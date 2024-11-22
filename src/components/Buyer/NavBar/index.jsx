@@ -1,33 +1,46 @@
+import { Box, Flex, Input, Button, Icon, Spacer } from "@chakra-ui/react";
 import {
-  Box,
-  Flex,
-  Spacer,
-  Input,
-  Button,
-  Icon,
-  Image,
-} from "@chakra-ui/react";
+  faMagnifyingGlass,
+  faRightFromBracket,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Link } from "@tanstack/react-router";
 
-const NavBar = () => {
+const Navbar = () => {
   return (
-    <Box bg="teal.500" px={4} py={2}>
-      <Flex align="center" maxW="1200px" mx="auto">
+    <Box bg="teal.500" px={4} py={3} boxShadow="md">
+      <Flex align="center">
         {/* Logo */}
-        <Image src="/logo.png" alt="Logo" boxSize="40px" />
-
-        {/* Spacer */}
-        <Spacer />
+        <Box color="white" fontSize="xl" fontWeight="bold">
+          MyLogo
+        </Box>
 
         {/* Search Bar */}
-        <InputGroup maxW="400px" mx={4}>
-          <Input placeholder="Search..." borderRadius="full" bg="white" />
-          <InputRightElement>
-            <Icon as={SearchIcon} color="gray.500" />
-          </InputRightElement>
-        </InputGroup>
+        <Flex align="center" w={{ base: "50%", md: "30%" }}>
+          <Input
+            placeholder="Search..."
+            size="md"
+            bg="white"
+            borderRadius="md"
+            mr={2}
+          />
+          <Button bg="white" color="teal.500" size="md">
+            <FontAwesomeIcon icon={faMagnifyingGlass} />
+          </Button>
+        </Flex>
+
+        {/* Spacer to separate the logo from the rest */}
+        <Spacer />
 
         {/* Login Button */}
-        <Button colorScheme="blue" borderRadius="full">
+        <Button
+          as={Link}
+          to="/login"
+          ml={4}
+          colorScheme="teal"
+          variant="outline"
+        >
+          <FontAwesomeIcon icon={faRightFromBracket} />
           Login
         </Button>
       </Flex>
@@ -35,4 +48,4 @@ const NavBar = () => {
   );
 };
 
-export default NavBar;
+export default Navbar;

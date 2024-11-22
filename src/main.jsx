@@ -1,13 +1,13 @@
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
+import { Provider } from "./components/ui/provider";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
-import { Provider } from "react-redux";
-import { ChakraProvider } from "@chakra-ui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
 // import generated tanstack router route tree
 import { routeTree } from "./routeTree.gen";
 
-// create tanstack query client
+// Buat instance Query Client
 const queryClient = new QueryClient();
 
 // create a new router instance
@@ -18,11 +18,11 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <ChakraProvider>
+      <Provider>
+        <QueryClientProvider client={queryClient}>
           <RouterProvider router={router} />
-        </ChakraProvider>
-      </QueryClientProvider>
+        </QueryClientProvider>
+      </Provider>
     </StrictMode>
   );
 }
