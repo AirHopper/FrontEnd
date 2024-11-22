@@ -6,5 +6,5 @@ export const Route = createLazyFileRoute("/login")({
 });
 
 function LoginPage() {
-  return "Hello /register!";
+  return <></>;
 }

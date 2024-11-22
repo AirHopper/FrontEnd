@@ -1,4 +1,4 @@
-import { Box, Flex, Input, Button, Icon, Spacer } from "@chakra-ui/react";
+import { Box, Flex, Input, Button, Spacer, Container } from "@chakra-ui/react";
 import {
   faMagnifyingGlass,
   faRightFromBracket,
@@ -8,8 +8,8 @@ import { Link } from "@tanstack/react-router";
 
 const Navbar = () => {
   return (
-    <Box bg="teal.500" px={4} py={3} boxShadow="md">
-      <Flex align="center">
+    <Container bg="teal.500" px={5} py={4} boxShadow="md">
+      <Flex align="center" gap={3}>
         {/* Logo */}
         <Box color="white" fontSize="xl" fontWeight="bold">
           MyLogo
@@ -21,7 +21,7 @@ const Navbar = () => {
             placeholder="Search..."
             size="md"
             bg="white"
-            borderRadius="md"
+            borderRadius="xl"
             mr={2}
           />
           <Button bg="white" color="teal.500" size="md">
@@ -44,7 +44,7 @@ const Navbar = () => {
           Login
         </Button>
       </Flex>
-    </Box>
+    </Container>
   );
 };
 
