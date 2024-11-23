@@ -1,33 +1,47 @@
-import { Box, Flex, Input, Button, Spacer, Container } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Input,
+  Button,
+  Spacer,
+  Container,
+  Image,
+} from "@chakra-ui/react";
 import {
   faMagnifyingGlass,
   faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "@tanstack/react-router";
+import { Logo } from "../../../assets/img";
 import { ColorModeButton } from "../../ui/color-mode";
 
 const Navbar = () => {
   return (
-    <Container bg="teal.500" px={5} py={4} boxShadow="md">
+    <Container bg="#2078b8" px={20} py={2} boxShadow="md">
       <Flex align="center" gap={3}>
         {/* Logo */}
         <Box color="white" fontSize="xl" fontWeight="bold">
-          MyLogo
+          <Image src={Logo} alt="AirHopper Logo" width="5vw" />
         </Box>
 
-        {/* Search Bar */}
-        <Flex align="center" w={{ base: "50%", md: "30%" }}>
-          <Input
-            placeholder="Search..."
-            size="md"
-            bg="white"
-            borderRadius="xl"
-            mr={2}
+        <Flex
+          align="center"
+          bg="white"
+          borderRadius="xl"
+          border="1px solid"
+          borderColor="gray.300"
+          px={3}
+          w="full"
+          maxW="400px"
+        >
+          <Input placeholder="Search..." variant="unstyled" size="md" mr={2} />
+          <FontAwesomeIcon
+            aria-label="Search"
+            size="lg"
+            icon={faMagnifyingGlass}
+            color="#8A8A8A"
           />
-          <Button bg="white" color="teal.500" size="md">
-            <FontAwesomeIcon icon={faMagnifyingGlass} />
-          </Button>
         </Flex>
 
         {/* Spacer to separate the logo from the rest */}
@@ -41,11 +55,19 @@ const Navbar = () => {
           as={Link}
           to="/login"
           ml={4}
-          colorScheme="teal"
+          borderRadius={10}
+          bg="#44b3f8"
+          border="#44b3f8"
+          color="white"
+          colorPalette="cyan"
           variant="outline"
+          _hover={{
+            bg: "#2078b8",
+            color: "white",
+          }}
         >
           <FontAwesomeIcon icon={faRightFromBracket} />
-          Login
+          Masuk
         </Button>
       </Flex>
     </Container>
