@@ -1,8 +1,12 @@
-"use client";
+'use client'
 
-import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
-import { Provider as ReduxProvider } from "react-redux";
+import { ChakraProvider, defaultSystem } from '@chakra-ui/react'
+import { ColorModeProvider } from './color-mode'
 
-export function Provider({ children }) {
-  return <ChakraProvider value={defaultSystem}>{children}</ChakraProvider>;
+export function Provider(props) {
+  return (
+    <ChakraProvider value={defaultSystem}>
+      <ColorModeProvider {...props} />
+    </ChakraProvider>
+  )
 }
