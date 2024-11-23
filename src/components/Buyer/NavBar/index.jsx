@@ -5,6 +5,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "@tanstack/react-router";
+import { ColorModeButton } from "../../ui/color-mode";
 
 const Navbar = () => {
   return (
@@ -32,6 +33,9 @@ const Navbar = () => {
         {/* Spacer to separate the logo from the rest */}
         <Spacer />
 
+        {/* Dark/Light Mode Toggle */}
+        <ColorModeButton ml={4} />
+
         {/* Login Button */}
         <Button
           as={Link}
@@ -43,6 +47,7 @@ const Navbar = () => {
           <FontAwesomeIcon icon={faRightFromBracket} />
           Login
         </Button>
+
       </Flex>
     </Container>
   );
