@@ -1,21 +1,39 @@
-import { createRootRoute, Outlet } from "@tanstack/react-router";
+import { createRootRoute, Outlet, useLocation } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import NavBar from "../components/Buyer/NavBar";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const Route = createRootRoute({
-  component: () => (
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID}>
-      {/* Navbar */}
-      <NavBar />
+  component: () => {
+    const location = useLocation(); // Get the current location
+    
+    // Define paths where NavBar should be hidden
+    const hiddenNavPaths = [
+      "/login", 
+      "/register", 
+      "/forgot-password", 
+      "/verify-otp", 
+      "/reset-password"
+    ]; // Add more paths if needed
+    const shouldHideNavBar = hiddenNavPaths.includes(location.pathname);
 
-      <Outlet />
+    return (
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID}>
+        {/* Conditionally render NavBar */}
+        {!shouldHideNavBar && <NavBar />}
 
-      {/* This is for debugging router */}
-      <TanStackRouterDevtools />
+        {/* Main Content */}
+        <Outlet />
 
-      {/* React Toastify */}
-      {/* <ToastContainer theme="colored" /> */}
-    </GoogleOAuthProvider>
-  ),
+        {/* This is for debugging router */}
+        <TanStackRouterDevtools />
+
+        {/* React Toastify */}
+        <ToastContainer theme="colored" />
+        {/* <ToastContainer theme="colored" /> */}
+      </GoogleOAuthProvider>
+    );
+  },
 });
