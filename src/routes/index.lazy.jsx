@@ -1,172 +1,201 @@
-import * as React from "react";
-import { createLazyFileRoute } from "@tanstack/react-router";
-import {
-  Box,
-  Text,
-  Image,
-  Flex,
-  Center,
-  Container,
-  Input,
-  Grid,
-  GridItem,
-  IconButton,
-  Heading,
-  Highlight,
-  Fieldset,
-} from "@chakra-ui/react";
-import { Button } from "../components/ui/button";
-import { Field } from "../components/ui/field";
-import { Banner } from "../assets/img";
-import {
-  faCalendarDays,
-  faPerson,
-  faPlaneDeparture,
-  faRepeat,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useState, useEffect } from "react";
+import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { Box, Container } from "@chakra-ui/react";
+import DatePicker from "../components/Buyer/LandingPage/DatePicker";
+import InputLocation from "../components/Buyer/LandingPage/InputLocation";
+import Passenger from "../components/Buyer/LandingPage/Passenger";
+import ClassSelect from "../components/Buyer/LandingPage/ClassSelect";
+import { getFlights } from "../services/flights";
+import SearchFlight from "../components/Buyer/LandingPage/SearchFlight";
+import FlightFav from "../components/Buyer/LandingPage/FlightFav";
 
 export const Route = createLazyFileRoute("/")({
   component: Beranda,
 });
 
 function Beranda() {
+  const [isFocused, setIsFocused] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isPassengerOpen, setIsPassengerOpen] = useState(false);
+  const [isClassOpen, setIsClassOpen] = useState(false);
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
+  const [focusedRange, setFocusedRange] = useState([0, 0]);
+  const [isRangeMode, setIsRangeMode] = useState(false); // State untuk Switch
+  const [singleDate, setSingleDate] = useState(new Date());
+  const [dateRange, setDateRange] = useState([
+    {
+      startDate: new Date(),
+      endDate: new Date(),
+      key: "selection",
+    },
+  ]);
+
+  // Format Date
+  const formattedStartDate = dateRange[0].startDate.toLocaleDateString(
+    "id-ID",
+    {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }
+  );
+
+  const formattedEndDate = dateRange[0].endDate.toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  const formattedSingleDate = singleDate.toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  const formatDate = (dateString) => {
+    const options = { day: "numeric", month: "long", year: "numeric" };
+    const formatter = new Intl.DateTimeFormat("id-ID", options); // 'id-ID' for Bahasa Indonesia
+    return formatter.format(new Date(dateString));
+  };
+
+  const handleFocus = () => {
+    setIsFocused(true);
+    setIsVisible(true);
+    setIsPickerOpen(false);
+    setIsPassengerOpen(false);
+    setIsClassOpen(false);
+  };
+  const handleDateFocus = (rangeIndex) => {
+    setIsFocused(true);
+    setIsPickerOpen(true);
+    setIsVisible(false);
+    setIsPassengerOpen(false);
+    setIsClassOpen(false);
+    setFocusedRange([0, rangeIndex]);
+  };
+  const handlePassengerFocus = () => {
+    setIsFocused(true);
+    setIsPassengerOpen(true);
+    setIsPickerOpen(false);
+    setIsVisible(false);
+    setIsClassOpen(false);
+  };
+  const handleClassFocus = () => {
+    setIsFocused(true);
+    setIsClassOpen(true);
+    setIsPickerOpen(false);
+    setIsVisible(false);
+    setIsPassengerOpen(false);
+  };
+  const handleClose = () => {
+    setIsFocused(false);
+    setIsVisible(false);
+    setIsPickerOpen(false);
+    setIsPassengerOpen(false);
+    setIsClassOpen(false);
+  };
+
+  const [flights, setFlights] = useState([]);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    pageSize: 10,
+    totalPages: 1,
+  });
+
+  // Use react query to fetch API
+  const { data, isSuccess, isLoading, isError } = useQuery({
+    queryKey: ["flights", pagination.currentPage, pagination.pageSize],
+    queryFn: () => getFlights(pagination.currentPage, pagination.pageSize),
+    enabled: pagination.pageSize > 0,
+  });
+
+  useEffect(() => {
+    if (isSuccess) {
+      setFlights(data?.data);
+      setPagination((prev) => ({
+        ...prev,
+        totalPages: data.pagination.totalPages,
+      }));
+    }
+  }, [data, isSuccess]);
+
+  const handlePageChange = (newPage) => {
+    setPagination((prev) => ({
+      ...prev,
+      currentPage: newPage,
+    }));
+  };
+
+  // const departureDate = formatDate(flights.departure.time);
+  // const arrivalDate = formatDate(flights.arrival.time);
+
+  const departureDate = "Iyo";
+  const arrivalDate = "Jakarta";
+
   return (
     <Container maxWidth="container.lg" mx="auto" py={8}>
-      <Flex justifyContent="center" alignItems="center" flexDirection="column">
-        <Flex justifyContent="center" alignItems="center" zIndex={-10}>
-          <Box
-            width="90vw"
-            color="white"
-            position="relative"
-            overflow="hidden"
-            borderRadius={10}
-          >
-            <Box bgColor="#ffec99" width="32vw" padding={12}>
-              <Heading
-                size="4xl"
-                fontWeight="extrabold"
-                fontStyle="italic"
-                color="black"
-              >
-                Diskon Hari Ini
-              </Heading>
-              <Heading mt={1} size="4xl" fontWeight="extrabold" color="#2078b8">
-                85%!
-              </Heading>
-            </Box>
+      {/* Overlay Box */}
+      <Box
+        position="absolute"
+        top="0"
+        left="0"
+        w="100%"
+        h="100%"
+        bg="blackAlpha.700"
+        opacity={isFocused ? 1 : 0}
+        pointerEvents="none"
+        transition="opacity 0.3s ease"
+        zIndex="5"
+      ></Box>
 
-            <Image
-              src={Banner}
-              alt="Banner Background"
-              position="absolute"
-              top="0"
-              left="0"
-              width="100%"
-              height="100%"
-              objectFit="cover"
-              zIndex={-1}
-            />
-            <Box
-              position="absolute"
-              top="0"
-              left="32vw"
-              w="35vw"
-              h="full"
-              bg="linear-gradient(to right, #ffec99, transparent)"
-            />
-          </Box>
+      {/* Input Wrapper */}
+      {isVisible && (
+        <InputLocation onCloseClick={handleClose} isFocused={isFocused} />
+      )}
 
-          <Center
-            bgGradient="to-r"
-            gradientFrom="#44b3f8"
-            gradientTo="#70caff"
-            color="white"
-            textAlign="center"
-            width="100%"
-            height="20vh"
-            py={10}
-            zIndex={-10}
-            position="absolute"
-            overflow="hidden"
-          ></Center>
-        </Flex>
+      {/* DatePicker */}
+      {isPickerOpen && (
+        <DatePicker
+          isRangeMode={isRangeMode}
+          dateRange={dateRange}
+          setDateRange={setDateRange}
+          singleDate={singleDate}
+          setSingleDate={setSingleDate}
+          focusedRange={focusedRange}
+          setIsPickerOpen={setIsPickerOpen}
+          handleClose={handleClose}
+        />
+      )}
 
-        <Flex
-          width="50vw"
-          flexDirection="column"
-          overflow="hidden"
-          bgColor="white"
-          shadow="md"
-          borderRadius={10}
-          pt={6}
-          px={6}
-          position="absolute"
-          top="30vh"
-        >
-          <Heading size="lg" fontWeight="bold" marginBottom={5}>
-            <Highlight query="AirHopper!" styles={{ color: "#2078b8" }}>
-              Pilih Jadwal Penerbangan Spesial di AirHopper!
-            </Highlight>
-          </Heading>
+      {isPassengerOpen && (
+        <Passenger onCloseClick={handleClose} isFocused={isFocused} />
+      )}
 
-          <Grid
-            justifyContent="center"
-            alignItems="center"
-            templateRows="repeat(3, 1fr)"
-            templateColumns="repeat(3, 1fr)"
-          >
-            <GridItem display="flex" gap={1} alignItems="center">
-              <FontAwesomeIcon icon={faPlaneDeparture} />
-              <Text display="inline">From</Text>
-              <Input placeholder="Enter your email" variant="flushed" />
-            </GridItem>
-            <GridItem
-              display="flex"
-              gap={1}
-              alignItems="center"
-              rowSpan={2}
-              justifySelf="center"
-              width="10px"
-            >
-              <IconButton borderColor="#44b3f8" borderRadius={15}>
-                <FontAwesomeIcon icon={faRepeat} style={{ fontSize: "20px" }} />
-              </IconButton>
-            </GridItem>
-            <GridItem display="flex" gap={1} alignItems="center">
-              <FontAwesomeIcon icon={faPlaneDeparture} />
-              <Text display="inline">To</Text>
-              <Input placeholder="Enter your email" variant="flushed" />
-            </GridItem>
-            <GridItem display="flex" gap={1} alignItems="center">
-              <FontAwesomeIcon icon={faCalendarDays} />
-              <Text display="inline">Date</Text>
+      {isClassOpen && (
+        <ClassSelect onCloseClick={handleClose} isFocused={isFocused} />
+      )}
 
-              <Field label="Departure">
-                <Input placeholder="Pilih Tanggal" variant="flushed" />
-              </Field>
-              <Field label="Return">
-                <Input placeholder="Pilih Tanggal" variant="flushed" />
-              </Field>
-            </GridItem>
-            <GridItem display="flex" gap={1} alignItems="center">
-              <FontAwesomeIcon icon={faPerson} />
-              <Text display="inline">To</Text>
+      <SearchFlight
+        handleFocus={handleFocus}
+        handleDateFocus={handleDateFocus}
+        handlePassengerFocus={handlePassengerFocus}
+        handleClassFocus={handleClassFocus}
+        isRangeMode={isRangeMode}
+        formattedStartDate={formattedStartDate}
+        formattedEndDate={formattedEndDate}
+        formattedSingleDate={formattedSingleDate}
+      />
 
-              <Field label="Passengers">
-                <Input placeholder="Pilih Tanggal" variant="flushed" />
-              </Field>
-              <Field label="Seat Class">
-                <Input placeholder="Pilih Tanggal" variant="flushed" />
-              </Field>
-            </GridItem>
-          </Grid>
-
-          <Button width="40vw" alignSelf="center" borderRadius={0}>
-            Cari Penerbangan
-          </Button>
-        </Flex>
-      </Flex>
+      <FlightFav
+        flights={flights}
+        departureDate={departureDate}
+        arrivalDate={arrivalDate}
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        pageSize={pagination.pageSize}
+        onPageChange={handlePageChange}
+      />
     </Container>
   );
 }

@@ -1,8 +1,10 @@
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
-import { Provider } from "@/components/ui/provider";
+import { ChakraProviderWrapper } from "@/components/ui/provider";
+import { Provider } from "react-redux";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { store } from "./redux/store";
 
 // import generated tanstack router route tree
 import { routeTree } from "./routeTree.gen";
@@ -20,11 +22,13 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <ColorModeProvider>
-        <Provider>
-          <QueryClientProvider client={queryClient}>
-            <RouterProvider router={router} />
-          </QueryClientProvider>
-        </Provider>
+        <ChakraProviderWrapper>
+          <Provider store={store}>
+            <QueryClientProvider client={queryClient}>
+              <RouterProvider router={router} />
+            </QueryClientProvider>
+          </Provider>
+        </ChakraProviderWrapper>
       </ColorModeProvider>
     </StrictMode>
   );

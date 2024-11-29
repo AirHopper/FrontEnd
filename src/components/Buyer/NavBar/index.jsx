@@ -18,25 +18,44 @@ import { ColorModeButton } from "../../ui/color-mode";
 
 const Navbar = () => {
   return (
-    <Container bg="#2078b8" px={20} py={2} boxShadow="md">
-      <Flex align="center" gap={3}>
+    <Container
+      px={{ sm: "2vw", lg: "5vw" }}
+      py={2}
+      boxShadow="md"
+      zIndex={20}
+      bgColor="white"
+    >
+      <Flex align="center" gap={5}>
         {/* Logo */}
-        <Box color="white" fontSize="xl" fontWeight="bold">
+        <Box
+          bgColor="#2078b8"
+          fontSize="xl"
+          fontWeight="bold"
+          borderRadius="full"
+        >
           <Image src={Logo} alt="AirHopper Logo" width="5vw" />
         </Box>
 
         <Flex
           align="center"
-          bg="white"
           borderRadius="xl"
           border="1px solid"
           borderColor="gray.300"
+          _dark={{ bgColor: "gray.700" }}
           px={3}
           w="full"
           maxW="400px"
         >
-          <Input placeholder="Search..." variant="unstyled" size="md" mr={2} />
+          <Input
+            placeholder="Search..."
+            variant="unstyled"
+            size="md"
+            mr={2}
+            _dark={{ bgColor: "gray.700" }}
+          />
           <FontAwesomeIcon
+            as={Button}
+            cursor="pointer"
             aria-label="Search"
             size="lg"
             icon={faMagnifyingGlass}

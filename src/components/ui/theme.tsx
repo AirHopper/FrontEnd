@@ -6,9 +6,11 @@ import {
 
 const customConfig = defineConfig({
   theme: {
-    colors: {
-      brand: {
-        500: "tomato",
+    semanticTokens: {
+      colors: {
+        "checkbox-border": {
+          value: { _light: "gray.200", _dark: "gray.800" },
+        },
       },
     },
   },
