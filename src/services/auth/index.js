@@ -82,14 +82,14 @@ export const verifyOTP = async (email, otpCode) => {
   }
 };
 
-export const resendOtp = async (request) => {
+export const resendOtp = async (email) => {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/auth/otp/resend`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(request),
+        body: JSON.stringify({email}),
       });
   
       const result = await response.json();
