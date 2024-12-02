@@ -16,7 +16,7 @@ export const Route = createLazyFileRoute("/")({
 
 function Beranda() {
   const [isFocused, setIsFocused] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [isPassengerOpen, setIsPassengerOpen] = useState(false);
   const [isClassOpen, setIsClassOpen] = useState(false);
   const [isPickerOpen, setIsPickerOpen] = useState(false);
@@ -30,6 +30,31 @@ function Beranda() {
       key: "selection",
     },
   ]);
+
+  // Selected Values
+  const [selectedFrom, setSelectedFrom] = useState("");
+  const [selectedTo, setSelectedTo] = useState("");
+  const [popupType, setPopupType] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedPassengers, setSelectedPassengers] = useState(null);
+  const [selectedClass, setSelectedClass] = useState("");
+
+  const handlePopup = (type) => {
+    setPopupType(type);
+    setIsFocused(true);
+    setIsPopupVisible(true);
+    setIsPickerOpen(false);
+    setIsClassOpen(false);
+  };
+
+  const handleCitySelect = (city) => {
+    if (popupType === "from") {
+      setSelectedFrom(`${city.name} (${city.code})`);
+    } else if (popupType === "to") {
+      setSelectedTo(`${city.name} (${city.code})`);
+    }
+    handleClose();
+  };
 
   // Format Date
   const formattedStartDate = dateRange[0].startDate.toLocaleDateString(
@@ -53,23 +78,18 @@ function Beranda() {
     year: "numeric",
   });
 
-  const formatDate = (dateString) => {
-    const options = { day: "numeric", month: "long", year: "numeric" };
-    const formatter = new Intl.DateTimeFormat("id-ID", options); // 'id-ID' for Bahasa Indonesia
-    return formatter.format(new Date(dateString));
-  };
-
   const handleFocus = () => {
     setIsFocused(true);
-    setIsVisible(true);
+    setIsPopupVisible(true);
     setIsPickerOpen(false);
     setIsPassengerOpen(false);
     setIsClassOpen(false);
   };
+
   const handleDateFocus = (rangeIndex) => {
     setIsFocused(true);
     setIsPickerOpen(true);
-    setIsVisible(false);
+    setIsPopupVisible(false);
     setIsPassengerOpen(false);
     setIsClassOpen(false);
     setFocusedRange([0, rangeIndex]);
@@ -78,19 +98,19 @@ function Beranda() {
     setIsFocused(true);
     setIsPassengerOpen(true);
     setIsPickerOpen(false);
-    setIsVisible(false);
+    setIsPopupVisible(false);
     setIsClassOpen(false);
   };
   const handleClassFocus = () => {
     setIsFocused(true);
     setIsClassOpen(true);
     setIsPickerOpen(false);
-    setIsVisible(false);
+    setIsPopupVisible(false);
     setIsPassengerOpen(false);
   };
   const handleClose = () => {
     setIsFocused(false);
-    setIsVisible(false);
+    setIsPopupVisible(false);
     setIsPickerOpen(false);
     setIsPassengerOpen(false);
     setIsClassOpen(false);
@@ -104,7 +124,7 @@ function Beranda() {
   });
 
   // Use react query to fetch API
-  const { data, isSuccess, isLoading, isError } = useQuery({
+  const { data, isSuccess, isPending } = useQuery({
     queryKey: ["flights", pagination.currentPage, pagination.pageSize],
     queryFn: () => getFlights(pagination.currentPage, pagination.pageSize),
     enabled: pagination.pageSize > 0,
@@ -127,9 +147,6 @@ function Beranda() {
     }));
   };
 
-  // const departureDate = formatDate(flights.departure.time);
-  // const arrivalDate = formatDate(flights.arrival.time);
-
   const departureDate = "Iyo";
   const arrivalDate = "Jakarta";
 
@@ -150,8 +167,13 @@ function Beranda() {
       ></Box>
 
       {/* Input Wrapper */}
-      {isVisible && (
-        <InputLocation onCloseClick={handleClose} isFocused={isFocused} />
+      {isPopupVisible && (
+        <InputLocation
+          onCloseClick={handleClose}
+          isFocused={isFocused}
+          flights={flights}
+          onCitySelect={handleCitySelect}
+        />
       )}
 
       {/* DatePicker */}
@@ -182,12 +204,17 @@ function Beranda() {
         handlePassengerFocus={handlePassengerFocus}
         handleClassFocus={handleClassFocus}
         isRangeMode={isRangeMode}
+        setIsRangeMode={setIsRangeMode}
         formattedStartDate={formattedStartDate}
         formattedEndDate={formattedEndDate}
         formattedSingleDate={formattedSingleDate}
+        handlePopup={handlePopup}
+        selectedFrom={selectedFrom}
+        selectedTo={selectedTo}
       />
 
       <FlightFav
+        loading={isPending}
         flights={flights}
         departureDate={departureDate}
         arrivalDate={arrivalDate}

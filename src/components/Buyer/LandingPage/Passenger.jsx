@@ -23,7 +23,7 @@ const Passenger = ({ isFocused, onCloseClick }) => {
   return (
     <Box
       position="absolute"
-      top="46%"
+      top="37%"
       left="50%"
       transform={`translate(34%, -10%) scale(${isFocused ? 1 : 0.8})`}
       bg="white"

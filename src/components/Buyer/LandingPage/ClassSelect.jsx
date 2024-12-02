@@ -4,11 +4,11 @@ import { CloseButton } from "../../ui/close-button";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const Passenger = ({ isFocused, onCloseClick }) => {
+const ClassSelect = ({ isFocused, onCloseClick }) => {
   return (
     <Box
       position="absolute"
-      top="47%"
+      top="37%"
       left="50%"
       transform={`translate(34%, -10%) scale(${isFocused ? 1 : 0.8})`}
       bg="white"
@@ -27,7 +27,6 @@ const Passenger = ({ isFocused, onCloseClick }) => {
           <HStack justifyContent="space-between" alignItems="center" py={1}>
             <Box>
               <Text fontWeight="bold">Economy</Text>
-              <Text>IDR 4.950.000</Text>
             </Box>
             <FontAwesomeIcon
               icon={faCircleCheck}
@@ -40,7 +39,6 @@ const Passenger = ({ isFocused, onCloseClick }) => {
           <HStack justifyContent="space-between" alignItems="center" py={1}>
             <Box>
               <Text fontWeight="bold">Premium Economy</Text>
-              <Text>IDR 7.550.000</Text>
             </Box>
             <FontAwesomeIcon
               icon={faCircleCheck}
@@ -53,7 +51,6 @@ const Passenger = ({ isFocused, onCloseClick }) => {
           <HStack justifyContent="space-between" alignItems="center" py={1}>
             <Box>
               <Text fontWeight="bold">Business</Text>
-              <Text>IDR 29.220.000</Text>
             </Box>
             <FontAwesomeIcon
               icon={faCircleCheck}
@@ -66,7 +63,6 @@ const Passenger = ({ isFocused, onCloseClick }) => {
           <HStack justifyContent="space-between" alignItems="center" py={1}>
             <Box>
               <Text fontWeight="bold">First Class</Text>
-              <Text>IDR 87.620.000</Text>
             </Box>
             <FontAwesomeIcon
               icon={faCircleCheck}
@@ -94,4 +90,4 @@ const Passenger = ({ isFocused, onCloseClick }) => {
   );
 };
 
-export default Passenger;
+export default ClassSelect;

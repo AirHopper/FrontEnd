@@ -47,7 +47,7 @@ const DatePicker = ({
     <Box
       mt={4}
       position="absolute"
-      top="26%"
+      top="33%"
       left="23%"
       bg="white"
       shadow="lg"

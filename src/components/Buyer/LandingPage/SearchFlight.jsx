@@ -29,6 +29,10 @@ const SearchFlight = ({
   formattedStartDate,
   formattedEndDate,
   formattedSingleDate,
+  handlePopup,
+  setIsRangeMode,
+  selectedFrom,
+  selectedTo,
 }) => {
   return (
     <Stack alignItems="center">
@@ -64,7 +68,9 @@ const SearchFlight = ({
             <Input
               placeholder="Enter Location"
               variant="flushed"
+              value={selectedFrom}
               onFocus={handleFocus}
+              onClick={() => handlePopup("from")}
               fontWeight="semibold"
             />
           </GridItem>
@@ -86,7 +92,9 @@ const SearchFlight = ({
             <Input
               placeholder="Enter Location"
               variant="flushed"
+              value={selectedTo}
               onFocus={handleFocus}
+              onClick={() => handlePopup("to")}
               fontWeight="semibold"
             />
           </GridItem>
@@ -105,6 +113,8 @@ const SearchFlight = ({
                     value={formattedStartDate}
                     onFocus={() => handleDateFocus(0)}
                     fontWeight="semibold"
+                    whiteSpace="nowrap"
+                    textOverflow="ellipsis"
                     readOnly
                   />
                 </Field>
@@ -115,6 +125,8 @@ const SearchFlight = ({
                     value={formattedEndDate}
                     onFocus={() => handleDateFocus(1)}
                     fontWeight="semibold"
+                    whiteSpace="nowrap"
+                    textOverflow="ellipsis"
                     readOnly
                   />
                 </Field>
