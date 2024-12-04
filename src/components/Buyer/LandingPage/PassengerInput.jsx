@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Box,
   Text,
@@ -10,8 +11,9 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
-import { StepperInput } from "../../ui/stepper-input";
-import { CloseButton } from "../../ui/close-button";
+// import { StepperInput } from "@/components/ui/stepper-input";
+import StepperInput from "./StepperInput";
+import { CloseButton } from "@/components/ui/close-button";
 import {
   faBaby,
   faPerson,
@@ -19,7 +21,17 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const Passenger = ({ isFocused, onCloseClick }) => {
+const PassengerInput = ({ isFocused, onCloseClick, onSave }) => {
+  const [adultCount, setAdultCount] = useState(0);
+  const [childCount, setChildCount] = useState(0);
+  const [babyCount, setBabyCount] = useState(0);
+
+  const handleSave = () => {
+    const totalPassengers = adultCount + childCount + babyCount;
+    onSave(totalPassengers); // Kirim nilai total ke komponen utama
+    onCloseClick(); // Tutup modal
+  };
+
   return (
     <Box
       position="absolute"
@@ -52,7 +64,11 @@ const Passenger = ({ isFocused, onCloseClick }) => {
               >{`(12 tahun keatas)`}</Text>
             </GridItem>
             <GridItem as={Flex} justifySelf="end">
-              <StepperInput defaultValue="0" min="0" />
+              <StepperInput
+                value={adultCount}
+                min={1}
+                onChange={(value) => setAdultCount(value)}
+              />
             </GridItem>
           </Grid>
           <Separator />
@@ -74,7 +90,11 @@ const Passenger = ({ isFocused, onCloseClick }) => {
               >{`(2 - 11 tahun)`}</Text>
             </GridItem>
             <GridItem as={Flex} justifySelf="end">
-              <StepperInput defaultValue="0" min="0" />
+              <StepperInput
+                value={childCount}
+                min={0}
+                onChange={(value) => setChildCount(value)}
+              />
             </GridItem>
           </Grid>
           <Separator />
@@ -93,7 +113,11 @@ const Passenger = ({ isFocused, onCloseClick }) => {
               >{`(Dibawah 2 tahun)`}</Text>
             </GridItem>
             <GridItem as={Flex} justifySelf="end">
-              <StepperInput defaultValue="0" min="0" />
+              <StepperInput
+                value={babyCount}
+                min={0}
+                onChange={(value) => setBabyCount(value)}
+              />
             </GridItem>
           </Grid>
           <Separator />
@@ -109,6 +133,7 @@ const Passenger = ({ isFocused, onCloseClick }) => {
           py={5}
           borderRadius="xl"
           fontSize="md"
+          onClick={handleSave}
         >
           Simpan
         </Button>
@@ -117,4 +142,4 @@ const Passenger = ({ isFocused, onCloseClick }) => {
   );
 };
 
-export default Passenger;
+export default PassengerInput;

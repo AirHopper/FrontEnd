@@ -117,9 +117,7 @@ const FlightFav = ({
       {/* Flight Cards */}
       <HStack justifyContent="center" marginTop={5} flexWrap="wrap">
         {loading
-          ? Array(pageSize).map((_, index) => (
-              <FlightSkeletonCard key={index} />
-            ))
+          ? filteredFlights.map((index) => <FlightSkeletonCard key={index} />)
           : filteredFlights.map((flight, index) => (
               <FlightCard key={index} flight={flight} loading={loading} />
             ))}

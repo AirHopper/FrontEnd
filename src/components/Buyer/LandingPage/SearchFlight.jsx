@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Text,
   Input,
@@ -7,6 +8,7 @@ import {
   Heading,
   Highlight,
   Stack,
+  HStack,
 } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
 import { Field } from "../../ui/field";
@@ -20,24 +22,133 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Promo from "./Promo";
 
-const SearchFlight = ({
-  handleFocus,
-  handleDateFocus,
-  handlePassengerFocus,
-  handleClassFocus,
-  isRangeMode,
-  formattedStartDate,
-  formattedEndDate,
-  formattedSingleDate,
-  handlePopup,
-  setIsRangeMode,
-  selectedFrom,
-  selectedTo,
-}) => {
+// Input Modals
+import DatePicker from "./DatePicker";
+import InputLocation from "./InputLocation";
+import PassengerInput from "./PassengerInput";
+import ClassSelect from "./ClassSelect";
+import { useNavigate } from "@tanstack/react-router";
+
+const SearchFlight = ({ flights, isFocused, setIsFocused }) => {
+  const navigate = useNavigate();
+
+  const [isLocationVisible, setIsLocationVisible] = useState(false);
+  const [isPassengerOpen, setIsPassengerOpen] = useState(false);
+  const [isClassOpen, setIsClassOpen] = useState(false);
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
+  const [focusedRange, setFocusedRange] = useState([0, 0]);
+  const [isRangeMode, setIsRangeMode] = useState(false); // State untuk Switch
+  const [singleDate, setSingleDate] = useState(new Date());
+  const [dateRange, setDateRange] = useState([
+    {
+      startDate: new Date(),
+      endDate: new Date(),
+      key: "selection",
+    },
+  ]);
+
+  // Selected Values
+  const [selectedFrom, setSelectedFrom] = useState("");
+  const [selectedTo, setSelectedTo] = useState("");
+  const [locationType, setLocationType] = useState("");
+  const [totalPassengers, setTotalPassengers] = useState(0);
+  const [selectedClass, setSelectedClass] = useState("");
+
+  // Format Date
+  const formattedStartDate = dateRange[0].startDate.toLocaleDateString(
+    "id-ID",
+    {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }
+  );
+
+  const formattedEndDate = dateRange[0].endDate.toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  const formattedSingleDate = singleDate.toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  const handleLocationInput = (locationType) => {
+    setLocationType(locationType);
+    setIsFocused(true);
+    setIsLocationVisible(true);
+    setIsPickerOpen(false);
+    setIsPassengerOpen(false);
+    setIsClassOpen(false);
+  };
+
+  const handleCitySelect = (city) => {
+    if (locationType === "from") {
+      setSelectedFrom(`${city.name} (${city.code})`);
+    } else if (locationType === "to") {
+      setSelectedTo(`${city.name} (${city.code})`);
+    }
+    handleClose();
+  };
+
+  const handleDateFocus = (rangeIndex) => {
+    setIsFocused(true);
+    setIsPickerOpen(true);
+    setIsLocationVisible(false);
+    setIsPassengerOpen(false);
+    setIsClassOpen(false);
+    setFocusedRange([0, rangeIndex]);
+  };
+  const handlePassengerFocus = () => {
+    setIsFocused(true);
+    setIsPassengerOpen(true);
+    setIsPickerOpen(false);
+    setIsLocationVisible(false);
+    setIsClassOpen(false);
+  };
+  const handleClassFocus = () => {
+    setIsFocused(true);
+    setIsClassOpen(true);
+    setIsPickerOpen(false);
+    setIsLocationVisible(false);
+    setIsPassengerOpen(false);
+  };
+  const handleClassSave = (className) => {
+    setSelectedClass(className);
+  };
+  const handleClose = () => {
+    setIsFocused(false);
+    setIsLocationVisible(false);
+    setIsPickerOpen(false);
+    setIsPassengerOpen(false);
+    setIsClassOpen(false);
+  };
+
+  const handleSwap = () => {
+    setSelectedFrom(selectedTo);
+    setSelectedTo(selectedFrom);
+  };
+
+  const handleSendSearch = () => {
+    const searchParams = new URLSearchParams();
+
+    if (selectedFrom)
+      searchParams.append("search[departureCity]", selectedFrom);
+    if (selectedTo) searchParams.append("search[arrivalCity]", selectedTo);
+    if (selectedClass) searchParams.append("search[classType]", selectedClass);
+    if (totalPassengers)
+      searchParams.append("search[passengers]", totalPassengers);
+
+    // Redirect ke halaman flights dengan query params
+    navigate({ to: `/flights?${searchParams.toString()}` });
+  };
+
   return (
     <Stack alignItems="center">
       <Promo />
-
       <Stack
         width="70vw"
         overflow="hidden"
@@ -69,8 +180,7 @@ const SearchFlight = ({
               placeholder="Enter Location"
               variant="flushed"
               value={selectedFrom}
-              onFocus={handleFocus}
-              onClick={() => handlePopup("from")}
+              onFocus={() => handleLocationInput("from")}
               fontWeight="semibold"
             />
           </GridItem>
@@ -80,7 +190,11 @@ const SearchFlight = ({
             justifyContent="center"
             marginTop={5}
           >
-            <IconButton borderColor="#44b3f8" borderRadius={15}>
+            <IconButton
+              borderColor="#44b3f8"
+              borderRadius={15}
+              onClick={handleSwap}
+            >
               <FontAwesomeIcon icon={faRepeat} style={{ fontSize: "20px" }} />
             </IconButton>
           </GridItem>
@@ -93,8 +207,7 @@ const SearchFlight = ({
               placeholder="Enter Location"
               variant="flushed"
               value={selectedTo}
-              onFocus={handleFocus}
-              onClick={() => handlePopup("to")}
+              onFocus={() => handleLocationInput("to")}
               fontWeight="semibold"
             />
           </GridItem>
@@ -104,45 +217,57 @@ const SearchFlight = ({
               Date
             </Text>
 
-            {isRangeMode ? (
-              <>
+            <HStack>
+              {isRangeMode ? (
+                <>
+                  <Field label="Departure">
+                    <Input
+                      placeholder="Pilih Tanggal"
+                      variant="flushed"
+                      value={formattedStartDate}
+                      onFocus={() => handleDateFocus(0)}
+                      _focus={{
+                        position: "relative",
+                        zIndex: "5",
+                        bgColor: "white",
+                      }}
+                      fontWeight="semibold"
+                      whiteSpace="nowrap"
+                      textOverflow="ellipsis"
+                      readOnly
+                    />
+                  </Field>
+                  <Field label="Return">
+                    <Input
+                      placeholder="Pilih Tanggal"
+                      variant="flushed"
+                      value={formattedEndDate}
+                      onFocus={() => handleDateFocus(1)}
+                      _focus={{
+                        position: "relative",
+                        zIndex: "5",
+                        bgColor: "white",
+                      }}
+                      fontWeight="semibold"
+                      whiteSpace="nowrap"
+                      textOverflow="ellipsis"
+                      readOnly
+                    />
+                  </Field>
+                </>
+              ) : (
                 <Field label="Departure">
                   <Input
                     placeholder="Pilih Tanggal"
                     variant="flushed"
-                    value={formattedStartDate}
-                    onFocus={() => handleDateFocus(0)}
+                    value={formattedSingleDate}
+                    onFocus={handleDateFocus}
                     fontWeight="semibold"
-                    whiteSpace="nowrap"
-                    textOverflow="ellipsis"
                     readOnly
                   />
                 </Field>
-                <Field label="Return">
-                  <Input
-                    placeholder="Pilih Tanggal"
-                    variant="flushed"
-                    value={formattedEndDate}
-                    onFocus={() => handleDateFocus(1)}
-                    fontWeight="semibold"
-                    whiteSpace="nowrap"
-                    textOverflow="ellipsis"
-                    readOnly
-                  />
-                </Field>
-              </>
-            ) : (
-              <Field label="Departure">
-                <Input
-                  placeholder="Pilih Tanggal"
-                  variant="flushed"
-                  value={formattedSingleDate}
-                  onFocus={handleDateFocus}
-                  fontWeight="semibold"
-                  readOnly
-                />
-              </Field>
-            )}
+              )}
+            </HStack>
             <Switch
               size="md"
               colorPalette="blue"
@@ -158,6 +283,7 @@ const SearchFlight = ({
             <Field label="Passengers">
               <Input
                 placeholder="Pilih Penumpang"
+                value={totalPassengers ? `${totalPassengers} Penumpang` : ""}
                 variant="flushed"
                 onFocus={handlePassengerFocus}
                 fontWeight="semibold"
@@ -167,6 +293,7 @@ const SearchFlight = ({
               <Input
                 placeholder="Pilih Kelas"
                 variant="flushed"
+                value={selectedClass}
                 onFocus={handleClassFocus}
                 fontWeight="semibold"
               />
@@ -180,10 +307,52 @@ const SearchFlight = ({
           borderRadius={0}
           bgColor="#44b3f8"
           _hover={{ bgColor: "#2078b8" }}
+          onClick={handleSendSearch}
         >
           Cari Penerbangan
         </Button>
       </Stack>
+
+      {/* Input Wrapper */}
+      {isLocationVisible && (
+        <InputLocation
+          onCloseClick={handleClose}
+          isFocused={isFocused}
+          flights={flights}
+          onCitySelect={handleCitySelect}
+        />
+      )}
+
+      {/* DatePicker */}
+      {isPickerOpen && (
+        <DatePicker
+          isRangeMode={isRangeMode}
+          dateRange={dateRange}
+          setDateRange={setDateRange}
+          singleDate={singleDate}
+          setSingleDate={setSingleDate}
+          focusedRange={focusedRange}
+          setIsPickerOpen={setIsPickerOpen}
+          handleClose={handleClose}
+        />
+      )}
+
+      {isPassengerOpen && (
+        <PassengerInput
+          onCloseClick={handleClose}
+          isFocused={isFocused}
+          onSave={(total) => setTotalPassengers(total)}
+        />
+      )}
+
+      {isClassOpen && (
+        <ClassSelect
+          isFocused={isFocused}
+          onCloseClick={handleClose}
+          onClassSelect={handleClassFocus}
+          onSave={handleClassSave}
+        />
+      )}
     </Stack>
   );
 };

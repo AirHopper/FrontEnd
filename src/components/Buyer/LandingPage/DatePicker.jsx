@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { Box } from "@chakra-ui/react";
 import { DateRange, Calendar } from "react-date-range";
 import "react-date-range/dist/styles.css"; // default styles

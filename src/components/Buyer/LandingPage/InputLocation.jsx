@@ -50,6 +50,7 @@ const InputLocation = ({ isFocused, onCloseClick, flights, onCitySelect }) => {
     ];
     saveHistory(newHistory);
     onCitySelect(city); // Pass selected city to parent
+    setQuery(""); // Clear query after selection
   };
 
   const handleRemoveHistory = (code) => {
@@ -63,6 +64,7 @@ const InputLocation = ({ isFocused, onCloseClick, flights, onCitySelect }) => {
 
   const filteredCities = flights
     .map((item) => item.departure.city) // Ambil hanya data departure.city
+    .concat(flights.map((item) => item.arrival.city)) // Tambahkan data arrival.city
     .filter(
       (city, index, self) =>
         index === self.findIndex((c) => c.name === city.name)
@@ -135,7 +137,7 @@ const InputLocation = ({ isFocused, onCloseClick, flights, onCitySelect }) => {
               onClick={() => handleCitySelect(city)}
             >
               <HStack justifyContent="space-between" alignItems="center">
-                <Text py={2}>
+                <Text py={2} cursor="default">
                   {city?.name} ({city?.code})
                 </Text>
               </HStack>
