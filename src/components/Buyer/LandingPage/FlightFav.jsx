@@ -1,13 +1,5 @@
 import { useState } from "react";
-import {
-  Text,
-  Stack,
-  HStack,
-  Pagination,
-  Skeleton,
-  Card,
-  Box,
-} from "@chakra-ui/react";
+import { Text, Stack, HStack, Image } from "@chakra-ui/react";
 import {
   PaginationItems,
   PaginationNextTrigger,
@@ -19,6 +11,7 @@ import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import FlightCard from "./FlightCard";
 import FlightSkeletonCard from "./Skeleton/FlightCard";
+import { NoData } from "../../../assets/img";
 
 const FlightFav = ({
   loading,
@@ -115,12 +108,30 @@ const FlightFav = ({
       </HStack>
 
       {/* Flight Cards */}
+
       <HStack justifyContent="center" marginTop={5} flexWrap="wrap">
-        {loading
-          ? filteredFlights.map((index) => <FlightSkeletonCard key={index} />)
-          : filteredFlights.map((flight, index) => (
+        {filteredFlights > 0 ? (
+          loading ? (
+            filteredFlights.map((index) => <FlightSkeletonCard key={index} />)
+          ) : (
+            filteredFlights.map((flight, index) => (
               <FlightCard key={index} flight={flight} loading={loading} />
-            ))}
+            ))
+          )
+        ) : (
+          <Stack alignItems="center" mt={2}>
+            <Image
+              src={NoData}
+              alt="No data Image"
+              width="25%"
+              objectFit="cover"
+            />
+            <Text>Data tidak ditemukan</Text>
+            <Text color="#44b3f8" mt={-2}>
+              Coba lagi nanti
+            </Text>
+          </Stack>
+        )}
       </HStack>
 
       {/* Pagination */}

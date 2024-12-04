@@ -17,7 +17,7 @@ const ClassSelect = ({ isFocused, onCloseClick, onSave }) => {
   return (
     <Box
       position="absolute"
-      top="37%"
+      top="430px"
       left="50%"
       transform={`translate(34%, -10%) scale(${isFocused ? 1 : 0.8})`}
       bg="white"

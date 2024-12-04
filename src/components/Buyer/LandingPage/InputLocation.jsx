@@ -80,7 +80,7 @@ const InputLocation = ({ isFocused, onCloseClick, flights, onCitySelect }) => {
   return (
     <Box
       position="absolute"
-      top="30%"
+      top="400px"
       left="50%"
       transform={`translate(-50%, -50%) scale(${isFocused ? 1 : 0.8})`}
       w="55vw"
