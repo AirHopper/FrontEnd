@@ -4,6 +4,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import NavBar from "../components/Buyer/NavBar";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Footer from "../components/Footer";
 
 export const Route = createRootRoute({
   component: () => {
@@ -17,7 +18,18 @@ export const Route = createRootRoute({
       "/verify-otp", 
       "/reset-password"
     ]; // Add more paths if needed
+
+    const hiddenFooterPaths = [
+      "/verify-otp",
+      "/login", 
+      "/register", 
+      "/forgot-password", 
+      "/verify-otp", 
+      "/reset-password"
+    ];
+
     const shouldHideNavBar = hiddenNavPaths.includes(location.pathname);
+    const shouldHideFooter = hiddenFooterPaths.includes(location.pathname);
 
     return (
       <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID}>
@@ -25,8 +37,9 @@ export const Route = createRootRoute({
         {!shouldHideNavBar && <NavBar />}
 
         {/* Main Content */}
-        <Outlet />
+        <Outlet minHeight="100vh"/>
 
+        {!shouldHideFooter && <Footer />}
         {/* This is for debugging router */}
         <TanStackRouterDevtools />
 

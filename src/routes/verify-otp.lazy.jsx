@@ -48,7 +48,7 @@ function VerifyOtpPage() {
 
   const handleVerifyOtp = async () => {
     if (!otpCode || otpCode.length < 6) {
-      toast.error("Please enter a valid 6-digit OTP code.");
+      toast.error("Silakan masukkan kode OTP 6 digit yang valid.");
       return;
     }
   
@@ -56,10 +56,10 @@ function VerifyOtpPage() {
   
     try {  
       const result = await verifyOTP(email, otpCode);
-      toast.success("Your email has been successfully verified.");
+      toast.success("Email Anda telah berhasil diverifikasi.");
       navigate({ to: "/login" }); // Redirect to login page after success
     } catch (error) {
-      toast.error(error.message || "Verification failed. Please try again.");
+      toast.error(error.message || "Verifikasi gagal. Silakan coba lagi.");
     } finally {
       setIsSubmitting(false);
     }
@@ -100,10 +100,10 @@ function VerifyOtpPage() {
         <Center flexDirection="column" gap={ 6}>
           {/* Header */}
           <Heading as="h2" size="lg" color="#2078b8" textAlign="center">
-            OTP verification
+            OTP verifikasi
           </Heading>
           <Text fontSize="md" textAlign="center">
-              Type the 6 digit code that sent to{" "}
+              Ketikkan 6 digit code yang telah dikirim ke{" "}
             <strong>
               {email.replace(/^(.{2}).+@/, (match, p1) => `${p1}***@`)}
             </strong>
@@ -121,8 +121,8 @@ function VerifyOtpPage() {
           {/* Timer */}
           <Text fontSize="sm" color={timer === 0 ? "red.500" : "gray.600"}>
             {timer > 0
-              ? `Please enter the OTP code in ${formatTime(timer)}`
-              : "Your time has expired, please resend the OTP code."}
+              ? `Silakan masukkan kode OTP yang ada ${formatTime(timer)}`
+              : "Waktu Anda telah habis, silakan kirim ulang kode OTP."}
           </Text>
 
           {/* Buttons */}
@@ -142,7 +142,7 @@ function VerifyOtpPage() {
               boxShadow: "md", // Add a shadow for depth
             }}
           >
-            OTP verification
+            OTP verifikasi
           </Button>
 
           {/* Resend OTP */}
@@ -157,7 +157,7 @@ function VerifyOtpPage() {
               onClick={handleResendOtp}
               isDisabled={isSubmitting}
             >
-              Resend OTP
+              Kirim ulang OTP
             </Button>
           )}
         </Center>

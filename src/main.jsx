@@ -11,6 +11,7 @@ import { store } from "./redux/store";
 // Import generated TanStack router route tree
 import { routeTree } from "./routeTree.gen";
 import { ColorModeProvider } from "./components/ui/color-mode";
+import "@fontsource-variable/plus-jakarta-sans/index.css"
 
 // Create an instance of Query Client
 const queryClient = new QueryClient();
