@@ -56,11 +56,11 @@ function LoginPage() {
     },
     onSuccess: (data) => {
       dispatch(setToken(data?.token));
-      toast.success("Login Success");
+      toast.success("Login Sukses");
       navigate({ to: "/" });
     },
     onError: (err) => {
-      toast.error(err?.message || "Login failed. Please check your credentials.");
+      toast.error(err?.message || "Login gagal. Mohon untuk cek email dan password.");
     },
   });
 
@@ -69,11 +69,11 @@ function LoginPage() {
       mutationFn: (accessToken) => googleLogin({ accessToken }),
       onSuccess: (data) => {
           dispatch(setToken(data?.token));
-          toast.success("Login Success");
+          toast.success("Login Sukses");
           navigate({ to: "/" });
       },
       onError: (err) => {
-          toast.error("Google login failed. Please try again.");
+          toast.error("Google login gagal. silahkan coba lagi.");
       },
     }); 
 

@@ -60,7 +60,7 @@ function RegisterPage() {
       return register(body);
     },
     onSuccess: (data) => {
-      toast.success("OTP code has been sent to your email")
+      toast.success("Kode OTP telah dikirim ke email")
       // Arahkan ke halaman verify-otp dengan membawa email pengguna
       navigate({
         to: "/verify-otp",
@@ -68,7 +68,7 @@ function RegisterPage() {
       });
     },
     onError: (err) => {
-      toast.error(err?.message || "Register Failed");
+      toast.error(err?.message || "Register Gagal");
     },
   });
 
@@ -81,7 +81,7 @@ const { mutate: googleLoginUser } = useMutation({
         navigate({ to: "/" });
     },
         onError: (err) => {
-            toast.error("Google login failed. Please try again.");
+            toast.error("Google login gagal. Silahkan coba lagi.");
     },
 }); 
 

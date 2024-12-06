@@ -194,14 +194,14 @@ function ForgotPasswordPage() {
             <Field
               label="Email Address"
               invalid={emailError}
-              errorText={emailError && 'Invalid email address'}
+              errorText={emailError && 'Email tidak ditemukan'}
             >
               <Input
                 borderRadius="10px"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 type="email"
-                placeholder="Enter your email"
+                placeholder="Masukkan email"
               />
             </Field>
 
@@ -218,7 +218,7 @@ function ForgotPasswordPage() {
                 boxShadow: 'md', // Add a shadow for depth
               }}
             >
-              Send Email
+              Kirim Email
             </Button>
           </Stack>
         </form>
