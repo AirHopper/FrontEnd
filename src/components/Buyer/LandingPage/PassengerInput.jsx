@@ -21,13 +21,18 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const PassengerInput = ({ isFocused, onCloseClick, onSave }) => {
-  const [adultCount, setAdultCount] = useState(0);
-  const [childCount, setChildCount] = useState(0);
-  const [babyCount, setBabyCount] = useState(0);
-
+const PassengerInput = ({
+  adultCount,
+  childCount,
+  infantCount,
+  setAdultCount,
+  setChildCount,
+  setInfantCount,
+  onCloseClick,
+  onSave,
+}) => {
   const handleSave = () => {
-    const totalPassengers = adultCount + childCount + babyCount;
+    const totalPassengers = adultCount + childCount + infantCount;
     onSave(totalPassengers); // Kirim nilai total ke komponen utama
     onCloseClick(); // Tutup modal
   };
@@ -35,11 +40,10 @@ const PassengerInput = ({ isFocused, onCloseClick, onSave }) => {
   return (
     <Box
       position="absolute"
-      top="430px"
-      left="50%"
-      transform={`translate(34%, -10%) scale(${isFocused ? 1 : 0.8})`}
+      top={{ base: "505px", sm: "405px", lg: "222px" }}
+      left={{ base: "3%", sm: "22%", md: "19%", lg: "59%" }}
       bg="white"
-      w="28vw"
+      w={{ base: "95%", sm: "60vw", md: "40vw", lg: "30vw" }}
       shadow="lg"
       borderRadius="xl"
       transition="all 0.3s ease"
@@ -114,9 +118,9 @@ const PassengerInput = ({ isFocused, onCloseClick, onSave }) => {
             </GridItem>
             <GridItem as={Flex} justifySelf="end">
               <StepperInput
-                value={babyCount}
+                value={infantCount}
                 min={0}
-                onChange={(value) => setBabyCount(value)}
+                onChange={(value) => setInfantCount(value)}
               />
             </GridItem>
           </Grid>

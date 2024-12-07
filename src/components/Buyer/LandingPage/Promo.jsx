@@ -13,12 +13,12 @@ const Promo = () => {
       >
         <Box
           bgColor="#ffec99"
-          width={{ base: "43vw", lg: "32vw" }}
-          py="7vh"
+          width={{ base: "43vw", sm: "42vw", md: "33vw" }}
+          py="6vh"
           px="5vw"
         >
           <Heading
-            size={{ sm: "sm", lg: "4xl" }}
+            size={{ base: "md", sm: "xl", md: "2xl", lg: "3xl" }}
             fontWeight="extrabold"
             fontStyle="italic"
             color="black"
@@ -27,7 +27,7 @@ const Promo = () => {
           </Heading>
           <Heading
             mt={1}
-            size={{ base: "3xl", lg: "4xl" }}
+            size={{ base: "2xl", sm: "3xl", md: "4xl" }}
             fontWeight="extrabold"
             color="#2078b8"
           >
@@ -49,9 +49,9 @@ const Promo = () => {
         <Box
           position="absolute"
           top="0"
-          left={{ base: "45vw", lg: "32vw" }}
-          w={{ lg: "35vw" }}
-          h="full"
+          left={{ base: "42vw", sm: "40vw", md: "33vw", lg: "32vw" }}
+          width={{ base: "35vw", md: "40vw" }}
+          height="full"
           bg="linear-gradient(to right, #ffec99, transparent)"
         />
       </Box>
@@ -63,7 +63,7 @@ const Promo = () => {
         color="white"
         textAlign="center"
         width="100%"
-        height="20vh"
+        height={{ base: "12vh", sm: "14vh", lg: "16vh" }}
         py={10}
         zIndex={-10}
         position="absolute"

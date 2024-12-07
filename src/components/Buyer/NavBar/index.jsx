@@ -1,16 +1,14 @@
 import {
   Box,
   Flex,
-  Input,
   Button,
   Spacer,
   Container,
   Image,
+  Text,
+  HStack,
 } from "@chakra-ui/react";
-import {
-  faMagnifyingGlass,
-  faRightFromBracket,
-} from "@fortawesome/free-solid-svg-icons";
+import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "@tanstack/react-router";
 import { Logo } from "../../../assets/img";
@@ -27,41 +25,19 @@ const Navbar = () => {
     >
       <Flex align="center" gap={5}>
         {/* Logo */}
-        <Box
-          bgColor="#2078b8"
-          fontSize="xl"
-          fontWeight="bold"
-          borderRadius="full"
-        >
-          <Image src={Logo} alt="AirHopper Logo" width="5vw" />
-        </Box>
-
-        <Flex
-          align="center"
-          borderRadius="xl"
-          border="1px solid"
-          borderColor="gray.300"
-          _dark={{ bgColor: "gray.700" }}
-          px={3}
-          w="full"
-          maxW="400px"
-        >
-          <Input
-            placeholder="Search..."
-            variant="unstyled"
-            size="md"
-            mr={2}
-            _dark={{ bgColor: "gray.700" }}
-          />
-          <FontAwesomeIcon
-            as={Button}
-            cursor="pointer"
-            aria-label="Search"
-            size="lg"
-            icon={faMagnifyingGlass}
-            color="#8A8A8A"
-          />
-        </Flex>
+        <HStack>
+          <Box
+            bgColor="#2078b8"
+            fontWeight="bold"
+            borderRadius="full"
+            width="35px"
+          >
+            <Image src={Logo} alt="AirHopper Logo" />
+          </Box>
+          <Text fontWeight="bold" color="#2078b8">
+            AirHopper
+          </Text>
+        </HStack>
 
         {/* Spacer to separate the logo from the rest */}
         <Spacer />

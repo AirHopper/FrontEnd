@@ -1,14 +1,17 @@
-export const getFlights = async (page = 1, pageSize = 10) => {
+export const getTickets = async (page, limit, continent) => {
   let params = {};
   if (page) {
     params.page = page;
   }
-  if (pageSize) {
-    params.pageSize = pageSize;
+  if (limit) {
+    params.limit = limit;
+  }
+  if (continent) {
+    params["search[continent]"] = continent;
   }
 
   let url =
-    `${import.meta.env.VITE_API_URL}${import.meta.env.VITE_API_VERSION}/flights?` +
+    `${import.meta.env.VITE_API_URL}${import.meta.env.VITE_API_VERSION}/tickets?` +
     new URLSearchParams(params);
 
   const response = await fetch(url, {

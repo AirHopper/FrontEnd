@@ -1,6 +1,6 @@
 import { Box, Stack, Skeleton } from "@chakra-ui/react";
 
-const FlightCard = () => {
+const TicketSkeletonCard = () => {
   return (
     <Box
       mt={5}
@@ -26,4 +26,4 @@ const FlightCard = () => {
   );
 };
 
-export default FlightCard;
+export default TicketSkeletonCard;

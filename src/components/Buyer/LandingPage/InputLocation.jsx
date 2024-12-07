@@ -16,7 +16,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState, useEffect } from "react";
 import { NoResult } from "../../../assets/img";
 
-const InputLocation = ({ isFocused, onCloseClick, flights, onCitySelect }) => {
+const InputLocation = ({ isFocused, onCloseClick, tickets, onCitySelect }) => {
   const [query, setQuery] = useState("");
   const [history, setHistory] = useState([]);
 
@@ -62,9 +62,9 @@ const InputLocation = ({ isFocused, onCloseClick, flights, onCitySelect }) => {
     saveHistory([]);
   };
 
-  const filteredCities = flights
+  const filteredCities = tickets
     .map((item) => item.departure.city) // Ambil hanya data departure.city
-    .concat(flights.map((item) => item.arrival.city)) // Tambahkan data arrival.city
+    .concat(tickets.map((item) => item.arrival.city)) // Tambahkan data arrival.city
     .filter(
       (city, index, self) =>
         index === self.findIndex((c) => c.name === city.name)
@@ -80,10 +80,10 @@ const InputLocation = ({ isFocused, onCloseClick, flights, onCitySelect }) => {
   return (
     <Box
       position="absolute"
-      top="400px"
+      top="200px"
       left="50%"
       transform={`translate(-50%, -50%) scale(${isFocused ? 1 : 0.8})`}
-      w="55vw"
+      w={{ base: "90%", lg: "55vw" }}
       p="6"
       bg="white"
       px={0}
@@ -98,6 +98,7 @@ const InputLocation = ({ isFocused, onCloseClick, flights, onCitySelect }) => {
           border="1px solid"
           borderColor="gray.300"
           borderRadius="md"
+          width="100%"
           px={2}
           py={1}
           bg="white"
@@ -115,7 +116,6 @@ const InputLocation = ({ isFocused, onCloseClick, flights, onCitySelect }) => {
           <Input
             variant="unstyled"
             placeholder="Search"
-            width="45vw"
             pl={2}
             py={0}
             focusBorderColor="transparent"
@@ -138,7 +138,7 @@ const InputLocation = ({ isFocused, onCloseClick, flights, onCitySelect }) => {
             >
               <HStack justifyContent="space-between" alignItems="center">
                 <Text py={2} cursor="default">
-                  {city?.name} ({city?.code})
+                  {city?.name}
                 </Text>
               </HStack>
               <Separator />
@@ -189,7 +189,7 @@ const InputLocation = ({ isFocused, onCloseClick, flights, onCitySelect }) => {
                       cursor="default"
                       onClick={() => handleCitySelect(city)}
                     >
-                      {city.name} ({city.code})
+                      {city.name}
                     </Text>
                     <CloseButton
                       variant="ghost"

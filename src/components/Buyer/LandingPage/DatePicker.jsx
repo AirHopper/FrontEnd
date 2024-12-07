@@ -9,7 +9,6 @@ const DatePicker = ({
   handleClose,
   dateRange,
   setDateRange,
-  singleDate,
   focusedRange,
   setSingleDate,
   setIsPickerOpen,
@@ -47,8 +46,8 @@ const DatePicker = ({
     <Box
       mt={4}
       position="absolute"
-      top="380px"
-      left="23%"
+      top={{ base: "400px", sm: "200px", lg: "205px" }}
+      left={{ base: "6%", sm: "23%", lg: "20.5%" }}
       bg="white"
       shadow="lg"
       transition="all 0.3s ease"
@@ -65,7 +64,7 @@ const DatePicker = ({
         />
       ) : (
         <Calendar
-          date={singleDate}
+          date={dateRange[0].startDate}
           color="#44b3f8"
           onChange={handleSingleDateChange}
         />

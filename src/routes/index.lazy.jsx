@@ -1,54 +1,64 @@
 import { useState, useEffect } from "react";
 import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Box, Container } from "@chakra-ui/react";
-import { getFlights } from "../services/flights";
-import SearchFlight from "../components/Buyer/LandingPage/SearchFlight";
-import FlightFav from "../components/Buyer/LandingPage/FlightFav";
+import { Stack, Box, Container } from "@chakra-ui/react";
+import { getTickets } from "../services/tickets";
+import SearchTicket from "../components/Buyer/LandingPage/SearchTicket";
+import TicketFav from "../components/Buyer/LandingPage/TicketFav";
+import Promo from "../components/Buyer/LandingPage/Promo";
 
 export const Route = createLazyFileRoute("/")({
   component: Beranda,
 });
 
 function Beranda() {
-  const [isFocused, setIsFocused] = useState(false);
+  // Selected Values
+  const [selectedFrom, setSelectedFrom] = useState("");
+  const [selectedTo, setSelectedTo] = useState("");
+  const [dateRange, setDateRange] = useState([
+    {
+      startDate: new Date(),
+      endDate: new Date(),
+      key: "selection",
+    },
+  ]);
 
-  const [flights, setFlights] = useState([]);
-  const [pagination, setPagination] = useState({
-    currentPage: 1,
-    pageSize: 10,
-    totalPages: 1,
-  });
+  // isFocused and tickets data states
+  const [isFocused, setIsFocused] = useState(false);
+  const [tickets, setTickets] = useState([]);
 
   // Use react query to fetch API
-  const { data, isSuccess, isPending } = useQuery({
-    queryKey: ["flights", pagination.currentPage, pagination.pageSize],
-    queryFn: () => getFlights(pagination.currentPage, pagination.pageSize),
-    enabled: pagination.pageSize > 0,
+  const { data, isSuccess, isError } = useQuery({
+    queryKey: ["tickets"],
+    queryFn: () => getTickets(),
+    enabled: true,
   });
 
   useEffect(() => {
     if (isSuccess) {
-      setFlights(data?.data);
-      setPagination((prev) => ({
-        ...prev,
-        totalPages: data.pagination.totalPages,
-      }));
+      setTickets(data?.data);
     }
   }, [data, isSuccess]);
 
-  const handlePageChange = (newPage) => {
-    setPagination((prev) => ({
-      ...prev,
-      currentPage: newPage,
-    }));
+  const handleSelectCard = (ticket) => {
+    setSelectedFrom(ticket?.departure?.city?.name || "");
+    setSelectedTo(ticket?.arrival?.city?.name || "");
+    setDateRange([
+      {
+        startDate: new Date(ticket?.departure?.time),
+        endDate: new Date(ticket?.arrival?.time),
+        key: "selection",
+      },
+    ]);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // Smooth scrolling animation
+    });
   };
 
-  const departureDate = "Iyo";
-  const arrivalDate = "Jakarta";
-
   return (
-    <Container maxWidth="container.lg" mx="auto" py={8}>
+    <Container maxWidth="container.lg" mx="auto" py={8} px={0}>
       {/* Overlay Box */}
       <Box
         position="absolute"
@@ -63,22 +73,24 @@ function Beranda() {
         zIndex="5"
       ></Box>
 
-      <SearchFlight
-        flights={flights}
-        isFocused={isFocused}
-        setIsFocused={setIsFocused}
-      />
+      <Promo />
 
-      <FlightFav
-        loading={isPending}
-        flights={flights}
-        departureDate={departureDate}
-        arrivalDate={arrivalDate}
-        currentPage={pagination.currentPage}
-        totalPages={pagination.totalPages}
-        pageSize={pagination.pageSize}
-        onPageChange={handlePageChange}
-      />
+      <Stack gap={5} position="relative" top={{ base: "2", lg: "-5" }}>
+        <SearchTicket
+          tickets={tickets}
+          isFocused={isFocused}
+          selectedFrom={selectedFrom}
+          selectedTo={selectedTo}
+          dateRange={dateRange}
+          isError={isError}
+          setSelectedFrom={setSelectedFrom}
+          setSelectedTo={setSelectedTo}
+          setDateRange={setDateRange}
+          setIsFocused={setIsFocused}
+        />
+
+        <TicketFav handleSelectCard={handleSelectCard} />
+      </Stack>
     </Container>
   );
 }
