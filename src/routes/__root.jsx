@@ -19,6 +19,7 @@ export const Route = createRootRoute({
       "/reset-password"
     ]; // Add more paths if needed
 
+
     const hiddenFooterPaths = [
       "/verify-otp",
       "/login", 

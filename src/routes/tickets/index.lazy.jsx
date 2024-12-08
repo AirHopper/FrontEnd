@@ -122,7 +122,7 @@ function RouteComponent() {
 	};
 
 	return (
-		<Container maxW={{ base: '100%', md: '90%', lg: '80%' }} py={6}>
+		<Container maxW={{ base: '100%', md: '90%', lg: '80%' }} py={6} minH="100vh">
 			<Heading as="h1" size="lg" mb={4} color="black" fontWeight="bold" textAlign={{ base: 'start', md: 'left' }}>
 				Pilih Penerbangan
 			</Heading>

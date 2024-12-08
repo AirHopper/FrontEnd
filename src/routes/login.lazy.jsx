@@ -125,7 +125,7 @@ function LoginPage() {
   return (
     <Flex
       w="100%"
-      h="100vh"
+      h="100%"
       alignItems="center"
       direction={{ base: "column ", md: "row" }} // Stack the boxes on small screens
     >
