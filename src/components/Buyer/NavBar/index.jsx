@@ -146,7 +146,7 @@ const Navbar = () => {
               <Box as="span" ml={2}>
                 Masuk
               </Box>
-            </Button>
+            </Button> 
           )}
         </Flex>
       </Container>

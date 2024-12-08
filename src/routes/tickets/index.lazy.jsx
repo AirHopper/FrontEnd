@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { createLazyFileRoute } from '@tanstack/react-router';
+import { createLazyFileRoute, Link } from '@tanstack/react-router';
 import { Box, Container, Grid, Heading, Text, Button } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { getTicketsListing } from '../../services/ticketsListing';
-import FilterDay from '../../components/tickets/FilterDay';
+import FilterDay from '../../components/Tickets/FilterDay';
 import { useState, useEffect } from 'react';
 import notFoundTicket from '../../assets/img/notfoundflight.png';
 import loadingImage from '../../assets/img/loading.png';
@@ -13,7 +13,7 @@ import { faArrowLeft, faCircleInfo, faGreaterThan } from '@fortawesome/free-soli
 import { useBreakpointValue } from '@chakra-ui/react';
 import { HStack, VStack, Image, AccordionItem, AccordionRoot, AccordionItemTrigger, AccordionItemContent, Flex } from '@chakra-ui/react';
 import { faChevronUp } from '@fortawesome/free-solid-svg-icons';
-import SelectFilter from '../../components/tickets/SelectFilter';
+import SelectFilter from '../../components/Tickets/SelectFilter';
 import { Checkbox } from '@/components/ui/checkbox';
 
 export const Route = createLazyFileRoute('/tickets/')({
@@ -148,7 +148,7 @@ function RouteComponent() {
 					</Text>
 				</Button>
 
-				<Button p={6} bg="#F8D24D" _hover={{ bg: '#D4B340', color: '#FDFFFE' }} borderRadius="md" color="#FDFFFE" display={{ base: 'none', md: 'flex' }} justifyContent="center" fontSize={useBreakpointValue({ base: 'sm', md: 'md' })}>
+				<Button as={Link} to="/" p={6} bg="#F8D24D" _hover={{ bg: '#D4B340', color: '#FDFFFE' }} borderRadius="md" color="#FDFFFE" display={{ base: 'none', md: 'flex' }} justifyContent="center" fontSize={useBreakpointValue({ base: 'sm', md: 'md' })}>
 					Ubah Pencarian
 				</Button>
 			</Grid>
