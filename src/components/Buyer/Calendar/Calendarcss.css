@@ -1,0 +1,21 @@
+input.inputBox {
+    background: white;
+    height: 2vw;
+    width: 28vw;
+    border-radius: 3px;
+    border: 1px solid gray;
+}
+
+.calendarWrap {
+    display: inline-block;
+    position: relative;
+}
+
+.calendarElement {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 40px;
+    border: 1px solid #ccc;
+    z-index: 999;
+}

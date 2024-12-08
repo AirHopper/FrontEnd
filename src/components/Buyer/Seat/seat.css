@@ -1,0 +1,27 @@
+.seat-picker {
+  margin: 0 auto;
+  width: 100%;   /* Menyesuaikan lebar dengan layar */
+  display: flex;
+  justify-content: center;
+}
+
+.seat {
+  width: 100%;     
+  font-size: 3vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0.4vw;
+}
+
+.seat__number {
+  font-size: xx-large;   /* Ukuran teks lebih besar */
+  font-weight: bold;
+  color:white;   
+}
+
+.seat-picker-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}

@@ -24,6 +24,8 @@ const NotificationLazyImport = createFileRoute('/notification')()
 const LoginLazyImport = createFileRoute('/login')()
 const ForgotPasswordLazyImport = createFileRoute('/forgot-password')()
 const IndexLazyImport = createFileRoute('/')()
+const CheckoutIndexLazyImport = createFileRoute('/Checkout/')()
+const CheckoutCompletedLazyImport = createFileRoute('/Checkout/completed')()
 const TicketsIndexLazyImport = createFileRoute('/tickets/')()
 const HistoryIndexLazyImport = createFileRoute('/history/')()
 
@@ -81,6 +83,21 @@ const IndexLazyRoute = IndexLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
 
+const CheckoutIndexLazyRoute = CheckoutIndexLazyImport.update({
+  id: '/Checkout/',
+  path: '/Checkout/',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/Checkout/index.lazy').then((d) => d.Route),
+)
+
+const CheckoutCompletedLazyRoute = CheckoutCompletedLazyImport.update({
+  id: '/Checkout/completed',
+  path: '/Checkout/completed',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/Checkout/completed.lazy').then((d) => d.Route),
+)
 const TicketsIndexLazyRoute = TicketsIndexLazyImport.update({
   id: '/tickets/',
   path: '/tickets/',
@@ -139,6 +156,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterLazyImport
       parentRoute: typeof rootRoute
     }
+    '/Checkout/completed': {
+      id: '/Checkout/completed'
+      path: '/Checkout/completed'
+      fullPath: '/Checkout/completed'
+      preLoaderRoute: typeof CheckoutCompletedLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/Checkout/': {
+      id: '/Checkout/'
+      path: '/Checkout'
+      fullPath: '/Checkout'
+      preLoaderRoute: typeof CheckoutIndexLazyImport
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
@@ -179,6 +208,8 @@ export interface FileRoutesByFullPath {
   '/notification': typeof NotificationLazyRoute
   '/profile': typeof ProfileLazyRoute
   '/register': typeof RegisterLazyRoute
+  '/Checkout/completed': typeof CheckoutCompletedLazyRoute
+  '/Checkout': typeof CheckoutIndexLazyRoute
   '/reset-password': typeof ResetPasswordLazyRoute
   '/verify-otp': typeof VerifyOtpLazyRoute
   '/history': typeof HistoryIndexLazyRoute
@@ -192,6 +223,8 @@ export interface FileRoutesByTo {
   '/notification': typeof NotificationLazyRoute
   '/profile': typeof ProfileLazyRoute
   '/register': typeof RegisterLazyRoute
+  '/Checkout/completed': typeof CheckoutCompletedLazyRoute
+  '/Checkout': typeof CheckoutIndexLazyRoute
   '/reset-password': typeof ResetPasswordLazyRoute
   '/verify-otp': typeof VerifyOtpLazyRoute
   '/history': typeof HistoryIndexLazyRoute
@@ -206,6 +239,8 @@ export interface FileRoutesById {
   '/notification': typeof NotificationLazyRoute
   '/profile': typeof ProfileLazyRoute
   '/register': typeof RegisterLazyRoute
+  '/Checkout/completed': typeof CheckoutCompletedLazyRoute
+  '/Checkout/': typeof CheckoutIndexLazyRoute
   '/reset-password': typeof ResetPasswordLazyRoute
   '/verify-otp': typeof VerifyOtpLazyRoute
   '/history/': typeof HistoryIndexLazyRoute
@@ -214,6 +249,16 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths: '/' | '/login' | '/register' | '/Checkout/completed' | '/Checkout'
+  fileRoutesByTo: FileRoutesByTo
+  to: '/' | '/login' | '/register' | '/Checkout/completed' | '/Checkout'
+  id:
+    | '__root__'
+    | '/'
+    | '/login'
+    | '/register'
+    | '/Checkout/completed'
+    | '/Checkout/'
   fullPaths:
     | '/'
     | '/forgot-password'
@@ -259,6 +304,8 @@ export interface RootRouteChildren {
   NotificationLazyRoute: typeof NotificationLazyRoute
   ProfileLazyRoute: typeof ProfileLazyRoute
   RegisterLazyRoute: typeof RegisterLazyRoute
+  CheckoutCompletedLazyRoute: typeof CheckoutCompletedLazyRoute
+  CheckoutIndexLazyRoute: typeof CheckoutIndexLazyRoute
   ResetPasswordLazyRoute: typeof ResetPasswordLazyRoute
   VerifyOtpLazyRoute: typeof VerifyOtpLazyRoute
   HistoryIndexLazyRoute: typeof HistoryIndexLazyRoute
@@ -272,6 +319,8 @@ const rootRouteChildren: RootRouteChildren = {
   NotificationLazyRoute: NotificationLazyRoute,
   ProfileLazyRoute: ProfileLazyRoute,
   RegisterLazyRoute: RegisterLazyRoute,
+  CheckoutCompletedLazyRoute: CheckoutCompletedLazyRoute,
+  CheckoutIndexLazyRoute: CheckoutIndexLazyRoute,
   ResetPasswordLazyRoute: ResetPasswordLazyRoute,
   VerifyOtpLazyRoute: VerifyOtpLazyRoute,
   HistoryIndexLazyRoute: HistoryIndexLazyRoute,
@@ -291,6 +340,9 @@ export const routeTree = rootRoute
         "/",
         "/forgot-password",
         "/login",
+        "/register",
+        "/Checkout/completed",
+        "/Checkout/"
         "/notification",
         "/profile",
         "/register",
@@ -318,6 +370,11 @@ export const routeTree = rootRoute
     "/register": {
       "filePath": "register.lazy.jsx"
     },
+    "/Checkout/completed": {
+      "filePath": "Checkout/completed.lazy.jsx"
+    },
+    "/Checkout/": {
+      "filePath": "Checkout/index.lazy.jsx"
     "/reset-password": {
       "filePath": "reset-password.lazy.jsx"
     },

@@ -1,3 +1,5 @@
+import * as React from 'react'
+import Navbar from '../components/Buyer/NavBar'
 import { useState, useEffect } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -11,6 +13,12 @@ export const Route = createLazyFileRoute("/")({
   component: Beranda,
 });
 
+function RouteComponent() {
+  return (
+    <>
+      <Navbar/>
+    </>
+  )
 function Beranda() {
   // Selected Values
   const [selectedFrom, setSelectedFrom] = useState("");

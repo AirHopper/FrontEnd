@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@chakra-ui/react": "^3.2.0",
+    "@chakra-ui/react": "^3.2.1",
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
     "@fontsource-variable/plus-jakarta-sans": "^5.1.0",
@@ -24,13 +24,15 @@
     "@tanstack/react-query": "^5.61.0",
     "@tanstack/react-router": "^1.82.1",
     "date-fns": "^4.1.0",
-    "framer-motion": "^11.11.17",
+    "framer-motion": "^11.12.0",
     "next-themes": "^0.4.3",
     "react": "^18.3.1",
     "react-date-range": "^2.0.1",
     "react-dom": "^18.3.1",
     "react-icons": "^5.3.0",
     "react-redux": "^9.1.2",
+    "react-seat-picker": "^1.5.3",
+    "react-tooltip": "^4.5.1"
     "react-simple-typewriter": "^5.0.1",
     "react-sweetalert2": "^0.6.0",
     "react-toastify": "^10.0.6"
