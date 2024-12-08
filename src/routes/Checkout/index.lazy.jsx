@@ -12,7 +12,6 @@ import {
   Card,
   createListCollection,
 } from '@chakra-ui/react';
-import Navbar from '../../components/Buyer/NavBar/checkout.lazy'
 import CalendarComponent from '../../components/Buyer/Calendar/CalendarComponent.jsx';
 import '../../components/Buyer/Calendar/Calendarcss.css'
 import {
@@ -39,7 +38,7 @@ import SeatPickerPremiunEkonomi from "../../components/Buyer/Seat/seatPremiumEko
 import SeatPickerBisnis from "../../components/Buyer/Seat/seatBisnis.lazy.jsx";
 import SeatPickerEksekutif from "../../components/Buyer/Seat/seatEksekutif.lazy.jsx";
 
-export const Route = createLazyFileRoute('/Checkout/')({
+export const Route = createLazyFileRoute('/checkout/')({
   component: CheckoutIndex,
 })
 
@@ -139,7 +138,6 @@ function CheckoutIndex() {
 
   return (
     <>
-      <Navbar/>
       <Box bg="white" px={4}>
         <Flex w="100%" alignItems="center" justifyContent="center" direction="column" borderBottom="2px solid" borderColor="gray.100">
           <Flex w="75%" direction="column" marginBottom={5}>

@@ -152,7 +152,7 @@ const handleGoogleLogin = useGoogleLogin({
   return (
     <Flex
       w="100%"
-      h="120vh"
+      h="100%"
       alignItems="center"
       direction={{ base: "column", md: "row" }} // Stack the boxes on small screens
     >

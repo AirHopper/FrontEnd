@@ -97,7 +97,7 @@ function ResetPasswordPage() {
   const imageDisplay = useBreakpointValue({ base: "none", md: "block" });
 
   return (
-    <Flex w="100%" h="100vh" alignItems="center" direction={{ base: "column", md: "row" }}>
+    <Flex w="100%" h="100%" alignItems="center" direction={{ base: "column", md: "row" }}>
       <Box
         w={leftBoxWidth}
         bgGradient="to-tr" gradientFrom="rgba(38,31,163,1) 45%" gradientTo="rgba(0,212,255,1) 90%"
