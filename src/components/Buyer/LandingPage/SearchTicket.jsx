@@ -36,6 +36,8 @@ const SearchTicket = ({
   selectedTo,
   dateRange,
   isRangeMode,
+  singleDate,
+  setSingleDate,
   setIsRangeMode,
   setSelectedFrom,
   setSelectedTo,
@@ -72,6 +74,18 @@ const SearchTicket = ({
   const [totalPassengers, setTotalPassengers] = useState(0);
 
   // Format Date
+  const formattedSingleDate = isRangeMode
+    ? ""
+    : dateRange[0]?.singleDate?.toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }) ||
+      dateRange[0]?.startDate?.toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
 
   const formattedStartDate = dateRange[0]?.startDate
     ? dateRange[0].startDate.toLocaleDateString("id-ID", {
@@ -150,16 +164,35 @@ const SearchTicket = ({
     return format(date, "yyyy-MM-dd");
   };
 
+  const handleSwitchChange = () => {
+    setIsRangeMode((prevMode) => {
+      if (prevMode) {
+        // Reset `endDate` dan simpan nilai `startDate` sebagai `singleDate`
+        setDateRange([
+          {
+            ...dateRange[0],
+            endDate: null,
+            singleDate: dateRange[0].startDate,
+          },
+        ]);
+      } else {
+        // Reset `singleDate` dan atur `startDate` kembali
+        setDateRange([{ ...dateRange[0], endDate: null, singleDate: null }]);
+      }
+      return !prevMode;
+    });
+  };
+
   // Handling untuk mengirimkan query params dengan value dari landing page
   const handleSendSearch = () => {
     const searchParams = new URLSearchParams();
 
     if (selectedFrom) searchParams.append("departure", selectedFrom);
-    if (selectedTo) searchParams.append("arrival", selectedTo);
+    if (!selectedTo === "") searchParams.append("arrival", selectedTo);
     if (dateRange[0].startDate) {
       searchParams.append(
         "departureDate",
-        handleFormatDate(dateRange[0].endDate)
+        handleFormatDate(dateRange[0].startDate)
       );
     }
     if (dateRange[0].endDate) {
@@ -187,7 +220,7 @@ const SearchTicket = ({
   return (
     <Stack alignItems="center">
       <Stack
-        width={{ base: "90vw", md: "85vw", lg: "75vw" }}
+        width={{ base: "90vw", md: "85vw", lg: "75vw", xl: "65vw" }}
         overflow="hidden"
         bgColor="white"
         shadow="md"
@@ -274,7 +307,9 @@ const SearchTicket = ({
                     <Input
                       placeholder="Pilih Tanggal"
                       variant="flushed"
-                      value={formattedStartDate}
+                      value={
+                        isRangeMode ? formattedStartDate : formattedSingleDate
+                      }
                       onFocus={() => handleDateFocus(0)}
                       _focus={{
                         position: "relative",
@@ -320,7 +355,7 @@ const SearchTicket = ({
                   <Input
                     placeholder="Pilih Tanggal"
                     variant="flushed"
-                    value={formattedStartDate}
+                    value={formattedSingleDate}
                     onFocus={handleDateFocus}
                     _focus={{
                       position: "relative",
@@ -337,17 +372,8 @@ const SearchTicket = ({
             <Switch
               size="md"
               colorPalette="blue"
-              defaultChecked
               checked={isRangeMode}
-              onCheckedChange={() => {
-                setIsRangeMode((prevMode) => {
-                  if (prevMode) {
-                    // Reset the `endDate` when switching to single date mode
-                    setDateRange([{ ...dateRange[0], endDate: null }]);
-                  }
-                  return !prevMode;
-                });
-              }}
+              onChange={handleSwitchChange}
             />
           </GridItem>
           <GridItem
@@ -429,6 +455,8 @@ const SearchTicket = ({
           isRangeMode={isRangeMode}
           dateRange={dateRange}
           setDateRange={setDateRange}
+          singleDate={singleDate}
+          setSingleDate={setSingleDate}
           focusedRange={focusedRange}
           setIsPickerOpen={setIsPickerOpen}
           handleClose={handleClose}

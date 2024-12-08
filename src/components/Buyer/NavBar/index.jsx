@@ -54,7 +54,6 @@ const Navbar = () => {
       boxShadow="md"
       px={{ sm: "10px", md: "15px", lg: "25px" }}
       bgColor="white"
-      mb={5}
     >
       <Container>
         <Flex py={2} align="center" justify="space-between" wrap="wrap" gap={4}>

@@ -83,7 +83,7 @@ const InputLocation = ({ isFocused, onCloseClick, tickets, onCitySelect }) => {
       top="200px"
       left="50%"
       transform={`translate(-50%, -50%) scale(${isFocused ? 1 : 0.8})`}
-      w={{ base: "90%", lg: "55vw" }}
+      w={{ base: "90%", lg: "55vw", xl: "40vw" }}
       p="6"
       bg="white"
       px={0}

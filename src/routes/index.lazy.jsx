@@ -15,14 +15,15 @@ function Beranda() {
   // Selected Values
   const [selectedFrom, setSelectedFrom] = useState("");
   const [selectedTo, setSelectedTo] = useState("");
+  const [singleDate, setSingleDate] = useState(new Date());
   const [dateRange, setDateRange] = useState([
     {
       startDate: new Date(),
-      endDate: new Date(),
+      endDate: null,
       key: "selection",
     },
   ]);
-  const [isRangeMode, setIsRangeMode] = useState(true);
+  const [isRangeMode, setIsRangeMode] = useState(false);
 
   // isFocused and tickets data states
   const [isFocused, setIsFocused] = useState(false);
@@ -47,11 +48,9 @@ function Beranda() {
     setDateRange([
       {
         startDate: new Date(ticket?.departure?.time),
-        endDate: new Date(ticket?.arrival?.time),
         key: "selection",
       },
     ]);
-    setIsRangeMode(true);
 
     window.scrollTo({
       top: 0,
@@ -60,7 +59,7 @@ function Beranda() {
   };
 
   return (
-    <Container maxWidth="container.lg" mx="auto" py={8} px={0}>
+    <Box maxWidth="container.lg" mx="auto" py={8} px={0}>
       {/* Overlay Box */}
       <Box
         position="absolute"
@@ -81,19 +80,21 @@ function Beranda() {
         <SearchTicket
           tickets={tickets}
           isFocused={isFocused}
+          setIsFocused={setIsFocused}
           selectedFrom={selectedFrom}
           selectedTo={selectedTo}
           dateRange={dateRange}
           isRangeMode={isRangeMode}
+          singleDate={singleDate}
+          setSingleDate={setSingleDate}
           setIsRangeMode={setIsRangeMode}
           setSelectedFrom={setSelectedFrom}
           setSelectedTo={setSelectedTo}
           setDateRange={setDateRange}
-          setIsFocused={setIsFocused}
         />
 
         <TicketFav handleSelectCard={handleSelectCard} />
       </Stack>
-    </Container>
+    </Box>
   );
 }
