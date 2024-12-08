@@ -22,7 +22,6 @@ import { setUser } from "../../../redux/slices/auth";
 import { profile } from "../../../services/user";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify"; // Ensure toast is imported
-import { ColorModeButton } from "../../ui/color-mode";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -129,8 +128,6 @@ const Navbar = () => {
               </Button>
             </HStack>
           ) : (
-         <>  
-        <ColorModeButton ml={4} />
             <Button
               as={Link}
               to="/login"
@@ -149,8 +146,7 @@ const Navbar = () => {
               <Box as="span" ml={2}>
                 Masuk
               </Box>
-            </Button>
-          </> 
+            </Button> 
           )}
         </Flex>
       </Container>
