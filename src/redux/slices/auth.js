@@ -6,7 +6,7 @@ const initialState = {
   token: localStorage.getItem("token") || null,
 };
 
-// Slice action and reducer
+// Slice actions and reducer
 export const authSlice = createSlice({
   initialState,
   name: "auth",
@@ -30,9 +30,3 @@ export const { setToken, setUser } = authSlice.actions;
 
 // Export the state/reducers
 export default authSlice.reducer;
-
-/* 
-    Analogy in useState code
-*/
-// const [user, setUser] = useState(null);
-// const [token, setToken] = useState(localStorage.getItem("token") || null);
