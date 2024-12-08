@@ -14,18 +14,17 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useNavigate, Link } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { LogoAirHopper } from "../../../assets/img";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setToken, setUser } from "../../../redux/slices/auth";
+import { setUser } from "../../../redux/slices/auth";
 import { profile } from "../../../services/user";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify"; // Ensure toast is imported
 
 const Navbar = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const { user, token } = useSelector((state) => state.auth); // Ambil user dan token dari Redux
 
@@ -53,6 +52,7 @@ const Navbar = () => {
       right={0}
       zIndex={20}
       boxShadow="md"
+      px={{ sm: "10px", md: "15px", lg: "25px" }}
       bgColor="white"
       mb={5}
     >
