@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
-import { Provider } from 'react-redux';
-import { ChakraProviderWrapper} from '@/components/ui/provider';
+import { Provider } from "react-redux";
+import { ChakraProviderWrapper } from "@/components/ui/provider";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -11,7 +11,7 @@ import { store } from "./redux/store";
 // Import generated TanStack router route tree
 import { routeTree } from "./routeTree.gen";
 import { ColorModeProvider } from "./components/ui/color-mode";
-import "@fontsource-variable/plus-jakarta-sans/index.css"
+import "@fontsource-variable/plus-jakarta-sans/index.css";
 
 // Create an instance of Query Client
 const queryClient = new QueryClient();
@@ -25,7 +25,7 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <ColorModeProvider>
-        <ChakraProviderWrapper >
+        <ChakraProviderWrapper>
           <Provider store={store}>
             <QueryClientProvider client={queryClient}>
               <RouterProvider router={router} />

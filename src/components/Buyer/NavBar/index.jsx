@@ -21,7 +21,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setToken, setUser } from "../../../redux/slices/auth";
 import { profile } from "../../../services/user";
 import { useQuery } from "@tanstack/react-query";
-import { toast } from 'react-toastify'; // Ensure toast is imported
+import { toast } from "react-toastify"; // Ensure toast is imported
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -57,94 +57,99 @@ const Navbar = () => {
       mb={5}
     >
       <Container>
-      <Flex
- 
-        py={2}
-        align="center"
-        justify="space-between"
-        wrap="wrap"
-        gap={4}
-      >
-        {/* Logo */}
-         <HStack>
-          <Box
-            bgColor="#2078b8"
-            fontWeight="bold"
-            borderRadius="full"
-            width="35px"
-          >
-            <Image src={LogoAirHopper} alt="AirHopper Logo" />
-          </Box>
-          <Text fontWeight="bold" color="#2078b8">
-            AirHopper
-          </Text>
-        </HStack>
-          
-        {/* Login Button */}
-        {user ? (
-          <HStack spacing={8} alignItems="center" marginRight={5}>
-            <Button 
-              variant="ghost"
-              as={Link}
-              to="/history" 
-              size="md" 
-              color="black"
-              _active={{
-                borderColor: "#74C0FC", 
-                boxShadow: "0 0 0 3px rgba(116, 192, 252, 0.6)"
-              }}
+        <Flex py={2} align="center" justify="space-between" wrap="wrap" gap={4}>
+          {/* Logo */}
+          <HStack>
+            <Box
+              bgColor="#2078b8"
+              fontWeight="bold"
+              borderRadius="full"
+              width="35px"
             >
-              <FontAwesomeIcon icon={faList} size="xl" style={{ color: "#74C0FC" }} />
-            </Button>
-            <Button   
-              variant="ghost"            
-              as={Link}
-              to="/notification" 
-              size="md" 
-              color="black"
-              _active={{
-                borderColor: "#74C0FC", 
-                boxShadow: "0 0 0 3px rgba(116, 192, 252, 0.6)"
-              }}
-            >
-              <FontAwesomeIcon icon={faBell} size="xl" style={{ color: "#74C0FC" }} />
-            </Button>
-            <Button               
-              variant="ghost"            
-              as={Link}
-              to="/profile"  
-              size="md" 
-              color="black"
-              _active={{
-                borderColor: "#74C0FC", 
-                boxShadow: "0 0 0 3px rgba(116, 192, 252, 0.6)"
-              }}
-            >
-              <FontAwesomeIcon icon={faUser} size="xl" style={{ color: "#74C0FC" }} />
-            </Button>
-          </HStack>
-        ) : (
-          <Button
-            as={Link}
-            to="/login"
-            borderRadius={10}
-            bg="#44b3f8"
-            border="#44b3f8"
-            color="white"
-            colorPalette="cyan"
-            variant="outline"
-            _hover={{
-              bg: "#2078b8",
-              color: "white",
-            }}
-          >
-            <FontAwesomeIcon icon={faRightFromBracket} />
-            <Box as="span" ml={2}>
-              Masuk
+              <Image src={LogoAirHopper} alt="AirHopper Logo" />
             </Box>
-          </Button>
-        )}
-      </Flex>
+            <Text fontWeight="bold" color="#2078b8">
+              AirHopper
+            </Text>
+          </HStack>
+
+          {/* Login Button */}
+          {user ? (
+            <HStack spacing={8} alignItems="center" marginRight={5}>
+              <Button
+                variant="ghost"
+                as={Link}
+                to="/history"
+                size="md"
+                color="black"
+                _active={{
+                  borderColor: "#74C0FC",
+                  boxShadow: "0 0 0 3px rgba(116, 192, 252, 0.6)",
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={faList}
+                  size="xl"
+                  style={{ color: "#74C0FC" }}
+                />
+              </Button>
+              <Button
+                variant="ghost"
+                as={Link}
+                to="/notification"
+                size="md"
+                color="black"
+                _active={{
+                  borderColor: "#74C0FC",
+                  boxShadow: "0 0 0 3px rgba(116, 192, 252, 0.6)",
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={faBell}
+                  size="xl"
+                  style={{ color: "#74C0FC" }}
+                />
+              </Button>
+              <Button
+                variant="ghost"
+                as={Link}
+                to="/profile"
+                size="md"
+                color="black"
+                _active={{
+                  borderColor: "#74C0FC",
+                  boxShadow: "0 0 0 3px rgba(116, 192, 252, 0.6)",
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={faUser}
+                  size="xl"
+                  style={{ color: "#74C0FC" }}
+                />
+              </Button>
+            </HStack>
+          ) : (
+            <Button
+              as={Link}
+              to="/login"
+              borderRadius={10}
+              bg="#44b3f8"
+              border="#44b3f8"
+              color="white"
+              colorPalette="cyan"
+              variant="outline"
+              _hover={{
+                bg: "#2078b8",
+                color: "white",
+              }}
+            >
+              <FontAwesomeIcon icon={faRightFromBracket} />
+              <Box as="span" ml={2}>
+                Masuk
+              </Box>
+            </Button>
+          )}
+        </Flex>
       </Container>
     </Box>
   );
