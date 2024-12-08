@@ -24,7 +24,6 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <ColorModeProvider>
         <ChakraProviderWrapper>
           <Provider store={store}>
             <QueryClientProvider client={queryClient}>
@@ -32,7 +31,6 @@ if (!rootElement.innerHTML) {
             </QueryClientProvider>
           </Provider>
         </ChakraProviderWrapper>
-      </ColorModeProvider>
     </StrictMode>
   );
 }
