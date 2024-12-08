@@ -13,7 +13,7 @@ import { faArrowLeft, faCircleInfo, faGreaterThan } from '@fortawesome/free-soli
 import { useBreakpointValue } from '@chakra-ui/react';
 import { HStack, VStack, Image, AccordionItem, AccordionRoot, AccordionItemTrigger, AccordionItemContent, Flex } from '@chakra-ui/react';
 import { faChevronUp } from '@fortawesome/free-solid-svg-icons';
-import SelectFilter from '../../components/tickets/SelectFilter';
+import SelectFilter from '../../components/Tickets/SelectFilter';
 import { Checkbox } from '@/components/ui/checkbox';
 
 export const Route = createLazyFileRoute('/tickets/')({
