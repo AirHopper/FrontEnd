@@ -28,6 +28,7 @@ import { register, googleLogin } from "../services/auth";
 import { useMutation } from "@tanstack/react-query";
 import { useGoogleLogin } from '@react-oauth/google';
 import { toast } from 'react-toastify';
+import { Typewriter } from 'react-simple-typewriter';
 
 export const Route = createLazyFileRoute("/register")({
   component: RegisterPage,
@@ -59,7 +60,7 @@ function RegisterPage() {
       return register(body);
     },
     onSuccess: (data) => {
-      toast.success("OTP code has been sent to your email")
+      toast.success("Kode OTP telah dikirim ke email")
       // Arahkan ke halaman verify-otp dengan membawa email pengguna
       navigate({
         to: "/verify-otp",
@@ -67,7 +68,7 @@ function RegisterPage() {
       });
     },
     onError: (err) => {
-      toast.error(err?.message || "Register Failed");
+      toast.error(err?.message || "Register Gagal");
     },
   });
 
@@ -80,7 +81,7 @@ const { mutate: googleLoginUser } = useMutation({
         navigate({ to: "/" });
     },
         onError: (err) => {
-            toast.error("Google login failed. Please try again.");
+            toast.error("Google login gagal. Silahkan coba lagi.");
     },
 }); 
 
@@ -100,7 +101,7 @@ const onSubmit = async (event) => {
       setEmailError(true);
       isValid = false;
   }
-  if (password.length < 6) {
+  if (password.length < 8) {
       setPasswordError(true);
       isValid = false;
   }
@@ -151,13 +152,13 @@ const handleGoogleLogin = useGoogleLogin({
   return (
     <Flex
       w="100%"
-      h="100vh"
+      h="120vh"
       alignItems="center"
       direction={{ base: "column", md: "row" }} // Stack the boxes on small screens
     >
-      {/* Left Section with Image */}
       <Box
         w={leftBoxWidth}
+        bgGradient="to-tr" gradientFrom="rgba(38,31,163,1) 45%" gradientTo="rgba(0,212,255,1) 90%"
         h="120vh"
         position="relative"
         display={imageDisplay} // Hide image on tablet breakpoints
@@ -165,16 +166,44 @@ const handleGoogleLogin = useGoogleLogin({
         alignItems="center"
         overflow="hidden" // Prevents image overflow
       >
+        {/* Gambar AirHopper */}
         <Image
-          src={AirHopper}
+          src={LogoAirHopper}
           alt="AirHopper"
           objectFit="cover" // Ensures image covers the entire area
-          w="100%" // Make image larger
-          h="100%"
+          w="40%" // Make image larger
           position="absolute" // Keeps the image in the background
-          top="0"
-          left="0"
+          top="40%" // Adjust the vertical position of the image
+          left="50%"
+          transform="translate(-50%, -50%)" // Center the image
         />
+        
+        {/* Teks di bawah gambar dengan teks statis dan animasi */}
+        <Box
+          position="absolute" // Ensures the text is positioned relative to the parent Box
+          top="70%" // Position the text below the image
+          left="50%"
+          transform="translate(-50%, -50%)" // Center the text horizontally
+          textAlign="center" // Center align the text content
+          color="white" // Text color
+        >
+          {/* Teks Statis */}
+          <Text fontSize="5xl" fontWeight="bold" mb="2">
+            AirHopper
+          </Text>
+          {/* Teks dengan Animasi */}
+          <Text fontSize="4xl" fontWeight="medium">
+            <Typewriter
+              words={['Partner perjalanan anda!', 'Solusi untuk pengalaman terbaik']}
+              loop={true} // Loops through the text
+              cursor // Show a blinking cursor
+              cursorStyle="|" // Customize cursor style
+              typeSpeed={70} // Speed of typing
+              deleteSpeed={50} // Speed of deleting
+              delaySpeed={1000} // Delay before typing the next word
+            />
+          </Text>
+        </Box>
       </Box>
 
       {/* Right Side - Login Form */}
@@ -183,7 +212,7 @@ const handleGoogleLogin = useGoogleLogin({
         w={rightBoxWidth}
         p="6%"
         ml={{ base: 0, md: 5 }} // Add margin on larger screens
-        mt={{ base: 0, md: -10 }} // Adjust margin top to move upward
+        mt={{ base: 0, md: -14 }} // Adjust margin top to move upward
         mr={{ base: 0, md: 3 }} // Add margin on smaller screens
         position="relative" // Ensure proper positioning
       >
@@ -208,23 +237,30 @@ const handleGoogleLogin = useGoogleLogin({
               <FontAwesomeIcon icon={faArrowLeft} size="xl" />
             </Button>
           </Flex>
-            {/* Image (Centered in the remaining space) */}
-            <Image
-              src={LogoAirHopper}
-              alt="AirHopper"
-              boxSize="100px" // Set the size of the logo (adjust as needed)
-              objectFit="contain" // Ensure the image fits within the specified box size
-              mb={0} // Add margin at the bottom to separate the image from the text
-              display="block" // Make the image a block element
-              mx="auto"
-            />
-            <Heading as="h1" size="4xl" mb="3">
-            AirHopper
+              {/* Image (Centered in the remaining space) */}
+              <Box
+                bgColor="#2078b8"
+                fontWeight="bold"
+                mx="auto"
+                borderRadius="full"
+              >
+                <Image
+                  src={LogoAirHopper}
+                  alt="AirHopper"
+                  boxSize="100px" // Set the size of the logo (adjust as needed)
+                  objectFit="contain" // Ensure the image fits within the specified box size
+                  mb={0} // Add margin at the bottom to separate the image from the text
+                  display="block" // Make the image a block element
+                  mx="auto"
+                />
+              </Box>
+            <Heading as="h1" size="3xl" fontWeight="bold" color="#2078b8">
+              AirHopper
             </Heading>
         </Stack>
 
         <Heading as="h1" size="2xl" color="#333" mb="3" fontWeight={"bold"}>
-          Sign Up
+          Daftar
         </Heading>
 
         {/* Form */}
@@ -232,43 +268,43 @@ const handleGoogleLogin = useGoogleLogin({
           <Stack gap="4">
             {/* Full name Field */}
             <Field
-              label="Full Name"
+              label="Nama Lengkap"
               invalid={fullNameError}
-              errorText={fullNameError && "Full name cannot be empty"}
+              errorText={fullNameError && "Nama lengkap tidak boleh kosong"}
             >
               <Input
                 borderRadius="10px"
                 value={fullName}
                 onChange={(e) => setFUllName(e.target.value)}
-                placeholder="Enter your fullname"
+                placeholder="Masukkan nama lengkap"
               />
             </Field>
             {/* Email Field */}
             <Field
-              label="Email Address"
+              label="Alamat Email"
               invalid={emailError}
-              errorText={emailError && "Invalid email address"}
+              errorText={emailError && "Email tidak sesuai"}
             >
               <Input
                 borderRadius="10px"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 type="email"
-                placeholder="Enter your email"
+                placeholder="Masukkan Email"
               />
             </Field>
 
             {/* Phone Number Field */}
             <Field
-              label="Phone Number"
+              label="Nomor Telepon"
               invalid={phoneError}
-              errorText={phoneError && "Phone number must be 10-15 digits and numeric"}
+              errorText={phoneError && "Nomor telepon harus 10 - 15 digit dan angka"}
             >
               <Input
                 borderRadius="10px"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
-                placeholder="Enter your phone number"
+                placeholder="Masukkan nomor telepon"
               />
             </Field>
 
@@ -276,27 +312,27 @@ const handleGoogleLogin = useGoogleLogin({
             <Field
               label="Password"
               invalid={passwordError}
-              errorText={passwordError && "Password must be at least 6 characters"}
+              errorText={passwordError && "Password harus 8 karakter"}
             >
               <PasswordInput
                 borderRadius="10px"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
+                placeholder="Masukkan password"
               />
             </Field>
 
             {/* Confirm Password Field */}
             <Field
-              label="Confirm Password"
+              label="Konfirmasi Password"
               invalid={confirmPasswordError}
-              errorText={confirmPasswordError && "Password and Confirm Password Must Be Same"}
+              errorText={confirmPasswordError && "Password dan konfirmasi password harus sama"}
             >
               <PasswordInput
                 borderRadius="10px"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Enter your confirm password"
+                placeholder="Masukkan konfirmasi password"
               />
             </Field>
           
@@ -313,12 +349,12 @@ const handleGoogleLogin = useGoogleLogin({
                 boxShadow: "md", // Add a shadow for depth
               }}
             >
-              Sign Up
+              Daftar
             </Button>
 
             <HStack>
               <Separator />
-              <Text flexShrink="0">or signin with</Text>
+              <Text flexShrink="0">atau masuk dengan</Text>
               <Separator />
             </HStack>
 
@@ -335,16 +371,16 @@ const handleGoogleLogin = useGoogleLogin({
               }}
             >
               <FontAwesomeIcon icon={faGoogle} />
-              Sign In With Google
+              Masuk dengan Google
             </Button>
           </Stack>
         </form>
 
         {/* Sign Up Link */}
         <Text textAlign="center" mt="4">
-          Already have an account?{" "}
+          Sudah punya akun?{" "}
           <Text as={Link} to="/login" color="blue.500">
-            Sign In
+            Masuk
           </Text>
         </Text>
       </Stack>

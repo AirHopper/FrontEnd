@@ -14,24 +14,38 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+<<<<<<< HEAD
 import { useNavigate, Link } from "@tanstack/react-router";
 import { LogoAirHopper } from "../../../assets/img";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setToken, setUser } from "../../../redux/slices/auth";
+=======
+import { Link } from "@tanstack/react-router";
+import { LogoAirHopper } from "../../../assets/img";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "../../../redux/slices/auth";
+>>>>>>> parent of 0a0f4a7 (listing ticket & history | slicing listing ticket and history page)
 import { profile } from "../../../services/user";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify"; // Ensure toast is imported
 
 const Navbar = () => {
   const dispatch = useDispatch();
+<<<<<<< HEAD
   const navigate = useNavigate();
+=======
+>>>>>>> parent of 0a0f4a7 (listing ticket & history | slicing listing ticket and history page)
 
-				{/* Spacer to separate the logo from the rest */}
-				<Spacer />
+  const { user, token } = useSelector((state) => state.auth); // Ambil user dan token dari Redux
 
-				{/* Dark/Light Mode Toggle */}
-				<ColorModeButton ml={4} />
+  // React Query untuk mendapatkan profil user jika token ada
+  const { data, isSuccess, isError } = useQuery({
+    queryKey: ["profile"],
+    queryFn: profile,
+    enabled: !!token,
+  });
 
   // Update Redux state jika data berhasil diambil
   useEffect(() => {
@@ -50,6 +64,10 @@ const Navbar = () => {
       right={0}
       zIndex={20}
       boxShadow="md"
+<<<<<<< HEAD
+=======
+      px={{ sm: "10px", md: "15px", lg: "25px" }}
+>>>>>>> parent of 0a0f4a7 (listing ticket & history | slicing listing ticket and history page)
       bgColor="white"
       mb={5}
     >
