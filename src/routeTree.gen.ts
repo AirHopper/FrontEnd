@@ -19,6 +19,8 @@ import { Route as rootRoute } from './routes/__root'
 const RegisterLazyImport = createFileRoute('/register')()
 const LoginLazyImport = createFileRoute('/login')()
 const IndexLazyImport = createFileRoute('/')()
+const CheckoutIndexLazyImport = createFileRoute('/Checkout/')()
+const CheckoutCompletedLazyImport = createFileRoute('/Checkout/completed')()
 
 // Create/Update Routes
 
@@ -39,6 +41,22 @@ const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const CheckoutIndexLazyRoute = CheckoutIndexLazyImport.update({
+  id: '/Checkout/',
+  path: '/Checkout/',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/Checkout/index.lazy').then((d) => d.Route),
+)
+
+const CheckoutCompletedLazyRoute = CheckoutCompletedLazyImport.update({
+  id: '/Checkout/completed',
+  path: '/Checkout/completed',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/Checkout/completed.lazy').then((d) => d.Route),
+)
 
 // Populate the FileRoutesByPath interface
 
@@ -65,6 +83,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterLazyImport
       parentRoute: typeof rootRoute
     }
+    '/Checkout/completed': {
+      id: '/Checkout/completed'
+      path: '/Checkout/completed'
+      fullPath: '/Checkout/completed'
+      preLoaderRoute: typeof CheckoutCompletedLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/Checkout/': {
+      id: '/Checkout/'
+      path: '/Checkout'
+      fullPath: '/Checkout'
+      preLoaderRoute: typeof CheckoutIndexLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -74,12 +106,16 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/login': typeof LoginLazyRoute
   '/register': typeof RegisterLazyRoute
+  '/Checkout/completed': typeof CheckoutCompletedLazyRoute
+  '/Checkout': typeof CheckoutIndexLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/login': typeof LoginLazyRoute
   '/register': typeof RegisterLazyRoute
+  '/Checkout/completed': typeof CheckoutCompletedLazyRoute
+  '/Checkout': typeof CheckoutIndexLazyRoute
 }
 
 export interface FileRoutesById {
@@ -87,14 +123,22 @@ export interface FileRoutesById {
   '/': typeof IndexLazyRoute
   '/login': typeof LoginLazyRoute
   '/register': typeof RegisterLazyRoute
+  '/Checkout/completed': typeof CheckoutCompletedLazyRoute
+  '/Checkout/': typeof CheckoutIndexLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/register'
+  fullPaths: '/' | '/login' | '/register' | '/Checkout/completed' | '/Checkout'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register'
-  id: '__root__' | '/' | '/login' | '/register'
+  to: '/' | '/login' | '/register' | '/Checkout/completed' | '/Checkout'
+  id:
+    | '__root__'
+    | '/'
+    | '/login'
+    | '/register'
+    | '/Checkout/completed'
+    | '/Checkout/'
   fileRoutesById: FileRoutesById
 }
 
@@ -102,12 +146,16 @@ export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   LoginLazyRoute: typeof LoginLazyRoute
   RegisterLazyRoute: typeof RegisterLazyRoute
+  CheckoutCompletedLazyRoute: typeof CheckoutCompletedLazyRoute
+  CheckoutIndexLazyRoute: typeof CheckoutIndexLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   LoginLazyRoute: LoginLazyRoute,
   RegisterLazyRoute: RegisterLazyRoute,
+  CheckoutCompletedLazyRoute: CheckoutCompletedLazyRoute,
+  CheckoutIndexLazyRoute: CheckoutIndexLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -122,7 +170,9 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/login",
-        "/register"
+        "/register",
+        "/Checkout/completed",
+        "/Checkout/"
       ]
     },
     "/": {
@@ -133,6 +183,12 @@ export const routeTree = rootRoute
     },
     "/register": {
       "filePath": "register.lazy.jsx"
+    },
+    "/Checkout/completed": {
+      "filePath": "Checkout/completed.lazy.jsx"
+    },
+    "/Checkout/": {
+      "filePath": "Checkout/index.lazy.jsx"
     }
   }
 }
