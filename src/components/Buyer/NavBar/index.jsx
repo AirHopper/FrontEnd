@@ -14,29 +14,17 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-<<<<<<< HEAD
-import { useNavigate, Link } from "@tanstack/react-router";
-import { LogoAirHopper } from "../../../assets/img";
-import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setToken, setUser } from "../../../redux/slices/auth";
-=======
 import { Link } from "@tanstack/react-router";
 import { LogoAirHopper } from "../../../assets/img";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../../../redux/slices/auth";
->>>>>>> parent of 0a0f4a7 (listing ticket & history | slicing listing ticket and history page)
 import { profile } from "../../../services/user";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify"; // Ensure toast is imported
 
 const Navbar = () => {
   const dispatch = useDispatch();
-<<<<<<< HEAD
-  const navigate = useNavigate();
-=======
->>>>>>> parent of 0a0f4a7 (listing ticket & history | slicing listing ticket and history page)
 
   const { user, token } = useSelector((state) => state.auth); // Ambil user dan token dari Redux
 
@@ -64,10 +52,7 @@ const Navbar = () => {
       right={0}
       zIndex={20}
       boxShadow="md"
-<<<<<<< HEAD
-=======
       px={{ sm: "10px", md: "15px", lg: "25px" }}
->>>>>>> parent of 0a0f4a7 (listing ticket & history | slicing listing ticket and history page)
       bgColor="white"
       mb={5}
     >
