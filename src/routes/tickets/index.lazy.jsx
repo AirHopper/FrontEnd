@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createLazyFileRoute } from '@tanstack/react-router';
+import { createLazyFileRoute, Link } from '@tanstack/react-router';
 import { Box, Container, Grid, Heading, Text, Button } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { getTicketsListing } from '../../services/ticketsListing';
@@ -148,7 +148,7 @@ function RouteComponent() {
 					</Text>
 				</Button>
 
-				<Button p={6} bg="#F8D24D" _hover={{ bg: '#D4B340', color: '#FDFFFE' }} borderRadius="md" color="#FDFFFE" display={{ base: 'none', md: 'flex' }} justifyContent="center" fontSize={useBreakpointValue({ base: 'sm', md: 'md' })}>
+				<Button as={Link} to="/" p={6} bg="#F8D24D" _hover={{ bg: '#D4B340', color: '#FDFFFE' }} borderRadius="md" color="#FDFFFE" display={{ base: 'none', md: 'flex' }} justifyContent="center" fontSize={useBreakpointValue({ base: 'sm', md: 'md' })}>
 					Ubah Pencarian
 				</Button>
 			</Grid>
