@@ -6,12 +6,11 @@ import "react-date-range/dist/theme/default.css"; // default theme
 
 const DatePicker = ({
   isRangeMode,
-  handleClose,
   dateRange,
   setDateRange,
   focusedRange,
-  setSingleDate,
   setIsPickerOpen,
+  handleClose,
 }) => {
   const pickerRef = useRef(); // Ref for detecting outside clicks
 
@@ -21,8 +20,8 @@ const DatePicker = ({
     handleClose();
   };
 
-  const handleSingleDateChange = (date) => {
-    setSingleDate(date);
+  const handleSingleDateChange = (item) => {
+    setDateRange([item.startDate]);
     setIsPickerOpen(false); // Close picker after selection
     handleClose();
   };

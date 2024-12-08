@@ -35,6 +35,8 @@ const SearchTicket = ({
   selectedFrom,
   selectedTo,
   dateRange,
+  isRangeMode,
+  setIsRangeMode,
   setSelectedFrom,
   setSelectedTo,
   setDateRange,
@@ -46,7 +48,7 @@ const SearchTicket = ({
   const [isClassOpen, setIsClassOpen] = useState(false);
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [focusedRange, setFocusedRange] = useState([0, 0]);
-  const [isRangeMode, setIsRangeMode] = useState(false); // State untuk Switch
+  // const [isRangeMode, setIsRangeMode] = useState(true); // State untuk Switch
 
   // Selected Values
   /*  -> From Props
@@ -183,7 +185,7 @@ const SearchTicket = ({
   };
 
   return (
-    <Stack alignItems="center" id="search-ticket">
+    <Stack alignItems="center">
       <Stack
         width={{ base: "90vw", md: "85vw", lg: "75vw" }}
         overflow="hidden"
@@ -298,7 +300,7 @@ const SearchTicket = ({
                     <Input
                       placeholder="Pilih Tanggal"
                       variant="flushed"
-                      value={formattedEndDate}
+                      value={formattedEndDate || ""}
                       onFocus={() => handleDateFocus(1)}
                       _focus={{
                         position: "relative",
@@ -335,7 +337,9 @@ const SearchTicket = ({
             <Switch
               size="md"
               colorPalette="blue"
-              onChange={() => {
+              defaultChecked
+              checked={isRangeMode}
+              onCheckedChange={() => {
                 setIsRangeMode((prevMode) => {
                   if (prevMode) {
                     // Reset the `endDate` when switching to single date mode
