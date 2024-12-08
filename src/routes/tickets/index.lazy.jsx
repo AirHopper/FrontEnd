@@ -3,7 +3,7 @@ import { createLazyFileRoute, Link } from '@tanstack/react-router';
 import { Box, Container, Grid, Heading, Text, Button } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { getTicketsListing } from '../../services/ticketsListing';
-import FilterDay from '../../components/tickets/FilterDay';
+import FilterDay from '../../components/Tickets/FilterDay';
 import { useState, useEffect } from 'react';
 import notFoundTicket from '../../assets/img/notfoundflight.png';
 import loadingImage from '../../assets/img/loading.png';
