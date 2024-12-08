@@ -17,11 +17,9 @@ import { PasswordInput } from "@/components/ui/password-input";
 import AirHopper from "@/assets/img/airhopper.jpg"; // Your image
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { resetPassword } from "../services/auth"; // Assume your reset password API service
-import { useDispatch } from "react-redux";
-import { setToken } from "../redux/slices/auth";
-import { Typewriter } from 'react-simple-typewriter';
 
 export const Route = createLazyFileRoute("/reset-password")({
   component: ResetPasswordPage,
@@ -34,7 +32,6 @@ function ResetPasswordPage() {
   const [confirmPasswordError, setConfirmPasswordError] = useState(false);
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get("token");
@@ -63,7 +60,7 @@ function ResetPasswordPage() {
       setConfirmPasswordError(true);
     }
   
-    if (newPassword.length >= 8 && newPassword === confirmPassword) {
+    if (newPassword.length >= 6 && newPassword === confirmPassword) {
       const token = localStorage.getItem("token"); // Get the token from local storage
   
       const body = {
@@ -77,11 +74,7 @@ function ResetPasswordPage() {
           // Await the response from the resetPassword service
           await resetPassword(body);
           toast.success("Your Password has Been Reset")
-
-          dispatch(setToken(null));
-
           localStorage.removeItem("token"); // Corrected removal of token
-
           navigate({ to: "/login"}); // Redirect to login page after success
         } catch (err) {
           console.error("Error resetting password:", err.message);
@@ -98,54 +91,9 @@ function ResetPasswordPage() {
 
   return (
     <Flex w="100%" h="100vh" alignItems="center" direction={{ base: "column", md: "row" }}>
-      <Box
-        w={leftBoxWidth}
-        bgGradient="to-tr" gradientFrom="rgba(38,31,163,1) 45%" gradientTo="rgba(0,212,255,1) 90%"
-        h="120vh"
-        position="relative"
-        display={imageDisplay} // Hide image on tablet breakpoints
-        justifyContent="center"
-        alignItems="center"
-        overflow="hidden" // Prevents image overflow
-      >
-        {/* Gambar AirHopper */}
-        <Image
-          src={LogoAirHopper}
-          alt="AirHopper"
-          objectFit="cover" // Ensures image covers the entire area
-          w="40%" // Make image larger
-          position="absolute" // Keeps the image in the background
-          top="40%" // Adjust the vertical position of the image
-          left="50%"
-          transform="translate(-50%, -50%)" // Center the image
-        />
-        
-        {/* Teks di bawah gambar dengan teks statis dan animasi */}
-        <Box
-          position="absolute" // Ensures the text is positioned relative to the parent Box
-          top="70%" // Position the text below the image
-          left="50%"
-          transform="translate(-50%, -50%)" // Center the text horizontally
-          textAlign="center" // Center align the text content
-          color="white" // Text color
-        >
-          {/* Teks Statis */}
-          <Text fontSize="5xl" fontWeight="bold" mb="2">
-            AirHopper
-          </Text>
-          {/* Teks dengan Animasi */}
-          <Text fontSize="4xl" fontWeight="medium">
-            <Typewriter
-              words={['Partner perjalanan anda!', 'Solusi untuk pengalaman terbaik']}
-              loop={true} // Loops through the text
-              cursor // Show a blinking cursor
-              cursorStyle="|" // Customize cursor style
-              typeSpeed={70} // Speed of typing
-              deleteSpeed={50} // Speed of deleting
-              delaySpeed={1000} // Delay before typing the next word
-            />
-          </Text>
-        </Box>
+      {/* Left Section with Image */}
+      <Box w={leftBoxWidth} h="100vh" position="relative" display={imageDisplay} justifyContent="center" alignItems="center" overflow="hidden">
+        <Image src={AirHopper} alt="AirHopper" objectFit="cover" w="100%" h="100%" position="absolute" top="0" left="0" />
       </Box>
 
       {/* Right Side - Reset Password Form */}
@@ -165,10 +113,8 @@ function ResetPasswordPage() {
             </Button>
           </Flex>
 
-          <Heading as="h1" size="2xl" fontWeight="bold" color="#2078b8">
-            AirHopper
-          </Heading>
-          <Text as="p" fontSize="lg" mb="5">Reset password baru anda</Text>
+          <Heading as="h1" size="4xl" mb="3">AirHopper</Heading>
+          <Text as="p" fontSize="lg" mb="5">Reset your new password</Text>
         </Stack>
 
         <Heading as="h1" size="2xl" color="#333" mb="3" fontWeight={"bold"}>
@@ -179,22 +125,22 @@ function ResetPasswordPage() {
         <form onSubmit={handleResetPassword}>
           <Stack gap="4">
             {/* New Password Field */}
-            <Field label="Password Baru" invalid={passwordError} errorText={passwordError && "Password harus 8 karakter"}>
+            <Field label="New Password" invalid={passwordError} errorText={passwordError && "Password must be at least 6 characters"}>
               <PasswordInput
                 borderRadius="10px"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Masukkan password"
+                placeholder="Enter your new password"
               />
             </Field>
 
             {/* Confirm Password Field */}
-            <Field label="Konfirmasi Password" invalid={confirmPasswordError} errorText={confirmPasswordError && "Password tidak sama"}>
+            <Field label="Confirm Password" invalid={confirmPasswordError} errorText={confirmPasswordError && "Passwords do not match"}>
               <PasswordInput
                 borderRadius="10px"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Konfirm password baru"
+                placeholder="Confirm your new password"
               />
             </Field>
 
