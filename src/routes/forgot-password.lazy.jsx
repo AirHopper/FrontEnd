@@ -20,7 +20,6 @@ import { toast } from 'react-toastify'; // Make sure you import toast for notifi
 import { forgotPassword } from '../services/auth'; // Ensure correct path to your service
 import { useSelector } from "react-redux";
 import { setToken } from "../redux/slices/auth";
-import { Typewriter } from 'react-simple-typewriter';
 
 export const Route = createLazyFileRoute('/forgot-password')({
   component: ForgotPasswordPage,
@@ -54,10 +53,10 @@ function ForgotPasswordPage() {
     try {
       // Call forgotPassword API service
       const response = await forgotPassword(email);
-        toast.success('Tautan reset password telah terkirim');
+        toast.success('Password reset email sent successfully!');
       
     } catch (error) {
-      toast.error(error?.message || 'Gagal untuk mengirim tautan reset password');
+      toast.error(error?.message || 'Failed to send password reset email');
     }
   };
 
@@ -75,54 +74,26 @@ function ForgotPasswordPage() {
       alignItems="center"
       direction={{ base: 'column', md: 'row' }} // Stack the boxes on small screens
     >
+      {/* Left Section with Image */}
       <Box
         w={leftBoxWidth}
-        bgGradient="to-tr" gradientFrom="rgba(38,31,163,1) 45%" gradientTo="rgba(0,212,255,1) 90%"
-        h="120vh"
+        h="100vh"
         position="relative"
         display={imageDisplay} // Hide image on tablet breakpoints
         justifyContent="center"
         alignItems="center"
         overflow="hidden" // Prevents image overflow
       >
-        {/* Gambar AirHopper */}
         <Image
-          src={LogoAirHopper}
+          src={AirHopper}
           alt="AirHopper"
           objectFit="cover" // Ensures image covers the entire area
-          w="40%" // Make image larger
+          w="100%" // Make image larger
+          h="100%"
           position="absolute" // Keeps the image in the background
-          top="40%" // Adjust the vertical position of the image
-          left="50%"
-          transform="translate(-50%, -50%)" // Center the image
+          top="0"
+          left="0"
         />
-        
-        {/* Teks di bawah gambar dengan teks statis dan animasi */}
-        <Box
-          position="absolute" // Ensures the text is positioned relative to the parent Box
-          top="70%" // Position the text below the image
-          left="50%"
-          transform="translate(-50%, -50%)" // Center the text horizontally
-          textAlign="center" // Center align the text content
-          color="white" // Text color
-        >
-          {/* Teks Statis */}
-          <Text fontSize="5xl" fontWeight="bold" mb="2">
-            AirHopper
-          </Text>
-          {/* Teks dengan Animasi */}
-          <Text fontSize="4xl" fontWeight="medium">
-            <Typewriter
-              words={['Partner perjalanan anda!', 'Solusi untuk pengalaman terbaik']}
-              loop={true} // Loops through the text
-              cursor // Show a blinking cursor
-              cursorStyle="|" // Customize cursor style
-              typeSpeed={70} // Speed of typing
-              deleteSpeed={50} // Speed of deleting
-              delaySpeed={1000} // Delay before typing the next word
-            />
-          </Text>
-        </Box>
       </Box>
 
       {/* Right Side - Forgot Password Form */}
@@ -159,32 +130,26 @@ function ForgotPasswordPage() {
 
             {/* Image (Centered in the remaining space) */}
           </Flex>
-          <Box
-              bgColor="#2078b8"
-              fontWeight="bold"
-              mx="auto"
-              borderRadius="full"
-            >
-              <Image
-                src={LogoAirHopper}
-                alt="AirHopper"
-                boxSize="100px" // Set the size of the logo (adjust as needed)
-                objectFit="contain" // Ensure the image fits within the specified box size
-                mb={0} // Add margin at the bottom to separate the image from the text
-                display="block" // Make the image a block element
-                mx="auto"
-              />
-            </Box>
-            <Heading as="h1" size="4xl" fontWeight="bold" color="#2078b8">
-              AirHopper
-            </Heading>
+          {/* Image (Centered in the remaining space) */}
+          <Image
+            src={LogoAirHopper}
+            alt="AirHopper"
+            boxSize="100px" // Set the size of the logo (adjust as needed)
+            objectFit="contain" // Ensure the image fits within the specified box size
+            mb={0} // Add margin at the bottom to separate the image from the text
+            display="block" // Make the image a block element
+            mx="auto"
+          />
+          <Heading as="h1" size="4xl" mb="3">
+            AirHopper
+          </Heading>
           <Text as="p" fontSize="lg" mb="5">
-            Kirim email untuk reset password
+            Send Email to Reset your Password
           </Text>
         </Stack>
 
         <Heading as="h1" size="2xl" color="#333" mb="3" fontWeight={'bold'}>
-          Lupa password
+          Forgot Password
         </Heading>
 
         {/* Form */}
@@ -194,14 +159,14 @@ function ForgotPasswordPage() {
             <Field
               label="Email Address"
               invalid={emailError}
-              errorText={emailError && 'Email tidak ditemukan'}
+              errorText={emailError && 'Invalid email address'}
             >
               <Input
                 borderRadius="10px"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 type="email"
-                placeholder="Masukkan email"
+                placeholder="Enter your email"
               />
             </Field>
 
@@ -218,7 +183,7 @@ function ForgotPasswordPage() {
                 boxShadow: 'md', // Add a shadow for depth
               }}
             >
-              Kirim Email
+              Send Email
             </Button>
           </Stack>
         </form>

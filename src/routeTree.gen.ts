@@ -19,11 +19,11 @@ import { Route as rootRoute } from './routes/__root'
 const VerifyOtpLazyImport = createFileRoute('/verify-otp')()
 const ResetPasswordLazyImport = createFileRoute('/reset-password')()
 const RegisterLazyImport = createFileRoute('/register')()
-const ProfileLazyImport = createFileRoute('/profile')()
-const NotificationLazyImport = createFileRoute('/notification')()
 const LoginLazyImport = createFileRoute('/login')()
 const ForgotPasswordLazyImport = createFileRoute('/forgot-password')()
 const IndexLazyImport = createFileRoute('/')()
+const TicketsIndexLazyImport = createFileRoute('/tickets/')()
+const HistoryIndexLazyImport = createFileRoute('/history/')()
 
 // Create/Update Routes
 
@@ -47,18 +47,6 @@ const RegisterLazyRoute = RegisterLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/register.lazy').then((d) => d.Route))
 
-const ProfileLazyRoute = ProfileLazyImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/profile.lazy').then((d) => d.Route))
-
-const NotificationLazyRoute = NotificationLazyImport.update({
-  id: '/notification',
-  path: '/notification',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/notification.lazy').then((d) => d.Route))
-
 const LoginLazyRoute = LoginLazyImport.update({
   id: '/login',
   path: '/login',
@@ -78,6 +66,18 @@ const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const TicketsIndexLazyRoute = TicketsIndexLazyImport.update({
+  id: '/tickets/',
+  path: '/tickets/',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/tickets/index.lazy').then((d) => d.Route))
+
+const HistoryIndexLazyRoute = HistoryIndexLazyImport.update({
+  id: '/history/',
+  path: '/history/',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/history/index.lazy').then((d) => d.Route))
 
 // Populate the FileRoutesByPath interface
 
@@ -104,20 +104,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginLazyImport
       parentRoute: typeof rootRoute
     }
-    '/notification': {
-      id: '/notification'
-      path: '/notification'
-      fullPath: '/notification'
-      preLoaderRoute: typeof NotificationLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileLazyImport
-      parentRoute: typeof rootRoute
-    }
     '/register': {
       id: '/register'
       path: '/register'
@@ -139,6 +125,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifyOtpLazyImport
       parentRoute: typeof rootRoute
     }
+    '/history/': {
+      id: '/history/'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof HistoryIndexLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/tickets/': {
+      id: '/tickets/'
+      path: '/tickets'
+      fullPath: '/tickets'
+      preLoaderRoute: typeof TicketsIndexLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -148,22 +148,22 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/forgot-password': typeof ForgotPasswordLazyRoute
   '/login': typeof LoginLazyRoute
-  '/notification': typeof NotificationLazyRoute
-  '/profile': typeof ProfileLazyRoute
   '/register': typeof RegisterLazyRoute
   '/reset-password': typeof ResetPasswordLazyRoute
   '/verify-otp': typeof VerifyOtpLazyRoute
+  '/history': typeof HistoryIndexLazyRoute
+  '/tickets': typeof TicketsIndexLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/forgot-password': typeof ForgotPasswordLazyRoute
   '/login': typeof LoginLazyRoute
-  '/notification': typeof NotificationLazyRoute
-  '/profile': typeof ProfileLazyRoute
   '/register': typeof RegisterLazyRoute
   '/reset-password': typeof ResetPasswordLazyRoute
   '/verify-otp': typeof VerifyOtpLazyRoute
+  '/history': typeof HistoryIndexLazyRoute
+  '/tickets': typeof TicketsIndexLazyRoute
 }
 
 export interface FileRoutesById {
@@ -171,11 +171,11 @@ export interface FileRoutesById {
   '/': typeof IndexLazyRoute
   '/forgot-password': typeof ForgotPasswordLazyRoute
   '/login': typeof LoginLazyRoute
-  '/notification': typeof NotificationLazyRoute
-  '/profile': typeof ProfileLazyRoute
   '/register': typeof RegisterLazyRoute
   '/reset-password': typeof ResetPasswordLazyRoute
   '/verify-otp': typeof VerifyOtpLazyRoute
+  '/history/': typeof HistoryIndexLazyRoute
+  '/tickets/': typeof TicketsIndexLazyRoute
 }
 
 export interface FileRouteTypes {
@@ -184,31 +184,31 @@ export interface FileRouteTypes {
     | '/'
     | '/forgot-password'
     | '/login'
-    | '/notification'
-    | '/profile'
     | '/register'
     | '/reset-password'
     | '/verify-otp'
+    | '/history'
+    | '/tickets'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/forgot-password'
     | '/login'
-    | '/notification'
-    | '/profile'
     | '/register'
     | '/reset-password'
     | '/verify-otp'
+    | '/history'
+    | '/tickets'
   id:
     | '__root__'
     | '/'
     | '/forgot-password'
     | '/login'
-    | '/notification'
-    | '/profile'
     | '/register'
     | '/reset-password'
     | '/verify-otp'
+    | '/history/'
+    | '/tickets/'
   fileRoutesById: FileRoutesById
 }
 
@@ -216,22 +216,22 @@ export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   ForgotPasswordLazyRoute: typeof ForgotPasswordLazyRoute
   LoginLazyRoute: typeof LoginLazyRoute
-  NotificationLazyRoute: typeof NotificationLazyRoute
-  ProfileLazyRoute: typeof ProfileLazyRoute
   RegisterLazyRoute: typeof RegisterLazyRoute
   ResetPasswordLazyRoute: typeof ResetPasswordLazyRoute
   VerifyOtpLazyRoute: typeof VerifyOtpLazyRoute
+  HistoryIndexLazyRoute: typeof HistoryIndexLazyRoute
+  TicketsIndexLazyRoute: typeof TicketsIndexLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   ForgotPasswordLazyRoute: ForgotPasswordLazyRoute,
   LoginLazyRoute: LoginLazyRoute,
-  NotificationLazyRoute: NotificationLazyRoute,
-  ProfileLazyRoute: ProfileLazyRoute,
   RegisterLazyRoute: RegisterLazyRoute,
   ResetPasswordLazyRoute: ResetPasswordLazyRoute,
   VerifyOtpLazyRoute: VerifyOtpLazyRoute,
+  HistoryIndexLazyRoute: HistoryIndexLazyRoute,
+  TicketsIndexLazyRoute: TicketsIndexLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -247,11 +247,11 @@ export const routeTree = rootRoute
         "/",
         "/forgot-password",
         "/login",
-        "/notification",
-        "/profile",
         "/register",
         "/reset-password",
-        "/verify-otp"
+        "/verify-otp",
+        "/history/",
+        "/tickets/"
       ]
     },
     "/": {
@@ -263,12 +263,6 @@ export const routeTree = rootRoute
     "/login": {
       "filePath": "login.lazy.jsx"
     },
-    "/notification": {
-      "filePath": "notification.lazy.jsx"
-    },
-    "/profile": {
-      "filePath": "profile.lazy.jsx"
-    },
     "/register": {
       "filePath": "register.lazy.jsx"
     },
@@ -277,6 +271,12 @@ export const routeTree = rootRoute
     },
     "/verify-otp": {
       "filePath": "verify-otp.lazy.jsx"
+    },
+    "/history/": {
+      "filePath": "history/index.lazy.jsx"
+    },
+    "/tickets/": {
+      "filePath": "tickets/index.lazy.jsx"
     }
   }
 }
