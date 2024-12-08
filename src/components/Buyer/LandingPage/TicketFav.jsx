@@ -84,6 +84,7 @@ const TicketFav = ({ handleSelectCard }) => {
         sm: "2rem",
         md: "4rem",
         lg: "11rem",
+        xl: "21rem",
       }}
     >
       <Stack direction="column">

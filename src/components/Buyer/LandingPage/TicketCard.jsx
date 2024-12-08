@@ -8,7 +8,6 @@ const TicketCard = ({ ticket, onSelectCard }) => {
   };
 
   const departureDate = formatDate(ticket?.departure.time);
-  const arrivalDate = formatDate(ticket?.arrival.time);
 
   return (
     <Card.Root
@@ -34,9 +33,9 @@ const TicketCard = ({ ticket, onSelectCard }) => {
           <Text color="#44b3f8" fontWeight="bold" fontSize={15}>
             {ticket?.flights[0].airline}
           </Text>
-          <Text fontWeight="semibold" fontSize={16}>
-            {departureDate.split(" ")[0]} - {arrivalDate.split(" ")[0]}{" "}
-            {arrivalDate.split(" ")[1]} {arrivalDate.split(" ")[2]}
+          <Text fontWeight="semibold" fontSize={13}>
+            Mulai dari: {departureDate.split(" ")[0]}{" "}
+            {departureDate.split(" ")[1]} {departureDate.split(" ")[2]}
           </Text>
         </Card.Description>
       </Card.Body>

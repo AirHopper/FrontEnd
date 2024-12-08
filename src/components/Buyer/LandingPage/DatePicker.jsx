@@ -8,6 +8,8 @@ const DatePicker = ({
   isRangeMode,
   dateRange,
   setDateRange,
+  singleDate,
+  setSingleDate,
   focusedRange,
   setIsPickerOpen,
   handleClose,
@@ -16,13 +18,13 @@ const DatePicker = ({
 
   const handleRangeChange = (item) => {
     setDateRange([item.selection]);
-    setIsPickerOpen(false); // Close picker after selection
+    setIsPickerOpen(false);
     handleClose();
   };
 
-  const handleSingleDateChange = (item) => {
-    setDateRange([item.startDate]);
-    setIsPickerOpen(false); // Close picker after selection
+  const handleSingleDateChange = (date) => {
+    setDateRange([{ startDate: date, endDate: null, singleDate: date }]);
+    setIsPickerOpen(false);
     handleClose();
   };
 
@@ -46,7 +48,7 @@ const DatePicker = ({
       mt={4}
       position="absolute"
       top={{ base: "400px", sm: "200px", lg: "205px" }}
-      left={{ base: "6%", sm: "23%", lg: "20.5%" }}
+      left={{ base: "6%", sm: "23%", lg: "20.5%", xl: "23%" }}
       bg="white"
       shadow="lg"
       transition="all 0.3s ease"
@@ -63,7 +65,7 @@ const DatePicker = ({
         />
       ) : (
         <Calendar
-          date={dateRange[0].startDate}
+          date={singleDate}
           color="#44b3f8"
           onChange={handleSingleDateChange}
         />
