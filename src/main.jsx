@@ -24,13 +24,13 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-        <ChakraProviderWrapper>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <RouterProvider router={router} />
-            </QueryClientProvider>
-          </Provider>
-        </ChakraProviderWrapper>
+      <ChakraProviderWrapper>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <RouterProvider router={router} />
+          </QueryClientProvider>
+        </Provider>
+      </ChakraProviderWrapper>
     </StrictMode>
   );
 }
