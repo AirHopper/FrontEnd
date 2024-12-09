@@ -33,7 +33,7 @@ import { faSun, faCircleCheck } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import SeatPicker from '../../components/Buyer/Seat/seatEkonomi.lazy.jsx'
 
-export const Route = createLazyFileRoute('/Checkout/completed')({
+export const Route = createLazyFileRoute('/checkout/completed')({
   component: CheckoutCompleted,
 })
 
