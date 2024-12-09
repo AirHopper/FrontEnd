@@ -40,7 +40,7 @@ import SeatPickerPremiunEkonomi from '../../components/Buyer/Seat/seatPremiumEko
 import SeatPickerBisnis from '../../components/Buyer/Seat/seatBisnis.lazy.jsx'
 import SeatPickerEksekutif from '../../components/Buyer/Seat/seatEksekutif.lazy.jsx'
 
-export const Route = createLazyFileRoute('/checkout/')({
+export const Route = createLazyFileRoute('/Checkout/')({
   component: CheckoutIndex,
 })
 
