@@ -1,5 +1,5 @@
 import { Box, Text, Button, HStack, VStack, Flex } from '@chakra-ui/react';
-import logo from '../../assets/img/image.png';
+import logo from '../../assets/img/Image.png';
 
 const DetailCard = ({ ticket }) => {
 	if (!ticket) {
