@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useState, useEffect } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Stack, Box, Container } from "@chakra-ui/react";
+import { Stack, Box, Container, NumberInputLabel } from "@chakra-ui/react";
 import { getTickets } from "../services/tickets";
 import SearchTicket from "../components/Buyer/LandingPage/SearchTicket";
 import TicketFav from "../components/Buyer/LandingPage/TicketFav";
@@ -16,7 +16,6 @@ function Beranda() {
   // Selected Values
   const [selectedFrom, setSelectedFrom] = useState("");
   const [selectedTo, setSelectedTo] = useState("");
-  const [singleDate, setSingleDate] = useState(new Date());
   const [dateRange, setDateRange] = useState([
     {
       startDate: new Date(),
@@ -24,7 +23,6 @@ function Beranda() {
       key: "selection",
     },
   ]);
-  const [isRangeMode, setIsRangeMode] = useState(false);
 
   // isFocused and tickets data states
   const [isFocused, setIsFocused] = useState(false);
@@ -85,10 +83,6 @@ function Beranda() {
           selectedFrom={selectedFrom}
           selectedTo={selectedTo}
           dateRange={dateRange}
-          isRangeMode={isRangeMode}
-          singleDate={singleDate}
-          setSingleDate={setSingleDate}
-          setIsRangeMode={setIsRangeMode}
           setSelectedFrom={setSelectedFrom}
           setSelectedTo={setSelectedTo}
           setDateRange={setDateRange}
