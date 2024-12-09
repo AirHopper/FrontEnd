@@ -14,15 +14,41 @@ const DatePicker = ({
 }) => {
   const pickerRef = useRef(); // Ref for detecting outside clicks
 
-  const handleRangeChange = (item) => {
-    setDateRange([item.selection]);
-    setIsPickerOpen(false); // Close picker after selection
-    handleClose();
+  const handleRangeChange = (ranges) => {
+    const { startDate, endDate } = ranges.selection;
+
+    setDateRange((prevDateRange) => {
+      const currentStartDate = prevDateRange[0].startDate;
+      const currentEndDate = prevDateRange[0].endDate;
+
+      // Perbarui berdasarkan fokus (focusedRange)
+      if (focusedRange[1] === 0) {
+        // Fokus pada startDate
+        return [
+          {
+            startDate,
+            endDate:
+              isRangeMode &&
+              (currentEndDate > startDate ? currentEndDate : null),
+          },
+        ];
+      } else if (focusedRange[1] === 1) {
+        // Fokus pada endDate
+        return [
+          {
+            startDate: currentStartDate,
+            endDate: isRangeMode ? endDate : null,
+          },
+        ];
+      }
+
+      return prevDateRange;
+    });
   };
 
-  const handleSingleDateChange = (item) => {
-    setDateRange([item.startDate]);
-    setIsPickerOpen(false); // Close picker after selection
+  const handleSingleDateChange = (date) => {
+    setDateRange([{ startDate: date, endDate: null }]);
+    setIsPickerOpen(false);
     handleClose();
   };
 
@@ -45,8 +71,8 @@ const DatePicker = ({
     <Box
       mt={4}
       position="absolute"
-      top={{ base: "400px", sm: "200px", lg: "205px" }}
-      left={{ base: "6%", sm: "23%", lg: "20.5%" }}
+      top={{ base: "400px", sm: "325px", lg: "215px" }}
+      left={{ base: "6%", sm: "21%", lg: "20.5%", xl: "23%" }}
       bg="white"
       shadow="lg"
       transition="all 0.3s ease"
@@ -58,8 +84,16 @@ const DatePicker = ({
           editableDateInputs
           onChange={handleRangeChange}
           color="#44b3f8"
-          ranges={dateRange}
-          focusedRange={focusedRange}
+          ranges={[
+            {
+              startDate: dateRange[0].startDate,
+              endDate: isRangeMode ? dateRange[0].endDate : null,
+              key: "selection",
+            },
+          ]}
+          preventSnapRefocus={true}
+          retainEndDateOnRangeChange={false}
+          focusedRange={focusedRange} // Pastikan Anda melacak focusedRange
         />
       ) : (
         <Calendar

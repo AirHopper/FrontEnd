@@ -32,7 +32,7 @@ import {
 const TicketFav = ({ handleSelectCard }) => {
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageLimit, setPageLimit] = useState(8);
+  const [pageLimit, setPageLimit] = useState(10);
   const [totalItems, setTotalItems] = useState(1);
 
   // Continent Filter State
@@ -83,7 +83,8 @@ const TicketFav = ({ handleSelectCard }) => {
         base: "1.5rem",
         sm: "2rem",
         md: "4rem",
-        lg: "11rem",
+        lg: "9.5rem",
+        xl: "21rem",
       }}
     >
       <Stack direction="column">

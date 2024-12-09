@@ -1,7 +1,8 @@
+import * as React from 'react'
 import { useState, useEffect } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Stack, Box, Container } from "@chakra-ui/react";
+import { Stack, Box, Container, NumberInputLabel } from "@chakra-ui/react";
 import { getTickets } from "../services/tickets";
 import SearchTicket from "../components/Buyer/LandingPage/SearchTicket";
 import TicketFav from "../components/Buyer/LandingPage/TicketFav";
@@ -18,11 +19,10 @@ function Beranda() {
   const [dateRange, setDateRange] = useState([
     {
       startDate: new Date(),
-      endDate: new Date(),
+      endDate: null,
       key: "selection",
     },
   ]);
-  const [isRangeMode, setIsRangeMode] = useState(true);
 
   // isFocused and tickets data states
   const [isFocused, setIsFocused] = useState(false);
@@ -47,11 +47,9 @@ function Beranda() {
     setDateRange([
       {
         startDate: new Date(ticket?.departure?.time),
-        endDate: new Date(ticket?.arrival?.time),
         key: "selection",
       },
     ]);
-    setIsRangeMode(true);
 
     window.scrollTo({
       top: 0,
@@ -60,7 +58,7 @@ function Beranda() {
   };
 
   return (
-    <Container maxWidth="container.lg" mx="auto" py={8} px={0}>
+    <Box maxWidth="container.lg" mx="auto" py={8} px={0}>
       {/* Overlay Box */}
       <Box
         position="absolute"
@@ -81,19 +79,17 @@ function Beranda() {
         <SearchTicket
           tickets={tickets}
           isFocused={isFocused}
+          setIsFocused={setIsFocused}
           selectedFrom={selectedFrom}
           selectedTo={selectedTo}
           dateRange={dateRange}
-          isRangeMode={isRangeMode}
-          setIsRangeMode={setIsRangeMode}
           setSelectedFrom={setSelectedFrom}
           setSelectedTo={setSelectedTo}
           setDateRange={setDateRange}
-          setIsFocused={setIsFocused}
         />
 
         <TicketFav handleSelectCard={handleSelectCard} />
       </Stack>
-    </Container>
+    </Box>
   );
 }

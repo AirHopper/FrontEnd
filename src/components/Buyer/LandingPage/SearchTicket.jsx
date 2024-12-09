@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Text,
   Input,
@@ -20,6 +20,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { format } from "date-fns";
+import { toast } from "react-toastify";
 
 // Input Modals
 import DatePicker from "./DatePicker";
@@ -35,8 +36,6 @@ const SearchTicket = ({
   selectedFrom,
   selectedTo,
   dateRange,
-  isRangeMode,
-  setIsRangeMode,
   setSelectedFrom,
   setSelectedTo,
   setDateRange,
@@ -48,20 +47,9 @@ const SearchTicket = ({
   const [isClassOpen, setIsClassOpen] = useState(false);
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [focusedRange, setFocusedRange] = useState([0, 0]);
-  // const [isRangeMode, setIsRangeMode] = useState(true); // State untuk Switch
+  const [isRangeMode, setIsRangeMode] = useState(false); // State untuk Switch
 
-  // Selected Values
-  /*  -> From Props
-  const [selectedFrom, setSelectedFrom] = useState("");
-  const [selectedTo, setSelectedTo] = useState("");
-  const [dateRange, setDateRange] = useState([
-    {
-      startDate: new Date(),
-      endDate: new Date(),
-      key: "selection",
-    },
-  ]);
-  */
+  // Passenger and Class Input
   const [adultCount, setAdultCount] = useState(0);
   const [childCount, setChildCount] = useState(0);
   const [infantCount, setInfantCount] = useState(0);
@@ -72,14 +60,14 @@ const SearchTicket = ({
   const [totalPassengers, setTotalPassengers] = useState(0);
 
   // Format Date
-
-  const formattedStartDate = dateRange[0]?.startDate
-    ? dateRange[0].startDate.toLocaleDateString("id-ID", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      })
-    : "";
+  const formattedStartDate = dateRange[0].startDate.toLocaleDateString(
+    "id-ID",
+    {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }
+  );
 
   const formattedEndDate = dateRange[0]?.endDate
     ? dateRange[0].endDate.toLocaleDateString("id-ID", {
@@ -150,35 +138,79 @@ const SearchTicket = ({
     return format(date, "yyyy-MM-dd");
   };
 
+  const handleSwitchChange = () => {
+    setIsRangeMode((prevMode) => {
+      if (prevMode) {
+        // Reset `endDate` dan simpan nilai `startDate`
+        setDateRange([
+          {
+            startDate: dateRange[0].startDate,
+            endDate: null,
+          },
+        ]);
+      }
+      return !prevMode;
+    });
+  };
+
   // Handling untuk mengirimkan query params dengan value dari landing page
   const handleSendSearch = () => {
+    // Validasi sebelum mengirim query params
+    if (!selectedFrom || !selectedTo) {
+      navigate({ to: "/" });
+      toast.error('Lokasi "From" dan "To" harus dipilih!');
+      return;
+    }
+
+    if (selectedFrom === selectedTo) {
+      navigate({ to: "/" });
+      toast.error('Lokasi "From" dan "To" tidak boleh sama!');
+      return;
+    }
+
+    if (!dateRange[0].startDate) {
+      navigate({ to: "/" });
+      toast.error("Tanggal Departure harus dipilih!");
+      return;
+    }
+
+    if (
+      dateRange[0].endDate &&
+      dateRange[0].startDate === dateRange[0].endDate
+    ) {
+      navigate({ to: "/" });
+      toast.error("Tanggal Departure dan Return tidak boleh sama!");
+      return;
+    }
+
+    if (!adultCount || adultCount <= 0) {
+      navigate({ to: "/" });
+      toast.error("Minimal satu orang Dewasa (Adult) harus dipilih!");
+      return;
+    }
+
+    if (!selectedClass) {
+      navigate({ to: "/" });
+      toast.error("Seat Class harus dipilih!");
+      return;
+    }
+
+    // Jika semua validasi lolos, buat query params
     const searchParams = new URLSearchParams();
 
-    if (selectedFrom) searchParams.append("departure", selectedFrom);
-    if (selectedTo) searchParams.append("arrival", selectedTo);
-    if (dateRange[0].startDate) {
-      searchParams.append(
-        "departureDate",
-        handleFormatDate(dateRange[0].endDate)
-      );
-    }
+    searchParams.append("departure", selectedFrom);
+    searchParams.append("arrival", selectedTo);
+    searchParams.append(
+      "departureDate",
+      handleFormatDate(dateRange[0].startDate)
+    );
     if (dateRange[0].endDate) {
       searchParams.append("returnDate", handleFormatDate(dateRange[0].endDate));
     }
-    if (adultCount > 0) {
-      searchParams.append("adult", adultCount);
-    }
-    if (childCount > 0) {
-      searchParams.append("child", childCount);
-    } else {
-      searchParams.append("child", 0);
-    }
-    if (infantCount > 0) {
-      searchParams.append("infant", infantCount);
-    } else {
-      searchParams.append("infant", 0);
-    }
-    if (selectedClass) searchParams.append("classType", selectedClass);
+    searchParams.append("adult", adultCount);
+    searchParams.append("child", childCount > 0 ? childCount : 0);
+    searchParams.append("infant", infantCount > 0 ? infantCount : 0);
+    searchParams.append("classType", selectedClass);
 
     // Redirect ke halaman tickets dengan query params
     navigate({ to: `/tickets?${searchParams.toString()}` });
@@ -187,13 +219,13 @@ const SearchTicket = ({
   return (
     <Stack alignItems="center">
       <Stack
-        width={{ base: "90vw", md: "85vw", lg: "75vw" }}
+        width={{ base: "90vw", md: "85vw", lg: "75vw", xl: "65vw" }}
         overflow="hidden"
         bgColor="white"
         shadow="md"
         borderRadius={10}
         pt={6}
-        px={6}
+        px={5}
       >
         <Heading size="lg" fontWeight="bold" marginBottom={5}>
           <Highlight query="AirHopper!" styles={{ color: "#2078b8" }}>
@@ -204,7 +236,7 @@ const SearchTicket = ({
         <Grid
           templateRows={{ lg: "repeat(2, 1fr)" }}
           templateColumns={{ lg: "3fr 1fr 3fr" }}
-          gap={1}
+          gap={3}
           marginBottom={5}
         >
           <GridItem display="flex" gap={1} alignItems="center">
@@ -265,7 +297,7 @@ const SearchTicket = ({
                   <Field
                     label="Departure"
                     width={{
-                      base: "48vw",
+                      base: "46vw",
                       sm: "28vw",
                       md: "32vw",
                       lg: "9.5vw",
@@ -291,7 +323,7 @@ const SearchTicket = ({
                   <Field
                     label="Return"
                     width={{
-                      base: "48vw",
+                      base: "46vw",
                       sm: "28vw",
                       md: "32vw",
                       lg: "9.5vw",
@@ -337,17 +369,8 @@ const SearchTicket = ({
             <Switch
               size="md"
               colorPalette="blue"
-              defaultChecked
               checked={isRangeMode}
-              onCheckedChange={() => {
-                setIsRangeMode((prevMode) => {
-                  if (prevMode) {
-                    // Reset the `endDate` when switching to single date mode
-                    setDateRange([{ ...dateRange[0], endDate: null }]);
-                  }
-                  return !prevMode;
-                });
-              }}
+              onChange={handleSwitchChange}
             />
           </GridItem>
           <GridItem
@@ -357,7 +380,7 @@ const SearchTicket = ({
             marginTop={{ base: "15px", lg: "0" }}
           >
             <FontAwesomeIcon icon={faPerson} />
-            <Text display="inline" marginRight={{ base: "8", lg: "3" }}>
+            <Text display="inline" marginRight={{ base: "8", lg: "3.5" }}>
               To
             </Text>
 

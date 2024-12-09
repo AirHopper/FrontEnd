@@ -40,10 +40,10 @@ const PassengerInput = ({
   return (
     <Box
       position="absolute"
-      top={{ base: "505px", sm: "405px", lg: "222px" }}
-      left={{ base: "3%", sm: "22%", md: "19%", lg: "59%" }}
+      top={{ base: "510px", sm: "435px", lg: "230px" }}
+      left={{ base: "3%", sm: "19%", md: "19%", lg: "59%", xl: "54.5%" }}
       bg="white"
-      w={{ base: "95%", sm: "60vw", md: "40vw", lg: "30vw" }}
+      w={{ base: "95%", sm: "60vw", md: "40vw", lg: "30vw", xl: "20vw" }}
       shadow="lg"
       borderRadius="xl"
       transition="all 0.3s ease"

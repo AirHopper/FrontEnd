@@ -8,11 +8,10 @@ const TicketCard = ({ ticket, onSelectCard }) => {
   };
 
   const departureDate = formatDate(ticket?.departure.time);
-  const arrivalDate = formatDate(ticket?.arrival.time);
 
   return (
     <Card.Root
-      width={{ base: "100%", sm: "220px" }}
+      width={{ base: "100%", sm: "183px" }}
       height="225px"
       border="none"
       boxShadow="md"
@@ -26,17 +25,18 @@ const TicketCard = ({ ticket, onSelectCard }) => {
           alt="Ticket Arrival Image"
           borderRadius="lg"
           width={220}
+          height={100}
         />
-        <Card.Title fontSize="md">
+        <Card.Title fontSize={14}>
           {ticket?.departure?.city?.name} {"->"} {ticket?.arrival?.city?.name}
         </Card.Title>
         <Card.Description>
-          <Text color="#44b3f8" fontWeight="bold" fontSize={15}>
-            {ticket?.flights[0].airline}
+          <Text color="#44b3f8" fontWeight="bold" fontSize={14}>
+            {ticket?.flights[0]?.airline?.name}
           </Text>
-          <Text fontWeight="semibold" fontSize={16}>
-            {departureDate.split(" ")[0]} - {arrivalDate.split(" ")[0]}{" "}
-            {arrivalDate.split(" ")[1]} {arrivalDate.split(" ")[2]}
+          <Text fontWeight="semibold" fontSize={13}>
+            Mulai dari: {departureDate.split(" ")[0]}{" "}
+            {departureDate.split(" ")[1]} {departureDate.split(" ")[2]}
           </Text>
         </Card.Description>
       </Card.Body>

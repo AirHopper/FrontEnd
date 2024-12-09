@@ -17,10 +17,10 @@ const ClassSelect = ({ isFocused, onCloseClick, onSave }) => {
   return (
     <Box
       position="absolute"
-      top={{ base: "580px", sm: "405px", lg: "222px" }}
-      left={{ base: "3%", sm: "22%", md: "51%", lg: "72.5%" }}
+      top={{ base: "580px", sm: "435px", lg: "230px" }}
+      left={{ base: "3%", sm: "25%", md: "51%", lg: "72.5%", xl: "67.5%" }}
       bg="white"
-      width={{ base: "95%", sm: "60vw", md: "40vw", lg: "25vw" }}
+      width={{ base: "95%", sm: "60vw", md: "40vw", lg: "25vw", xl: "20vw" }}
       shadow="lg"
       borderRadius="xl"
       transition="all 0.3s ease"
