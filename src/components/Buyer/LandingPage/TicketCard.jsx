@@ -11,7 +11,7 @@ const TicketCard = ({ ticket, onSelectCard }) => {
 
   return (
     <Card.Root
-      width={{ base: "100%", sm: "220px" }}
+      width={{ base: "100%", sm: "183px" }}
       height="225px"
       border="none"
       boxShadow="md"
@@ -26,11 +26,11 @@ const TicketCard = ({ ticket, onSelectCard }) => {
           borderRadius="lg"
           width={220}
         />
-        <Card.Title fontSize="md">
+        <Card.Title fontSize={14}>
           {ticket?.departure?.city?.name} {"->"} {ticket?.arrival?.city?.name}
         </Card.Title>
         <Card.Description>
-          <Text color="#44b3f8" fontWeight="bold" fontSize={15}>
+          <Text color="#44b3f8" fontWeight="bold" fontSize={14}>
             {ticket?.flights[0].airline}
           </Text>
           <Text fontWeight="semibold" fontSize={13}>
