@@ -11,7 +11,7 @@ const TicketCard = ({ ticket, onSelectCard }) => {
 
   return (
     <Card.Root
-      width={{ base: "100%", sm: "220px" }}
+      width={{ base: "100%", sm: "183px" }}
       height="225px"
       border="none"
       boxShadow="md"
@@ -25,13 +25,14 @@ const TicketCard = ({ ticket, onSelectCard }) => {
           alt="Ticket Arrival Image"
           borderRadius="lg"
           width={220}
+          height={100}
         />
-        <Card.Title fontSize="md">
+        <Card.Title fontSize={14}>
           {ticket?.departure?.city?.name} {"->"} {ticket?.arrival?.city?.name}
         </Card.Title>
         <Card.Description>
-          <Text color="#44b3f8" fontWeight="bold" fontSize={15}>
-            {ticket?.flights[0].airline}
+          <Text color="#44b3f8" fontWeight="bold" fontSize={14}>
+            {ticket?.flights[0]?.airline?.name}
           </Text>
           <Text fontWeight="semibold" fontSize={13}>
             Mulai dari: {departureDate.split(" ")[0]}{" "}
