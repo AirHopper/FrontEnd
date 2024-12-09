@@ -7,6 +7,7 @@ const TicketCard = ({ ticket, onSelectCard }) => {
     return formatter.format(new Date(dateString));
   };
 
+  console.log(ticket);
   const departureDate = formatDate(ticket?.departure.time);
 
   return (
@@ -31,7 +32,7 @@ const TicketCard = ({ ticket, onSelectCard }) => {
         </Card.Title>
         <Card.Description>
           <Text color="#44b3f8" fontWeight="bold" fontSize={14}>
-            {ticket?.flights[0].airline}
+            {ticket?.flights[0]?.airline}
           </Text>
           <Text fontWeight="semibold" fontSize={13}>
             Mulai dari: {departureDate.split(" ")[0]}{" "}
