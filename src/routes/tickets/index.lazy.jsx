@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { createLazyFileRoute, Link } from '@tanstack/react-router';
+import { createLazyFileRoute, useLocation, useNavigate } from '@tanstack/react-router';
 import { Box, Container, Grid, Heading, Text, Button } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { getTicketsListing } from '../../services/ticketsListing';
-import FilterDay from '../../components/Tickets/FilterDay';
+import FilterDay from '../../components/tickets/FilterDay';
 import { useState, useEffect } from 'react';
 import notFoundTicket from '../../assets/img/notfoundflight.png';
 import loadingImage from '../../assets/img/loading.png';
@@ -13,7 +13,7 @@ import { faArrowLeft, faCircleInfo, faGreaterThan } from '@fortawesome/free-soli
 import { useBreakpointValue } from '@chakra-ui/react';
 import { HStack, VStack, Image, AccordionItem, AccordionRoot, AccordionItemTrigger, AccordionItemContent, Flex } from '@chakra-ui/react';
 import { faChevronUp } from '@fortawesome/free-solid-svg-icons';
-import SelectFilter from '../../components/Tickets/SelectFilter';
+import SelectFilter from '../../components/tickets/SelectFilter';
 import { Checkbox } from '@/components/ui/checkbox';
 
 export const Route = createLazyFileRoute('/tickets/')({
@@ -21,28 +21,35 @@ export const Route = createLazyFileRoute('/tickets/')({
 });
 
 function RouteComponent() {
+	const navigate = useNavigate();
+
 	const [tickets, setTickets] = useState([]);
 	const [selectedDay, setSelectedDay] = useState(0);
 	const [activeAccordion, setActiveAccordion] = useState(null);
 	const [isFilterOpen, setFilterOpen] = useState(false);
 	const [isTransitFilter, setIsTransitFilter] = useState(false);
 
+	const location = useLocation();
 	// Ambil parameter URL
-	const urlParams = new URLSearchParams(window.location.search);
+	const urlParams = new URLSearchParams(location.search);
 	const params = {
 		departureCity: urlParams.get('departure'),
 		arrivalCity: urlParams.get('arrival'),
-		classType: urlParams.get('classType'),
 		flightDate: urlParams.get('departureDate'),
-		orderBy: urlParams.get('orderBy') || 'price_asc',
+		classType: urlParams.get('classType'),
+		adult: urlParams.get('adult'),
+		child: urlParams.get('child'),
+		infant: urlParams.get('infant'),
+		returnDate: urlParams.get('returnDate'),
 		isTransit: urlParams.get('isTransit'),
+		orderBy: urlParams.get('orderBy') || 'price_asc',
+		passenger: parseInt(urlParams.get('adult')) + parseInt(urlParams.get('child')) + parseInt(urlParams.get('infant')),
 	};
 
 	const { data, isLoading, isSuccess, isError } = useQuery({
 		queryKey: ['tickets', params],
 		queryFn: async () => {
 			const response = await getTicketsListing(params);
-			console.log(response);
 			return response;
 		},
 		retry: 0,
@@ -92,8 +99,6 @@ function RouteComponent() {
 	};
 
 	const handleCheckboxChange = (isDirectChecked, isTransitChecked) => {
-		console.log('Langsung:', isDirectChecked, 'Transit:', isTransitChecked);
-
 		let updatedIsTransit = null;
 
 		if (isDirectChecked && isTransitChecked) {
@@ -121,13 +126,72 @@ function RouteComponent() {
 		});
 	};
 
+	// Inisialisasi state untuk ticketId1 dan ticketId2
+	const [ticketId1, setTicketId1] = useState(null);
+	const [ticketId2, setTicketId2] = useState(null);
+	const handleSendSearch = ticketId => {
+		const searchParams = new URLSearchParams();
+
+		// Jika ada returnDate (pulang-pergi)
+		if (params.returnDate) {
+			// Jika belum ada ticketId1, artinya ini adalah pemilihan tiket pergi
+			if (!ticketId1) {
+				setTicketId1(ticketId); // Set ticketId1 untuk tiket pergi
+
+				searchParams.append('departure', params.arrivalCity); // Tukar asal dan tujuan
+				searchParams.append('arrival', params.departureCity);
+				searchParams.append('classType', params.classType);
+				searchParams.append('departureDate', params.returnDate); // Gunakan returnDate untuk tiket pulang
+				searchParams.append('ticketId1', ticketId); // Kirim ticketId1 untuk tiket pergi
+
+				if (params.adult) searchParams.append('adult', params.adult);
+				if (params.child) searchParams.append('child', params.child);
+				if (params.infant) searchParams.append('infant', params.infant);
+
+				const newUrl = `/tickets?${searchParams.toString()}`;
+				navigate({ to: newUrl });
+			}
+		}
+
+		// Jika sudah ada ticketId1, artinya ini adalah pemilihan tiket pulang
+		else if (!params.returnDate) {
+			if (ticketId1 === null) {
+				setTicketId2(ticketId); // Set ticketId2 untuk tiket pulang
+
+				searchParams.append('ticketId', ticketId);
+
+				if (params.classType) searchParams.append('classType', params.classType);
+				if (params.adult) searchParams.append('adult', params.adult);
+				if (params.child) searchParams.append('child', params.child);
+				if (params.infant) searchParams.append('infant', params.infant);
+
+				const newUrl = `/checkout?${searchParams.toString()}`;
+				navigate({ to: newUrl });
+			} else {
+				setTicketId2(ticketId); // Set ticketId2 untuk tiket pulang
+
+				searchParams.append('ticketId1', ticketId1);
+				searchParams.append('ticketId2', ticketId);
+
+				if (params.classType) searchParams.append('classType', params.classType);
+				if (params.adult) searchParams.append('adult', params.adult);
+				if (params.child) searchParams.append('child', params.child);
+				if (params.infant) searchParams.append('infant', params.infant);
+
+				const newUrl = `/checkout?${searchParams.toString()}`;
+				navigate({ to: newUrl });
+			}
+		}
+	};
+
 	return (
-		<Container maxW={{ base: '100%', md: '90%', lg: '80%' }} py={6} minH="100vh">
+		<Container maxW={{ base: '100%', md: '90%', lg: '80%' }} py={6}>
 			<Heading as="h1" size="lg" mb={4} color="black" fontWeight="bold" textAlign={{ base: 'start', md: 'left' }}>
 				Pilih Penerbangan
 			</Heading>
 			<Grid templateColumns={['1fr', '4fr 1fr']} gap={4} alignItems="center">
 				<Button
+					onClick={() => navigate({ to: '../' })}
 					py={6}
 					px={8}
 					bg="#44B3F8"
@@ -142,13 +206,23 @@ function RouteComponent() {
 				>
 					<FontAwesomeIcon icon={faArrowLeft} size="sm" />
 					<Text display={['block', 'inline']}>
-						{params.departureCity || 'Kota Asal'}
+						{params.departureCity}
 						<FontAwesomeIcon icon={faGreaterThan} size="sm" />
-						{params.arrivalCity || 'Kota Tujuan'} - {params.passengerCount || '1'} Penumpang - {params.classType || 'Kelas'}
+						{params.arrivalCity} - {params.passenger} Penumpang - {params.classType}
 					</Text>
 				</Button>
 
-				<Button as={Link} to="/" p={6} bg="#F8D24D" _hover={{ bg: '#D4B340', color: '#FDFFFE' }} borderRadius="md" color="#FDFFFE" display={{ base: 'none', md: 'flex' }} justifyContent="center" fontSize={useBreakpointValue({ base: 'sm', md: 'md' })}>
+				<Button
+					onClick={() => navigate({ to: '../' })}
+					p={6}
+					bg="#F8D24D"
+					_hover={{ bg: '#D4B340', color: '#FDFFFE' }}
+					borderRadius="md"
+					color="#FDFFFE"
+					display={{ base: 'none', md: 'flex' }}
+					justifyContent="center"
+					fontSize={useBreakpointValue({ base: 'sm', md: 'md' })}
+				>
 					Ubah Pencarian
 				</Button>
 			</Grid>
@@ -245,7 +319,7 @@ function RouteComponent() {
 												<Flex justify={'space-between'} flexDirection={['column-reverse', 'row']} mb={1}>
 													<HStack justifyContent={'start'}>
 														<Flex align={'center'} gap={6}>
-															<Image src={ticket.flights[0].airline} alt="Airline logo" boxSize="40px" />
+															<Image src={ticket.flights[0].airline.logo} alt="Airline logo" boxSize="40px" />
 															<Text fontWeight="normal" fontSize={'md'}>
 																{ticket.flights[0].airplane}
 															</Text>
@@ -271,7 +345,7 @@ function RouteComponent() {
 														{/* Departure Info */}
 														<VStack gap={0} align={'flex-start'}>
 															<Text fontSize={['sm', 'lg']} fontWeight={'bold'}>
-																{new Date(ticket.departure.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
+																{new Date(ticket.departure.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' })}
 															</Text>
 															<Text fontSize={['sm', 'md']}>{ticket.departure.airport.code}</Text>
 														</VStack>
@@ -279,7 +353,7 @@ function RouteComponent() {
 														{/* Duration Info */}
 														<VStack align="center" mx={[4, 6]} gap={1}>
 															<Text fontWeight="normal" fontSize={'md'} color={'#A8B6B7'}>
-																Direct
+																{ticket.isTransit ? `${ticket.flights.length - 1} pemberhentian` : 'Langsung'}
 															</Text>
 															<Box fontWeight="normal" fontSize={'md'} borderBottom="2px solid red" width={['100%', '14vw']} />
 															<Text color={'#A8B6B7'}>
@@ -290,7 +364,7 @@ function RouteComponent() {
 														{/* Arrival Info */}
 														<VStack gap={0} align={'flex-start'} mr={4}>
 															<Text fontSize={['sm', 'md']} fontWeight={'bold'}>
-																{new Date(ticket.arrival.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
+																{new Date(ticket.arrival.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' })}
 															</Text>
 															<Text fontSize={['sm', 'md']}>{ticket.arrival.airport.code}</Text>
 														</VStack>
@@ -303,7 +377,7 @@ function RouteComponent() {
 															IDR. {new Intl.NumberFormat('id-ID').format(ticket.totalPrice)}
 														</Text>
 
-														<Button bg={'#44B3F8'} px={[6, 10]} py={1} borderRadius={'md'} _hover={{ bg: '#2078B8' }}>
+														<Button onClick={() => handleSendSearch(ticket.id)} bg={'#44B3F8'} px={[6, 10]} py={1} borderRadius={'md'} _hover={{ bg: '#2078B8' }}>
 															Pilih
 														</Button>
 													</Grid>
@@ -318,6 +392,7 @@ function RouteComponent() {
 															<Text fontSize="md" fontWeight="bold" color="#2078B8">
 																Detail Penerbangan {index + 1}
 															</Text>
+															{console.log(ticket)}
 
 															{/* Keberangkatan */}
 															<HStack justify="space-between" align="start" w="100%" borderBottom="1px solid" borderColor="#A8B6B7" pb={6} pt={1}>
@@ -327,6 +402,7 @@ function RouteComponent() {
 																			hour: '2-digit',
 																			minute: '2-digit',
 																			hour12: false,
+																			timeZone: 'UTC',
 																		})}
 																	</Text>
 																	<Text fontSize="md">
@@ -334,6 +410,7 @@ function RouteComponent() {
 																			day: '2-digit',
 																			month: 'long',
 																			year: 'numeric',
+																			timeZone: 'UTC',
 																		}).format(new Date(flight.departure.time))}
 																	</Text>
 																	<Text fontSize="md" fontWeight="semibold">
@@ -369,6 +446,7 @@ function RouteComponent() {
 																			hour: '2-digit',
 																			minute: '2-digit',
 																			hour12: false,
+																			timeZone: 'UTC',
 																		})}
 																	</Text>
 																	<Text fontSize="md">
@@ -376,6 +454,7 @@ function RouteComponent() {
 																			day: '2-digit',
 																			month: 'long',
 																			year: 'numeric',
+																			timeZone: 'UTC',
 																		}).format(new Date(flight.arrival.time))}
 																	</Text>
 																	<Text fontSize="md" fontWeight="semibold">
