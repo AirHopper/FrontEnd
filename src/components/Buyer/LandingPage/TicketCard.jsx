@@ -24,7 +24,7 @@ const TicketCard = ({ ticket, onSelectCard }) => {
           src={ticket?.arrival?.city?.image}
           alt="Ticket Arrival Image"
           borderRadius="lg"
-          width={220}
+          width="100%"
           height={100}
         />
         <Card.Title fontSize="clamp(12px, 1vw, 14px)">
