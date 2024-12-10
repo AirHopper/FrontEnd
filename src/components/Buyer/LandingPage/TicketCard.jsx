@@ -12,7 +12,7 @@ const TicketCard = ({ ticket, onSelectCard }) => {
   return (
     <Card.Root
       width={{ base: "100%", sm: "183px" }}
-      height="225px"
+      height="240px"
       border="none"
       boxShadow="md"
       cursor="pointer"
@@ -24,10 +24,15 @@ const TicketCard = ({ ticket, onSelectCard }) => {
           src={ticket?.arrival?.city?.image}
           alt="Ticket Arrival Image"
           borderRadius="lg"
-          width={220}
+          width="100%"
           height={100}
         />
-        <Card.Title fontSize="clamp(12px, 1vw, 14px)">
+        <Card.Title
+          height="35px"
+          fontSize={{ base: "15px", sm: "clamp(12px, 1vw, 14px)" }}
+          lineHeight="moderate"
+          fontWeight="bold"
+        >
           {ticket?.departure?.city?.name} {"->"} {ticket?.arrival?.city?.name}
         </Card.Title>
         <Card.Description>
