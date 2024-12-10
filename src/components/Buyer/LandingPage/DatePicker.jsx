@@ -19,17 +19,13 @@ const DatePicker = ({
 
     setDateRange((prevDateRange) => {
       const currentStartDate = prevDateRange[0].startDate;
-      const currentEndDate = prevDateRange[0].endDate;
 
-      // Perbarui berdasarkan fokus (focusedRange)
       if (focusedRange[1] === 0) {
         // Fokus pada startDate
         return [
           {
             startDate,
-            endDate:
-              isRangeMode &&
-              (currentEndDate > startDate ? currentEndDate : null),
+            endDate: isRangeMode && endDate > startDate ? endDate : null,
           },
         ];
       } else if (focusedRange[1] === 1) {
@@ -37,7 +33,7 @@ const DatePicker = ({
         return [
           {
             startDate: currentStartDate,
-            endDate: isRangeMode ? endDate : null,
+            endDate: endDate > currentStartDate ? endDate : null,
           },
         ];
       }
@@ -46,10 +42,27 @@ const DatePicker = ({
     });
   };
 
+  const dayContentRenderer = (date) => {
+    const currentStartDate = dateRange[0].startDate;
+
+    // Disable dates before or equal to startDate for endDate
+    if (focusedRange[1] === 1 && (date <= currentStartDate || !isRangeMode)) {
+      return (
+        <div style={{ textDecoration: "line-through", color: "#ccc" }}>
+          {date.getDate()}
+        </div>
+      );
+    }
+    return <div>{date.getDate()}</div>;
+  };
+
   const handleSingleDateChange = (date) => {
-    setDateRange([{ startDate: date, endDate: null }]);
-    setIsPickerOpen(false);
-    handleClose();
+    if (date >= new Date()) {
+      // Allow setting only if the date is today or in the future
+      setDateRange([{ startDate: date, endDate: null }]);
+      setIsPickerOpen(false);
+      handleClose();
+    }
   };
 
   // Handle clicks outside the picker
@@ -94,6 +107,8 @@ const DatePicker = ({
           preventSnapRefocus={true}
           retainEndDateOnRangeChange={false}
           focusedRange={focusedRange} // Pastikan Anda melacak focusedRange
+          dayContentRenderer={dayContentRenderer} // Add dayContentRenderer for disabling logic
+          minDate={new Date()} // Disable dates before today
         />
       ) : (
         <Calendar
