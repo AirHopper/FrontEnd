@@ -26,8 +26,8 @@ const ForgotPasswordLazyImport = createFileRoute('/forgot-password')();
 const IndexLazyImport = createFileRoute('/')();
 const TicketsIndexLazyImport = createFileRoute('/tickets/')();
 const HistoryIndexLazyImport = createFileRoute('/history/')();
-const CheckoutIndexLazyImport = createFileRoute('/checkout/')();
-const CheckoutCompletedLazyImport = createFileRoute('/checkout/completed')();
+const CheckoutIndexLazyImport = createFileRoute('/Checkout/')();
+const CheckoutCompletedLazyImport = createFileRoute('/Checkout/completed')();
 
 // Create/Update Routes
 
@@ -92,16 +92,16 @@ const HistoryIndexLazyRoute = HistoryIndexLazyImport.update({
 } as any).lazy(() => import('./routes/history/index.lazy').then(d => d.Route));
 
 const CheckoutIndexLazyRoute = CheckoutIndexLazyImport.update({
-	id: '/checkout/',
-	path: '/checkout/',
+	id: '/Checkout/',
+	path: '/Checkout/',
 	getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/checkout/index.lazy').then(d => d.Route));
+} as any).lazy(() => import('./routes/Checkout/index.lazy').then(d => d.Route));
 
 const CheckoutCompletedLazyRoute = CheckoutCompletedLazyImport.update({
-	id: '/checkout/completed',
-	path: '/checkout/completed',
+	id: '/Checkout/completed',
+	path: '/Checkout/completed',
 	getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/checkout/completed.lazy').then(d => d.Route));
+} as any).lazy(() => import('./routes/Checkout/completed.lazy').then(d => d.Route));
 
 // Populate the FileRoutesByPath interface
 
@@ -163,17 +163,17 @@ declare module '@tanstack/react-router' {
 			preLoaderRoute: typeof VerifyOtpLazyImport;
 			parentRoute: typeof rootRoute;
 		};
-		'/checkout/completed': {
-			id: '/checkout/completed';
-			path: '/checkout/completed';
-			fullPath: '/checkout/completed';
+		'/Checkout/completed': {
+			id: '/Checkout/completed';
+			path: '/Checkout/completed';
+			fullPath: '/Checkout/completed';
 			preLoaderRoute: typeof CheckoutCompletedLazyImport;
 			parentRoute: typeof rootRoute;
 		};
-		'/checkout/': {
-			id: '/checkout/';
-			path: '/checkout';
-			fullPath: '/checkout';
+		'/Checkout/': {
+			id: '/Checkout/';
+			path: '/Checkout';
+			fullPath: '/Checkout';
 			preLoaderRoute: typeof CheckoutIndexLazyImport;
 			parentRoute: typeof rootRoute;
 		};
@@ -205,8 +205,8 @@ export interface FileRoutesByFullPath {
 	'/register': typeof RegisterLazyRoute;
 	'/reset-password': typeof ResetPasswordLazyRoute;
 	'/verify-otp': typeof VerifyOtpLazyRoute;
-	'/checkout/completed': typeof CheckoutCompletedLazyRoute;
-	'/checkout': typeof CheckoutIndexLazyRoute;
+	'/Checkout/completed': typeof CheckoutCompletedLazyRoute;
+	'/Checkout': typeof CheckoutIndexLazyRoute;
 	'/history': typeof HistoryIndexLazyRoute;
 	'/tickets': typeof TicketsIndexLazyRoute;
 }
@@ -220,8 +220,8 @@ export interface FileRoutesByTo {
 	'/register': typeof RegisterLazyRoute;
 	'/reset-password': typeof ResetPasswordLazyRoute;
 	'/verify-otp': typeof VerifyOtpLazyRoute;
-	'/checkout/completed': typeof CheckoutCompletedLazyRoute;
-	'/checkout': typeof CheckoutIndexLazyRoute;
+	'/Checkout/completed': typeof CheckoutCompletedLazyRoute;
+	'/Checkout': typeof CheckoutIndexLazyRoute;
 	'/history': typeof HistoryIndexLazyRoute;
 	'/tickets': typeof TicketsIndexLazyRoute;
 }
@@ -236,18 +236,18 @@ export interface FileRoutesById {
 	'/register': typeof RegisterLazyRoute;
 	'/reset-password': typeof ResetPasswordLazyRoute;
 	'/verify-otp': typeof VerifyOtpLazyRoute;
-	'/checkout/completed': typeof CheckoutCompletedLazyRoute;
-	'/checkout/': typeof CheckoutIndexLazyRoute;
+	'/Checkout/completed': typeof CheckoutCompletedLazyRoute;
+	'/Checkout/': typeof CheckoutIndexLazyRoute;
 	'/history/': typeof HistoryIndexLazyRoute;
 	'/tickets/': typeof TicketsIndexLazyRoute;
 }
 
 export interface FileRouteTypes {
 	fileRoutesByFullPath: FileRoutesByFullPath;
-	fullPaths: '/' | '/forgot-password' | '/login' | '/notification' | '/profile' | '/register' | '/reset-password' | '/verify-otp' | '/checkout/completed' | '/checkout' | '/history' | '/tickets';
+	fullPaths: '/' | '/forgot-password' | '/login' | '/notification' | '/profile' | '/register' | '/reset-password' | '/verify-otp' | '/Checkout/completed' | '/Checkout' | '/history' | '/tickets';
 	fileRoutesByTo: FileRoutesByTo;
-	to: '/' | '/forgot-password' | '/login' | '/notification' | '/profile' | '/register' | '/reset-password' | '/verify-otp' | '/checkout/completed' | '/checkout' | '/history' | '/tickets';
-	id: '__root__' | '/' | '/forgot-password' | '/login' | '/notification' | '/profile' | '/register' | '/reset-password' | '/verify-otp' | '/checkout/completed' | '/checkout/' | '/history/' | '/tickets/';
+	to: '/' | '/forgot-password' | '/login' | '/notification' | '/profile' | '/register' | '/reset-password' | '/verify-otp' | '/Checkout/completed' | '/Checkout' | '/history' | '/tickets';
+	id: '__root__' | '/' | '/forgot-password' | '/login' | '/notification' | '/profile' | '/register' | '/reset-password' | '/verify-otp' | '/Checkout/completed' | '/Checkout/' | '/history/' | '/tickets/';
 	fileRoutesById: FileRoutesById;
 }
 
@@ -297,8 +297,8 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
         "/register",
         "/reset-password",
         "/verify-otp",
-        "/checkout/completed",
-        "/checkout/",
+        "/Checkout/completed",
+        "/Checkout/",
         "/history/",
         "/tickets/"
       ]
@@ -327,11 +327,11 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
     "/verify-otp": {
       "filePath": "verify-otp.lazy.jsx"
     },
-    "/checkout/completed": {
-      "filePath": "checkout/completed.lazy.jsx"
+    "/Checkout/completed": {
+      "filePath": "Checkout/completed.lazy.jsx"
     },
-    "/checkout/": {
-      "filePath": "checkout/index.lazy.jsx"
+    "/Checkout/": {
+      "filePath": "Checkout/index.lazy.jsx"
     },
     "/history/": {
       "filePath": "history/index.lazy.jsx"

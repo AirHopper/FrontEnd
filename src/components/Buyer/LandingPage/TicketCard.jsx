@@ -10,10 +10,10 @@ const TicketCard = ({ ticket, onSelectCard }) => {
 	const departureDate = formatDate(ticket?.departure.time);
 
 	return (
-		<Card.Root width={{ base: '100%', sm: '183px' }} height="225px" border="none" boxShadow="md" cursor="pointer" onClick={() => onSelectCard(ticket)} _hover={{ boxShadow: 'lg' }}>
+		<Card.Root width={{ base: '100%', sm: '183px' }} height="240px" border="none" boxShadow="md" cursor="pointer" onClick={() => onSelectCard(ticket)} _hover={{ boxShadow: 'lg' }}>
 			<Card.Body gap="2" padding={3} textAlign={{ base: 'center', sm: 'left' }}>
-				<Image src={ticket?.arrival?.city?.image} alt="Ticket Arrival Image" borderRadius="lg" width={220} height={100} />
-				<Card.Title fontSize={14}>
+				<Image src={ticket?.arrival?.city?.image} alt="Ticket Arrival Image" borderRadius="lg" width="100%" height={100} />
+				<Card.Title height="35px" fontSize={{ base: '15px', sm: 'clamp(12px, 1vw, 14px)' }} lineHeight="moderate" fontWeight="bold">
 					{ticket?.departure?.city?.name} {'->'} {ticket?.arrival?.city?.name}
 				</Card.Title>
 				<Card.Description>
