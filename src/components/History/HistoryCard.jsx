@@ -103,7 +103,7 @@ function HistoryCard({ orders, onSelectOrder, selectedOrderId }) {
 							</VStack>
 
 							<Text fontSize={'md'} fontWeight="bold" color="#2078B8" textAlign="right">
-								IDR. {new Intl.NumberFormat('id-ID').format(order.outboundTicket.totalPrice)}
+								IDR. {new Intl.NumberFormat('id-ID').format(order.payment.amount)}
 							</Text>
 						</Grid>
 					</Box>

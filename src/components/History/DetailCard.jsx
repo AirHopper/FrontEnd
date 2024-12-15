@@ -1,4 +1,4 @@
-import { Box, Text, Button, HStack, VStack, Flex, Image } from '@chakra-ui/react';
+import { Box, Text, Button, HStack, VStack, Flex } from '@chakra-ui/react';
 
 const DetailCard = ({ order }) => {
 	if (!order) {
@@ -14,13 +14,11 @@ const DetailCard = ({ order }) => {
 				<Text fontSize={'lg'} fontWeight={'bold'}>
 					Detail Pesanan
 				</Text>
-				<Text bg={order.orderStatus === 'Unpaid' ? 'red.500' : order.orderStatus === 'Issued' ? 'green.400' : 'gray.400'} color="white" borderRadius="2xl" px={4} py={1}>
+				<Text bg={order.orderStatus === 'Unpaid' ? 'red.600' : order.orderStatus === 'Issued' ? 'green.400' : 'gray.400'} color="white" borderRadius="2xl" px={4} py={1}>
 					{order.orderStatus}
 				</Text>
 			</Box>
-			<Text fontSize="lg" fontWeight="bold" mb={2}>
-				Detail Tiket Pergi
-			</Text>
+
 			{/* Booking Code */}
 			<HStack mb={4}>
 				<Text fontSize="lg" fontWeight="normal">
@@ -56,33 +54,6 @@ const DetailCard = ({ order }) => {
 				</Text>
 			</HStack>
 
-			{/* Gambar Airline dan Pesawat */}
-			<HStack gap={4}>
-				<Image src={order.outboundTicket.flights[0].airline.logo} alt={order.outboundTicket.flights[0].airline.name} boxSize="50px" />
-				<VStack align={'start'} mb={4} borderBottom="1px solid #A8B6B7" pb={4}>
-					<VStack align="flex-start">
-						<Text fontSize="md" fontWeight="bold">
-							{order.outboundTicket.flights[0].airline.name}
-						</Text>
-						<Text fontSize="md">Pesawat: {order.outboundTicket.flights[0].airplane}</Text>
-					</VStack>
-					{/* Passengers Information */}
-					<VStack align="flex-start" mb={4}>
-						<Text fontSize="lg" fontWeight="bold">
-							Informasi Penumpang
-						</Text>
-						{order.passengers.map((passenger, index) => (
-							<VStack align={'start'} key={index} fontSize="md">
-								<Text>
-									Penumpang {index + 1}: {passenger.title} {passenger.name} {passenger.familyName}
-								</Text>
-								<Text>ID: {passenger.identifierNumber}</Text>
-							</VStack>
-						))}
-					</VStack>
-				</VStack>
-			</HStack>
-
 			{/* Arrival Details */}
 			<HStack align={'start'} justify={'space-between'} mb={4} borderBottom="1px solid #A8B6B7" pb={4}>
 				<VStack gap={0} align="flex-start">
@@ -108,62 +79,6 @@ const DetailCard = ({ order }) => {
 				</Text>
 			</HStack>
 
-			{/* Render Return Ticket Details only if isRoundTrip is true */}
-			{order.isRoundTrip && order.returnTicket && (
-				<Box borderBottom="1px solid #A8B6B7" pb={4} mb={4}>
-					<Text fontSize="lg" fontWeight="bold" mb={2}>
-						Detail Tiket Pulang
-					</Text>
-					<HStack align={'start'} justify={'space-between'} mb={4}>
-						<VStack gap={0} align="flex-start">
-							<Text fontSize={'md'} fontWeight="bold">
-								{new Date(order.returnTicket.departure.time).toLocaleTimeString([], {
-									hour: '2-digit',
-									minute: '2-digit',
-								})}
-							</Text>
-							<Text fontSize={'md'}>
-								{new Date(order.returnTicket.departure.time).toLocaleDateString('id-ID', {
-									day: '2-digit',
-									month: 'long',
-									year: 'numeric',
-								})}
-							</Text>
-							<Text fontSize={'md'} fontWeight="normal">
-								{order.returnTicket.departure.airport.name}
-							</Text>
-						</VStack>
-						<Text fontSize={'sm'} fontWeight={'bold'} color={'#70CAFF'}>
-							Keberangkatan
-						</Text>
-					</HStack>
-
-					<HStack align={'start'} justify={'space-between'} mb={4}>
-						<VStack gap={0} align="flex-start">
-							<Text fontSize={'md'} fontWeight="bold">
-								{new Date(order.returnTicket.arrival.time).toLocaleTimeString([], {
-									hour: '2-digit',
-									minute: '2-digit',
-								})}
-							</Text>
-							<Text fontSize={'md'}>
-								{new Date(order.returnTicket.arrival.time).toLocaleDateString('id-ID', {
-									day: '2-digit',
-									month: 'long',
-									year: 'numeric',
-								})}
-							</Text>
-							<Text fontSize={'md'} fontWeight="normal">
-								{order.returnTicket.arrival.airport.name}
-							</Text>
-						</VStack>
-						<Text fontSize={'sm'} fontWeight={'bold'} color={'#70CAFF'}>
-							Kedatangan
-						</Text>
-					</HStack>
-				</Box>
-			)}
-
 			{/* Price Breakdown */}
 			<Flex mb={4} borderBottom="1px solid #A8B6B7" pb={4} gap={2} flexDirection="column">
 				<Text size="lg" fontWeight={'bold'} mb={1}>
@@ -172,9 +87,8 @@ const DetailCard = ({ order }) => {
 				{order.detailPrice.map((item, index) => (
 					<HStack key={index} align={'start'} justify={'space-between'}>
 						<Text fontSize={'md'} fontWeight="normal">
-							({item.amount}) {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
+							{item.type.charAt(0).toUpperCase() + item.type.slice(1)} (Jumlah: {item.amount})
 						</Text>
-
 						<Text fontSize={'sm'}>IDR. {new Intl.NumberFormat('id-ID').format(item.totalPrice)}</Text>
 					</HStack>
 				))}
@@ -182,6 +96,7 @@ const DetailCard = ({ order }) => {
 					<Text fontSize={'md'} fontWeight="normal">
 						Tax
 					</Text>
+					<Text fontSize={'sm'}>IDR. {new Intl.NumberFormat('id-ID').format(order.detailPrice.reduce((acc, curr) => acc + (curr.totalPrice || 0), 0))}</Text>
 				</HStack>
 			</Flex>
 
@@ -190,7 +105,7 @@ const DetailCard = ({ order }) => {
 					Total
 				</Text>
 				<Text fontSize={'xl'} fontWeight={'bold'} color={'#2078B8'}>
-					IDR. {new Intl.NumberFormat('id-ID').format(parseFloat(order.outboundTicket.totalPrice))}
+					IDR. {new Intl.NumberFormat('id-ID').format(parseFloat(order.payment.amount))}
 				</Text>
 			</HStack>
 
