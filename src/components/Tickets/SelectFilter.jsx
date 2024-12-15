@@ -5,51 +5,33 @@ import { CloseButton } from '../ui/close-button';
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const SelectFilter = ({ isFocused, onCloseClick, tickets, onApplyFilter }) => {
+const SelectFilter = ({ onCloseClick, onApplyFilter }) => {
 	const [selectedItem, setSelectedItem] = useState(null); // State untuk item yang dipilih
 
 	// Data list filter
 	const filterOptions = [
-		{ key: 'harga-termurah', label: 'Harga', subLabel: 'Termurah' },
-		{ key: 'durasi-terpendek', label: 'Durasi', subLabel: 'Terpendek' },
-		{ key: 'keberangkatan-awal', label: 'Keberangkatan', subLabel: 'Paling Awal' },
-		{ key: 'keberangkatan-akhir', label: 'Keberangkatan', subLabel: 'Paling Akhir' },
-		{ key: 'kedatangan-awal', label: 'Kedatangan', subLabel: 'Paling Awal' },
-		{ key: 'kedatangan-akhir', label: 'Kedatangan', subLabel: 'Paling Akhir' },
+		{ key: 'harga-termurah', label: 'Harga', subLabel: 'Termurah', orderBy: 'price_asc' },
+		{ key: 'durasi-terpendek', label: 'Durasi', subLabel: 'Terpendek', orderBy: 'duration_asc' },
+		{ key: 'keberangkatan-awal', label: 'Keberangkatan', subLabel: 'Paling Awal', orderBy: 'departure_soon' },
+		{ key: 'keberangkatan-akhir', label: 'Keberangkatan', subLabel: 'Paling Akhir', orderBy: 'departure_late' },
+		{ key: 'kedatangan-awal', label: 'Kedatangan', subLabel: 'Paling Awal', orderBy: 'arrival_soon' },
+		{ key: 'kedatangan-akhir', label: 'Kedatangan', subLabel: 'Paling Akhir', orderBy: 'arrival_late' },
 	];
-
-	// Fungsi menghitung durasi penerbangan
-	const calculateDurationInMinutes = (departureTime, arrivalTime) => {
-		const departure = new Date(departureTime);
-		const arrival = new Date(arrivalTime);
-		return Math.floor((arrival - departure) / 60000);
-	};
-
-	// Fungsi filter data
-	const getFilteredTickets = () => {
-		if (selectedItem === null) return tickets;
-
-		const sortFunctions = {
-			'harga-termurah': (a, b) => a.totalPrice - b.totalPrice,
-			'durasi-terpendek': (a, b) => {
-				const durationA = calculateDurationInMinutes(a.departure.time, a.arrival.time);
-				const durationB = calculateDurationInMinutes(b.departure.time, b.arrival.time);
-				return durationA - durationB;
-			},
-			'keberangkatan-awal': (a, b) => new Date(a.departure.time) - new Date(b.departure.time),
-			'keberangkatan-akhir': (a, b) => new Date(b.departure.time) - new Date(a.departure.time),
-			'kedatangan-awal': (a, b) => new Date(a.arrival.time) - new Date(b.arrival.time),
-			'kedatangan-akhir': (a, b) => new Date(b.arrival.time) - new Date(a.arrival.time),
-		};
-
-		const selectedKey = filterOptions[selectedItem]?.key;
-		return [...tickets].sort(sortFunctions[selectedKey]);
-	};
 
 	// Event handler untuk tombol Pilih
 	const handleFilter = () => {
-		const results = getFilteredTickets(); // Dapatkan hasil filter
-		onApplyFilter(results); // Kirim hasil ke komponen utama
+		if (selectedItem === null) return;
+
+		const selectedKey = filterOptions[selectedItem]?.orderBy;
+
+		// Update URL dengan parameter filter
+		const urlParams = new URLSearchParams(window.location.search);
+		urlParams.set('orderBy', selectedKey);
+		const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+		window.history.replaceState({}, '', newUrl);
+
+		// Panggil fungsi untuk menerapkan filter
+		onApplyFilter(selectedKey); // Kirim hasil ke komponen utama
 		onCloseClick(); // Tutup komponen setelah filter
 	};
 
