@@ -172,9 +172,8 @@ const DetailCard = ({ order }) => {
 				{order.detailPrice.map((item, index) => (
 					<HStack key={index} align={'start'} justify={'space-between'}>
 						<Text fontSize={'md'} fontWeight="normal">
-							({item.amount}) {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
+							{item.type.charAt(0).toUpperCase() + item.type.slice(1)} (Jumlah: {item.amount})
 						</Text>
-
 						<Text fontSize={'sm'}>IDR. {new Intl.NumberFormat('id-ID').format(item.totalPrice)}</Text>
 					</HStack>
 				))}
@@ -182,6 +181,7 @@ const DetailCard = ({ order }) => {
 					<Text fontSize={'md'} fontWeight="normal">
 						Tax
 					</Text>
+					<Text fontSize={'sm'}>IDR. {new Intl.NumberFormat('id-ID').format(order.detailPrice.reduce((acc, curr) => acc + (curr.totalPrice || 0), 0))}</Text>
 				</HStack>
 			</Flex>
 
@@ -190,7 +190,7 @@ const DetailCard = ({ order }) => {
 					Total
 				</Text>
 				<Text fontSize={'xl'} fontWeight={'bold'} color={'#2078B8'}>
-					IDR. {new Intl.NumberFormat('id-ID').format(parseFloat(order.outboundTicket.totalPrice))}
+					IDR. {new Intl.NumberFormat('id-ID').format(parseFloat(order.payment.amount))}
 				</Text>
 			</HStack>
 
