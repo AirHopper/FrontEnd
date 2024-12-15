@@ -6,6 +6,7 @@ import {
   Image,
   Text,
   Container,
+  Badge,
 } from "@chakra-ui/react";
 import {
   faRightFromBracket,
@@ -16,17 +17,19 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "@tanstack/react-router";
 import { LogoAirHopper } from "../../../assets/img";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../../../redux/slices/auth";
+import { setToken, setUser } from "../../../redux/slices/auth";
 import { profile } from "../../../services/user";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify"; // Ensure toast is imported
+import { enableNotification } from "../../../script";
 
 const Navbar = () => {
   const dispatch = useDispatch();
+  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
 
-  const { user, token } = useSelector((state) => state.auth); // Ambil user dan token dari Redux
+  const { user, token } = useSelector((state) => state.auth);
 
   // React Query untuk mendapatkan profil user jika token ada
   const { data, isSuccess, isError } = useQuery({
@@ -39,8 +42,12 @@ const Navbar = () => {
   useEffect(() => {
     if (isSuccess && token) {
       dispatch(setUser(data));
+      // Periksa apakah ada notifikasi yang belum dibaca
+      const unreadExists = data.Notification.some((notif) => !notif.isRead);
+      setHasUnreadNotifications(unreadExists);
     } else if (isError) {
-      toast.error("There`s issue with fetching user");
+      toast.error("Ada yang salah, silahkan login kembali");
+      dispatch(setToken(null));
     }
   }, [isSuccess, isError, data, dispatch, token]);
 
@@ -58,7 +65,10 @@ const Navbar = () => {
       <Container>
         <Flex py={2} align="center" justify="space-between" wrap="wrap" gap={4}>
           {/* Logo */}
-          <HStack>
+          <HStack
+            as={Link}
+            to="/"  
+          >
             <Box
               bgColor="#2078b8"
               fontWeight="bold"
@@ -92,23 +102,38 @@ const Navbar = () => {
                   style={{ color: "#74C0FC" }}
                 />
               </Button>
-              <Button
-                variant="ghost"
-                as={Link}
-                to="/notification"
-                size="md"
-                color="black"
-                _active={{
-                  borderColor: "#74C0FC",
-                  boxShadow: "0 0 0 3px rgba(116, 192, 252, 0.6)",
-                }}
-              >
-                <FontAwesomeIcon
-                  icon={faBell}
-                  size="xl"
-                  style={{ color: "#74C0FC" }}
-                />
-              </Button>
+              <Box position="relative">
+                <Button
+                  onClick={enableNotification}
+                  variant="ghost"
+                  as={Link}
+                  to="/notification"
+                  size="md"
+                  color="black"
+                  _active={{
+                    borderColor: "#74C0FC",
+                    boxShadow: "0 0 0 3px rgba(116, 192, 252, 0.6)",
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={faBell}
+                    size="xl"
+                    style={{ color: "#74C0FC" }}
+                  />
+                </Button>
+                {hasUnreadNotifications && (
+                  <Box
+                    position="absolute"
+                    top="0px"
+                    right="5px"
+                    bg="red.500"
+                    color="white"
+                    borderRadius="full"
+                    w={2}
+                    h={2}
+                  />
+                )}
+              </Box>
               <Button
                 variant="ghost"
                 as={Link}
@@ -146,7 +171,7 @@ const Navbar = () => {
               <Box as="span" ml={2}>
                 Masuk
               </Box>
-            </Button> 
+            </Button>
           )}
         </Flex>
       </Container>

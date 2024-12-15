@@ -15,6 +15,7 @@ import {
 import { Field } from "@/components/ui/field";
 import { PasswordInput } from "@/components/ui/password-input";
 import AirHopper from "@/assets/img/airhopper.jpg"; // Your image
+import { LogoAirHopper } from '../assets/img';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
