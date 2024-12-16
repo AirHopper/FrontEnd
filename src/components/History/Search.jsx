@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Text, Flex, Input, HStack, Button, VStack, IconButton } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMagnifyingGlass, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { CloseButton } from '@/components/ui/close-button';
 
-const Search = ({ setIsSearchOpen, onSearch }) => {
-	const [orderId, setOrderId] = useState('');
+const Search = ({ setIsSearchOpen, onSearch, orderId }) => {
+	const [orderIdState, setOrderIdState] = useState(orderId || '');
 	const [recentSearches, setRecentSearches] = useState([]);
+	const [suggestions, setSuggestions] = useState([]);
 
 	// Load recent searches from localStorage
 	useEffect(() => {
@@ -14,20 +15,32 @@ const Search = ({ setIsSearchOpen, onSearch }) => {
 		setRecentSearches(storedSearches);
 	}, []);
 
+	// Tambahkan useEffect untuk memberikan saran berdasarkan input
+	useEffect(() => {
+		if (orderIdState) {
+			const filteredSuggestions = recentSearches.filter(
+				search => search.includes(orderIdState) // Cek apakah input ada dalam pencarian terkini
+			);
+			setSuggestions(filteredSuggestions);
+		} else {
+			setSuggestions([]); // Kosongkan saran jika input kosong
+		}
+	}, [orderIdState, recentSearches]);
+
 	const handleSearch = () => {
-		if (orderId) {
+		if (orderIdState) {
 			// Update recent searches
-			const updatedSearches = [orderId, ...recentSearches.filter(search => search !== orderId)].slice(0, 5); // Max 5 recent searches
+			const updatedSearches = [orderIdState, ...recentSearches.filter(search => search !== orderIdState)].slice(0, 3); 
 			setRecentSearches(updatedSearches);
 			localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
 
-			onSearch(orderId);
+			onSearch(orderIdState);
 		}
 		setIsSearchOpen(false);
 	};
 
 	const handleSelectRecent = search => {
-		setOrderId(search);
+		setOrderIdState(search);
 		onSearch(search);
 		setIsSearchOpen(false);
 	};
@@ -50,6 +63,18 @@ const Search = ({ setIsSearchOpen, onSearch }) => {
 		}
 	};
 
+	// Tambahkan useEffect untuk memberikan saran berdasarkan orderId
+	useEffect(() => {
+		if (orderIdState) {
+			const newSuggestions = recentSearches.filter(
+				search => search.toLowerCase().includes(orderIdState.toLowerCase()) // Cek apakah input ada dalam pencarian terkini
+			);
+			setSuggestions(newSuggestions);
+		} else {
+			setSuggestions([]); // Kosongkan saran jika input kosong
+		}
+	}, [orderIdState]);
+
 	return (
 		<>
 			{/* Overlay */}
@@ -69,12 +94,25 @@ const Search = ({ setIsSearchOpen, onSearch }) => {
 					<HStack px={5}>
 						<Flex align="center" border="1px solid" borderColor="gray.300" borderRadius="md" px={2} bg="white">
 							<FontAwesomeIcon icon={faMagnifyingGlass} style={{ marginLeft: '10px', fontSize: '20px', color: 'gray.200' }} />
-							<Input value={orderId} onChange={e => setOrderId(e.target.value)} onKeyPress={handleKeyPress} variant="unstyled" placeholder="Masukkan Nomor Penerbangan" width="25vw" py={0} focusBorderColor="transparent" />
+							<Input value={orderIdState} onChange={e => setOrderIdState(e.target.value)} onKeyPress={handleKeyPress} variant="unstyled" placeholder="Masukkan Nomor Penerbangan" width="25vw" py={0} focusBorderColor="transparent" />
 						</Flex>
 						<Box display="flex" justifyContent="flex-end">
 							<CloseButton onClick={() => setIsSearchOpen(false)} />
 						</Box>
 					</HStack>
+
+					{/* Menampilkan saran jika ada */}
+					{suggestions.length > 0 && (
+						<VStack spacing={1} px={5} width="100%">
+							{suggestions.map(suggestion => (
+								<HStack key={suggestion} justifyContent="space-between" width="100%" borderBottom="1px solid #E2E8F0" pb={1}>
+									<Text cursor="pointer" onClick={() => handleSelectRecent(suggestion)} color="blue.500">
+										{suggestion}
+									</Text>
+								</HStack>
+							))}
+						</VStack>
+					)}
 
 					{recentSearches.length > 0 ? (
 						<>

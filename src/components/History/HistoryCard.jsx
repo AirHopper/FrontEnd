@@ -3,8 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
 
 function HistoryCard({ orders, onSelectOrder, selectedOrderId }) {
-	console.log('orders prop in HistoryCard:', orders);
-
 	if (!orders || !Array.isArray(orders) || orders.length === 0) {
 		return <Text>No order data available.</Text>;
 	}

@@ -49,11 +49,8 @@ function RouteComponent() {
 	useEffect(() => {
 		if (isSuccess) {
 			setOrders(data);
-			console.log('Fetched history:', data);
 		}
 	}, [data, isSuccess]);
-
-	console.log('Order data:', orders);
 
 	const filteredOrders = orders; // Tidak ada filter lagi, semua dilakukan di backend
 
@@ -78,7 +75,6 @@ function RouteComponent() {
 			element.scrollIntoView({ behavior: 'smooth' });
 		}
 	};
-	console.log('Selected Order ID in Route:', selectedOrderId);
 
 	const toggleDatePicker = () => {
 		setIsPickerOpen(prevState => !prevState);
@@ -161,7 +157,7 @@ function RouteComponent() {
 						{' '}
 						{/* Menggunakan VStack untuk memisahkan Spinner dan Text */}
 						<Spinner size="lg" color="#44B3F8" />
-						<Text>Memuat data penerbangan...</Text>
+						<Text>Memuat history penerbangan...</Text>
 					</VStack>
 				</Box>
 			) : filteredOrders.length === 0 || isError ? (
