@@ -25,9 +25,11 @@ const LoginLazyImport = createFileRoute('/login')()
 const ForgotPasswordLazyImport = createFileRoute('/forgot-password')()
 const IndexLazyImport = createFileRoute('/')()
 const TicketsIndexLazyImport = createFileRoute('/tickets/')()
+const PaymentIndexLazyImport = createFileRoute('/payment/')()
 const HistoryIndexLazyImport = createFileRoute('/history/')()
-const CheckoutIndexLazyImport = createFileRoute('/Checkout/')()
-const CheckoutCompletedLazyImport = createFileRoute('/Checkout/completed')()
+const CheckoutIndexLazyImport = createFileRoute('/checkout/')()
+const PaymentSuccessLazyImport = createFileRoute('/payment/success')()
+const CheckoutCompletedLazyImport = createFileRoute('/checkout/completed')()
 
 // Create/Update Routes
 
@@ -89,6 +91,12 @@ const TicketsIndexLazyRoute = TicketsIndexLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/tickets/index.lazy').then((d) => d.Route))
 
+const PaymentIndexLazyRoute = PaymentIndexLazyImport.update({
+  id: '/payment/',
+  path: '/payment/',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/payment/index.lazy').then((d) => d.Route))
+
 const HistoryIndexLazyRoute = HistoryIndexLazyImport.update({
   id: '/history/',
   path: '/history/',
@@ -96,19 +104,27 @@ const HistoryIndexLazyRoute = HistoryIndexLazyImport.update({
 } as any).lazy(() => import('./routes/history/index.lazy').then((d) => d.Route))
 
 const CheckoutIndexLazyRoute = CheckoutIndexLazyImport.update({
-  id: '/Checkout/',
-  path: '/Checkout/',
+  id: '/checkout/',
+  path: '/checkout/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() =>
-  import('./routes/Checkout/index.lazy').then((d) => d.Route),
+  import('./routes/checkout/index.lazy').then((d) => d.Route),
+)
+
+const PaymentSuccessLazyRoute = PaymentSuccessLazyImport.update({
+  id: '/payment/success',
+  path: '/payment/success',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/payment/success.lazy').then((d) => d.Route),
 )
 
 const CheckoutCompletedLazyRoute = CheckoutCompletedLazyImport.update({
-  id: '/Checkout/completed',
-  path: '/Checkout/completed',
+  id: '/checkout/completed',
+  path: '/checkout/completed',
   getParentRoute: () => rootRoute,
 } as any).lazy(() =>
-  import('./routes/Checkout/completed.lazy').then((d) => d.Route),
+  import('./routes/checkout/completed.lazy').then((d) => d.Route),
 )
 
 // Populate the FileRoutesByPath interface
@@ -171,17 +187,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifyOtpLazyImport
       parentRoute: typeof rootRoute
     }
-    '/Checkout/completed': {
-      id: '/Checkout/completed'
-      path: '/Checkout/completed'
-      fullPath: '/Checkout/completed'
+    '/checkout/completed': {
+      id: '/checkout/completed'
+      path: '/checkout/completed'
+      fullPath: '/checkout/completed'
       preLoaderRoute: typeof CheckoutCompletedLazyImport
       parentRoute: typeof rootRoute
     }
-    '/Checkout/': {
-      id: '/Checkout/'
-      path: '/Checkout'
-      fullPath: '/Checkout'
+    '/payment/success': {
+      id: '/payment/success'
+      path: '/payment/success'
+      fullPath: '/payment/success'
+      preLoaderRoute: typeof PaymentSuccessLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/checkout/': {
+      id: '/checkout/'
+      path: '/checkout'
+      fullPath: '/checkout'
       preLoaderRoute: typeof CheckoutIndexLazyImport
       parentRoute: typeof rootRoute
     }
@@ -190,6 +213,13 @@ declare module '@tanstack/react-router' {
       path: '/history'
       fullPath: '/history'
       preLoaderRoute: typeof HistoryIndexLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/payment/': {
+      id: '/payment/'
+      path: '/payment'
+      fullPath: '/payment'
+      preLoaderRoute: typeof PaymentIndexLazyImport
       parentRoute: typeof rootRoute
     }
     '/tickets/': {
@@ -213,9 +243,11 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterLazyRoute
   '/reset-password': typeof ResetPasswordLazyRoute
   '/verify-otp': typeof VerifyOtpLazyRoute
-  '/Checkout/completed': typeof CheckoutCompletedLazyRoute
-  '/Checkout': typeof CheckoutIndexLazyRoute
+  '/checkout/completed': typeof CheckoutCompletedLazyRoute
+  '/payment/success': typeof PaymentSuccessLazyRoute
+  '/checkout': typeof CheckoutIndexLazyRoute
   '/history': typeof HistoryIndexLazyRoute
+  '/payment': typeof PaymentIndexLazyRoute
   '/tickets': typeof TicketsIndexLazyRoute
 }
 
@@ -228,9 +260,11 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterLazyRoute
   '/reset-password': typeof ResetPasswordLazyRoute
   '/verify-otp': typeof VerifyOtpLazyRoute
-  '/Checkout/completed': typeof CheckoutCompletedLazyRoute
-  '/Checkout': typeof CheckoutIndexLazyRoute
+  '/checkout/completed': typeof CheckoutCompletedLazyRoute
+  '/payment/success': typeof PaymentSuccessLazyRoute
+  '/checkout': typeof CheckoutIndexLazyRoute
   '/history': typeof HistoryIndexLazyRoute
+  '/payment': typeof PaymentIndexLazyRoute
   '/tickets': typeof TicketsIndexLazyRoute
 }
 
@@ -244,9 +278,11 @@ export interface FileRoutesById {
   '/register': typeof RegisterLazyRoute
   '/reset-password': typeof ResetPasswordLazyRoute
   '/verify-otp': typeof VerifyOtpLazyRoute
-  '/Checkout/completed': typeof CheckoutCompletedLazyRoute
-  '/Checkout/': typeof CheckoutIndexLazyRoute
+  '/checkout/completed': typeof CheckoutCompletedLazyRoute
+  '/payment/success': typeof PaymentSuccessLazyRoute
+  '/checkout/': typeof CheckoutIndexLazyRoute
   '/history/': typeof HistoryIndexLazyRoute
+  '/payment/': typeof PaymentIndexLazyRoute
   '/tickets/': typeof TicketsIndexLazyRoute
 }
 
@@ -261,9 +297,11 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-password'
     | '/verify-otp'
-    | '/Checkout/completed'
-    | '/Checkout'
+    | '/checkout/completed'
+    | '/payment/success'
+    | '/checkout'
     | '/history'
+    | '/payment'
     | '/tickets'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -275,9 +313,11 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-password'
     | '/verify-otp'
-    | '/Checkout/completed'
-    | '/Checkout'
+    | '/checkout/completed'
+    | '/payment/success'
+    | '/checkout'
     | '/history'
+    | '/payment'
     | '/tickets'
   id:
     | '__root__'
@@ -289,9 +329,11 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-password'
     | '/verify-otp'
-    | '/Checkout/completed'
-    | '/Checkout/'
+    | '/checkout/completed'
+    | '/payment/success'
+    | '/checkout/'
     | '/history/'
+    | '/payment/'
     | '/tickets/'
   fileRoutesById: FileRoutesById
 }
@@ -306,8 +348,10 @@ export interface RootRouteChildren {
   ResetPasswordLazyRoute: typeof ResetPasswordLazyRoute
   VerifyOtpLazyRoute: typeof VerifyOtpLazyRoute
   CheckoutCompletedLazyRoute: typeof CheckoutCompletedLazyRoute
+  PaymentSuccessLazyRoute: typeof PaymentSuccessLazyRoute
   CheckoutIndexLazyRoute: typeof CheckoutIndexLazyRoute
   HistoryIndexLazyRoute: typeof HistoryIndexLazyRoute
+  PaymentIndexLazyRoute: typeof PaymentIndexLazyRoute
   TicketsIndexLazyRoute: typeof TicketsIndexLazyRoute
 }
 
@@ -321,8 +365,10 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordLazyRoute: ResetPasswordLazyRoute,
   VerifyOtpLazyRoute: VerifyOtpLazyRoute,
   CheckoutCompletedLazyRoute: CheckoutCompletedLazyRoute,
+  PaymentSuccessLazyRoute: PaymentSuccessLazyRoute,
   CheckoutIndexLazyRoute: CheckoutIndexLazyRoute,
   HistoryIndexLazyRoute: HistoryIndexLazyRoute,
+  PaymentIndexLazyRoute: PaymentIndexLazyRoute,
   TicketsIndexLazyRoute: TicketsIndexLazyRoute,
 }
 
@@ -344,9 +390,11 @@ export const routeTree = rootRoute
         "/register",
         "/reset-password",
         "/verify-otp",
-        "/Checkout/completed",
-        "/Checkout/",
+        "/checkout/completed",
+        "/payment/success",
+        "/checkout/",
         "/history/",
+        "/payment/",
         "/tickets/"
       ]
     },
@@ -374,14 +422,20 @@ export const routeTree = rootRoute
     "/verify-otp": {
       "filePath": "verify-otp.lazy.jsx"
     },
-    "/Checkout/completed": {
-      "filePath": "Checkout/completed.lazy.jsx"
+    "/checkout/completed": {
+      "filePath": "checkout/completed.lazy.jsx"
     },
-    "/Checkout/": {
-      "filePath": "Checkout/index.lazy.jsx"
+    "/payment/success": {
+      "filePath": "payment/success.lazy.jsx"
+    },
+    "/checkout/": {
+      "filePath": "checkout/index.lazy.jsx"
     },
     "/history/": {
       "filePath": "history/index.lazy.jsx"
+    },
+    "/payment/": {
+      "filePath": "payment/index.lazy.jsx"
     },
     "/tickets/": {
       "filePath": "tickets/index.lazy.jsx"
