@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { createLazyFileRoute, Link } from "@tanstack/react-router";
+import { createLazyFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   Box,
   Button,
@@ -22,25 +22,54 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faFilter, faBell } from "@fortawesome/free-solid-svg-icons";
 import { useQuery } from "@tanstack/react-query"; // Import React Query
 import { notifications } from "../services/notification";
+import { useSelector } from "react-redux";
 
 export const Route = createLazyFileRoute("/notification")({
   component: NotificationPage,
 });
 
 function NotificationPage() {
-  const [notification, setNotification] = useState([]);
 
-  // Fetch notifications using React Query
+  const { token, user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  
+
+  const [notification, setNotification] = useState([]);
+  const [filterType, setFilterType] = useState("all"); 
+  const [searchQuery, setSearchQuery] = useState(""); 
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+
+  useEffect(() => {
+    if (!token && !user) {
+      navigate({ to: "/" });
+    }
+  }, [navigate, token, user]);
+
+  // Debounce search input
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 1200); 
+    return () => clearTimeout(handler); 
+  }, [searchQuery]);
+
+  // Fetch notifications with React Query
   const { data, isLoading, isError, error, isSuccess } = useQuery({
-    queryKey: ["notifications"],
-    queryFn: notifications,
+    queryKey: ["notifications", filterType, debouncedQuery],
+    queryFn: () =>
+      notifications(filterType === "all" ? undefined : filterType, debouncedQuery),
   });
 
   useEffect(() => {
     if (isSuccess) {
-      setNotification(data?.Notification); // Akses ke properti Notification
+      setNotification(data);
     }
   }, [data, isSuccess]);
+
+  // Handler untuk filter perubahan
+  const handleFilterChange = (type) => {
+    setFilterType(type);
+  };
 
   // Loading and error states
   if (isLoading) {
@@ -98,12 +127,19 @@ function NotificationPage() {
                   </Button>
                 </MenuTrigger>
                 <MenuContent>
-                  <MenuItem value="all">Semua</MenuItem>
-                  <MenuItem value="promosi">Promosi</MenuItem>
-                  <MenuItem value="notifikasi">Notifikasi</MenuItem>
+                  <MenuItem onClick={() => handleFilterChange("all")}>Semua</MenuItem>
+                  <MenuItem onClick={() => handleFilterChange("promosi")}>Promosi</MenuItem>
+                  <MenuItem onClick={() => handleFilterChange("notifikasi")}>
+                    Notifikasi
+                  </MenuItem>
                 </MenuContent>
               </MenuRoot>
-              <Input placeholder="Cari notifikasi..." w={{ base: "100%", sm: "200px" }} />
+              <Input
+                placeholder="Cari notifikasi..."
+                w={{ base: "100%", sm: "200px" }}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)} // Update search query
+              />
             </Flex>
           </Flex>
         </Container>
@@ -127,7 +163,11 @@ function NotificationPage() {
                 flexDirection={{ base: "column", sm: "row" }}
               >
                 {/* Bagian Kiri: Icon Bell + Info Notifikasi */}
-                <Flex align="center" gap={6} flexDirection={{ base: "column", sm: "row" }}>
+                <Flex
+                  align="center"
+                  gap={6}
+                  flexDirection={{ base: "column", sm: "row" }}
+                >
                   {/* Icon Bell */}
                   <Box>
                     <FontAwesomeIcon icon={faBell} size="2xl" color="#6B7280" />

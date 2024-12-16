@@ -236,7 +236,7 @@ function AboutUsPage() {
               shadow="2xl"
               textAlign="center"
               bg="white"
-              width={["90%", "45%", "30%","22%"]} // Responsif untuk ukuran layar kecil, sedang, besar
+              width={["90%", "45%", "30%","22%"]}
               display="flex"
               flexDirection="column"
               alignItems="center"

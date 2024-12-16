@@ -22,7 +22,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setToken, setUser } from "../../../redux/slices/auth";
 import { profile } from "../../../services/user";
 import { useQuery } from "@tanstack/react-query";
-import { toast } from "react-toastify"; // Ensure toast is imported
+import { toast } from "react-toastify"; 
 import { enableNotification } from "../../../script";
 
 const Navbar = () => {
