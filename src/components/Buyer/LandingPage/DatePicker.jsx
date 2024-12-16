@@ -25,7 +25,7 @@ const DatePicker = ({
         return [
           {
             startDate,
-            endDate: isRangeMode && endDate > startDate ? endDate : null,
+            endDate: isRangeMode && endDate >= startDate ? endDate : null,
           },
         ];
       } else if (focusedRange[1] === 1) {
@@ -33,27 +33,13 @@ const DatePicker = ({
         return [
           {
             startDate: currentStartDate,
-            endDate: endDate > currentStartDate ? endDate : null,
+            endDate: endDate >= currentStartDate ? endDate : null,
           },
         ];
       }
 
       return prevDateRange;
     });
-  };
-
-  const dayContentRenderer = (date) => {
-    const currentStartDate = dateRange[0].startDate;
-
-    // Disable dates before or equal to startDate for endDate
-    if (focusedRange[1] === 1 && (date <= currentStartDate || !isRangeMode)) {
-      return (
-        <div style={{ textDecoration: "line-through", color: "#ccc" }}>
-          {date.getDate()}
-        </div>
-      );
-    }
-    return <div>{date.getDate()}</div>;
   };
 
   const handleSingleDateChange = (date) => {
@@ -94,9 +80,9 @@ const DatePicker = ({
     >
       {isRangeMode ? (
         <DateRange
-          editableDateInputs
           onChange={handleRangeChange}
           color="#44b3f8"
+          rangeColors="#44b3f8"
           ranges={[
             {
               startDate: dateRange[0].startDate,
@@ -104,16 +90,16 @@ const DatePicker = ({
               key: "selection",
             },
           ]}
-          preventSnapRefocus={true}
           retainEndDateOnRangeChange={false}
+          moveRangeOnFirstSelection={false}
           focusedRange={focusedRange} // Pastikan Anda melacak focusedRange
-          dayContentRenderer={dayContentRenderer} // Add dayContentRenderer for disabling logic
           minDate={new Date()} // Disable dates before today
         />
       ) : (
         <Calendar
           date={dateRange[0].startDate}
           color="#44b3f8"
+          minDate={new Date()}
           onChange={handleSingleDateChange}
         />
       )}

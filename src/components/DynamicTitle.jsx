@@ -34,9 +34,6 @@ const DynamicTitle = () => {
       case "/tickets":
         document.title = "Tickets - AirHopper";
         break;
-      case "/tickets":
-        document.title = "Tickets - AirHopper";
-        break;
       case "/Checkout/":
         document.title = "Checkout - AirHopper";
         break;

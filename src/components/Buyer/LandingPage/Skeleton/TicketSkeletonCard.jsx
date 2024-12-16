@@ -4,8 +4,8 @@ const TicketSkeletonCard = () => {
   return (
     <Box
       mt={5}
-      width="215px"
-      height="225px"
+      width="183px"
+      height="260px"
       border="none"
       boxShadow="md"
       borderRadius="md"
@@ -14,10 +14,11 @@ const TicketSkeletonCard = () => {
         <Skeleton
           gap="2"
           padding={3}
-          width={192}
+          width={160}
           borderRadius="lg"
           height={105}
         ></Skeleton>
+        <Skeleton gap="2" padding={3}></Skeleton>
         <Skeleton gap="2" padding={3}></Skeleton>
         <Skeleton gap="2" padding={3}></Skeleton>
         <Skeleton gap="2" padding={3}></Skeleton>

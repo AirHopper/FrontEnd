@@ -8,10 +8,19 @@ import {
   Heading,
   Highlight,
   Stack,
+  Box,
 } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
-import { Field } from "../../ui/field";
-import { Switch } from "../../ui/switch";
+import { Field } from "@/components/ui/field";
+import { Switch } from "@/components/ui/switch";
+import {
+  PopoverRoot,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverHeader,
+  PopoverBody,
+} from "@/components/ui/popover";
 import {
   faCalendarDays,
   faPerson,
@@ -48,6 +57,8 @@ const SearchTicket = ({
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [focusedRange, setFocusedRange] = useState([0, 0]);
   const [isRangeMode, setIsRangeMode] = useState(false); // State untuk Switch
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false); // State untuk buka popover
+  const [hoverTimeout, setHoverTimeout] = useState(null); // state untuk timeout popover
 
   // Passenger and Class Input
   const [adultCount, setAdultCount] = useState(0);
@@ -58,6 +69,21 @@ const SearchTicket = ({
   // location input type and total passengers
   const [locationType, setLocationType] = useState("");
   const [totalPassengers, setTotalPassengers] = useState(0);
+
+  const handleMouseEnter = () => {
+    // Set delay untuk membuka popover
+    const timeout = setTimeout(() => setIsPopoverOpen(true), 500); // Delay 500ms
+    setHoverTimeout(timeout);
+  };
+
+  const handleMouseLeave = () => {
+    // Hentikan delay jika user tidak jadi hover
+    clearTimeout(hoverTimeout);
+    setHoverTimeout(null);
+
+    // Set delay untuk menutup popover
+    setTimeout(() => setIsPopoverOpen(false), 200); // Delay 200ms
+  };
 
   // Format Date
   const formattedStartDate = dateRange[0].startDate.toLocaleDateString(
@@ -103,6 +129,7 @@ const SearchTicket = ({
     setIsClassOpen(false);
     setFocusedRange([0, rangeIndex]);
   };
+
   const handlePassengerFocus = () => {
     setIsFocused(true);
     setIsPassengerOpen(true);
@@ -110,6 +137,7 @@ const SearchTicket = ({
     setIsLocationVisible(false);
     setIsClassOpen(false);
   };
+
   const handleClassFocus = () => {
     setIsFocused(true);
     setIsClassOpen(true);
@@ -117,9 +145,11 @@ const SearchTicket = ({
     setIsLocationVisible(false);
     setIsPassengerOpen(false);
   };
+
   const handleClassSave = (className) => {
     setSelectedClass(className);
   };
+
   const handleClose = () => {
     setIsFocused(false);
     setIsLocationVisible(false);
@@ -366,12 +396,28 @@ const SearchTicket = ({
                 </Field>
               )}
             </Stack>
-            <Switch
-              size="md"
-              colorPalette="blue"
-              checked={isRangeMode}
-              onChange={handleSwitchChange}
-            />
+
+            <PopoverRoot open={isPopoverOpen}>
+              <PopoverTrigger
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                _focus={{ outline: "none", border: "none" }}
+              >
+                <Switch
+                  size="md"
+                  colorScheme="blue"
+                  checked={isRangeMode}
+                  onChange={handleSwitchChange}
+                />
+              </PopoverTrigger>
+              <PopoverContent>
+                <PopoverArrow />
+                <PopoverBody>
+                  Aktif/Nonaktifkan switch ini untuk memilih tanggal penerbangan
+                  pulang (Return Date) saat memesan tiket.
+                </PopoverBody>
+              </PopoverContent>
+            </PopoverRoot>
           </GridItem>
           <GridItem
             display="flex"
@@ -401,6 +447,7 @@ const SearchTicket = ({
                   }}
                   fontWeight="semibold"
                   required
+                  readOnly
                 />
               </Field>
               <Field

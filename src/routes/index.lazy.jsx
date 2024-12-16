@@ -1,61 +1,61 @@
-import * as React from 'react'
-import { useState, useEffect } from 'react'
-import { createLazyFileRoute } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
-import { Stack, Box, Container, NumberInputLabel } from '@chakra-ui/react'
-import { getTickets } from '../services/tickets'
-import SearchTicket from '../components/Buyer/LandingPage/SearchTicket'
-import TicketFav from '../components/Buyer/LandingPage/TicketFav'
-import Promo from '../components/Buyer/LandingPage/Promo'
+import * as React from "react";
+import { useState, useEffect } from "react";
+import { createLazyFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { Stack, Box, Container, NumberInputLabel } from "@chakra-ui/react";
+import { getTickets } from "../services/tickets";
+import SearchTicket from "../components/Buyer/LandingPage/SearchTicket";
+import TicketFav from "../components/Buyer/LandingPage/TicketFav";
+import Promo from "../components/Buyer/LandingPage/Promo";
 
-export const Route = createLazyFileRoute('/')({
+export const Route = createLazyFileRoute("/")({
   component: Beranda,
-})
+});
 
 function Beranda() {
   // Selected Values
-  const [selectedFrom, setSelectedFrom] = useState('')
-  const [selectedTo, setSelectedTo] = useState('')
+  const [selectedFrom, setSelectedFrom] = useState("");
+  const [selectedTo, setSelectedTo] = useState("");
   const [dateRange, setDateRange] = useState([
     {
       startDate: new Date(),
       endDate: null,
-      key: 'selection',
+      key: "selection",
     },
-  ])
+  ]);
 
   // isFocused and tickets data states
-  const [isFocused, setIsFocused] = useState(false)
-  const [tickets, setTickets] = useState([])
+  const [isFocused, setIsFocused] = useState(false);
+  const [tickets, setTickets] = useState([]);
 
   // Use react query to fetch API
   const { data, isSuccess } = useQuery({
-    queryKey: ['tickets'],
+    queryKey: ["tickets"],
     queryFn: () => getTickets(),
     enabled: true,
-  })
+  });
 
   useEffect(() => {
     if (isSuccess) {
-      setTickets(data?.data)
+      setTickets(data?.data);
     }
-  }, [data, isSuccess])
+  }, [data, isSuccess]);
 
   const handleSelectCard = (ticket) => {
-    setSelectedFrom(ticket?.departure?.city?.name || '')
-    setSelectedTo(ticket?.arrival?.city?.name || '')
+    setSelectedFrom(ticket?.departure?.city?.name || "");
+    setSelectedTo(ticket?.arrival?.city?.name || "");
     setDateRange([
       {
         startDate: new Date(ticket?.departure?.time),
-        key: 'selection',
+        key: "selection",
       },
-    ])
+    ]);
 
     window.scrollTo({
       top: 0,
-      behavior: 'smooth', // Smooth scrolling animation
-    })
-  }
+      behavior: "smooth", // Smooth scrolling animation
+    });
+  };
 
   return (
     <Box maxWidth="container.lg" mx="auto" py={8} px={0}>
@@ -75,7 +75,7 @@ function Beranda() {
 
       <Promo />
 
-      <Stack gap={5} position="relative" top={{ base: '2', lg: '-5' }}>
+      <Stack gap={5} position="relative" top={{ base: "2", lg: "-5" }}>
         <SearchTicket
           tickets={tickets}
           isFocused={isFocused}
@@ -91,5 +91,5 @@ function Beranda() {
         <TicketFav handleSelectCard={handleSelectCard} />
       </Stack>
     </Box>
-  )
+  );
 }

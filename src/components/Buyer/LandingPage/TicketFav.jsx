@@ -19,7 +19,7 @@ import TicketCard from "./TicketCard";
 import TicketSkeletonCard from "./Skeleton/TicketSkeletonCard";
 import { NoData } from "../../../assets/img";
 import { useQuery } from "@tanstack/react-query";
-import { getTickets } from "../../../services/tickets";
+import { getDiscounts, getTickets } from "../../../services/tickets";
 import {
   SelectContent,
   SelectItem,
@@ -189,11 +189,13 @@ const TicketFav = ({ handleSelectCard }) => {
             </Text>
           </Stack>
         ) : isPending ? (
-          tickets.map((ticket) => <TicketSkeletonCard key={ticket.id} />)
+          Array.from({ length: 5 }).map((_, index) => (
+            <TicketSkeletonCard key={index} />
+          ))
         ) : (
-          tickets.map((ticket, index) => (
+          tickets.map((ticket) => (
             <TicketCard
-              key={index}
+              key={ticket.id}
               ticket={ticket}
               onSelectCard={handleSelectCard}
             />

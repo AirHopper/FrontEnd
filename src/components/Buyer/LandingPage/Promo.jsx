@@ -43,6 +43,7 @@ const Promo = () => {
           left="0"
           width="100%"
           height="100%"
+          loading="lazy"
           objectFit="cover"
           zIndex={-1}
         />
