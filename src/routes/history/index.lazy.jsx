@@ -211,7 +211,7 @@ function RouteComponent() {
             {" "}
             {/* Menggunakan VStack untuk memisahkan Spinner dan Text */}
             <Spinner size="lg" color="#44B3F8" />
-            <Text>Memuat data penerbangan...</Text>
+            <Text>Memuat history penerbangan...</Text>
           </VStack>
         </Box>
       ) : filteredOrders.length === 0 || isError ? (

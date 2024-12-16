@@ -36,7 +36,8 @@
     "react-simple-typewriter": "^5.0.1",
     "react-sweetalert2": "^0.6.0",
     "react-toastify": "^10.0.6",
-    "react-tooltip": "^4.5.1"
+    "react-tooltip": "^4.5.1",
+    "vite-plugin-pwa": "^0.21.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",

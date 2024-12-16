@@ -7,14 +7,16 @@ import {
   HStack,
   Button,
   VStack,
+  IconButton,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMagnifyingGlass, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { CloseButton } from "@/components/ui/close-button";
 
-const Search = ({ setIsSearchOpen, onSearch }) => {
-  const [orderId, setOrderId] = useState("");
+const Search = ({ setIsSearchOpen, onSearch, orderId }) => {
+  const [orderIdState, setOrderIdState] = useState(orderId || "");
   const [recentSearches, setRecentSearches] = useState([]);
+  const [suggestions, setSuggestions] = useState([]);
 
   // Load recent searches from localStorage
   useEffect(() => {
@@ -23,24 +25,35 @@ const Search = ({ setIsSearchOpen, onSearch }) => {
     setRecentSearches(storedSearches);
   }, []);
 
-  const handleSearch = () => {
-    if (orderId) {
-      // Update recent searches
+  // Tambahkan useEffect untuk memberikan saran berdasarkan input
+  useEffect(() => {
+    if (orderIdState) {
+      const filteredSuggestions = recentSearches.filter(
+        (search) => search.includes(orderIdState) // Cek apakah input ada dalam pencarian terkini
+      );
+      setSuggestions(filteredSuggestions);
+    } else {
+      setSuggestions([]); // Kosongkan saran jika input kosong
+    }
+  }, [orderIdState, recentSearches]);
 
+  const handleSearch = () => {
+    if (orderIdState) {
+      // Update recent searches
       const updatedSearches = [
-        orderId,
-        ...recentSearches.filter((search) => search !== orderId),
-      ].slice(0, 5); // Max 5 recent searches
+        orderIdState,
+        ...recentSearches.filter((search) => search !== orderIdState),
+      ].slice(0, 3);
       setRecentSearches(updatedSearches);
       localStorage.setItem("recentSearches", JSON.stringify(updatedSearches));
 
-      onSearch(orderId);
+      onSearch(orderIdState);
     }
     setIsSearchOpen(false);
   };
 
   const handleSelectRecent = (search) => {
-    setOrderId(search);
+    setOrderIdState(search);
     onSearch(search);
     setIsSearchOpen(false);
   };
@@ -62,6 +75,18 @@ const Search = ({ setIsSearchOpen, onSearch }) => {
       handleSearch();
     }
   };
+
+  // Tambahkan useEffect untuk memberikan saran berdasarkan orderId
+  useEffect(() => {
+    if (orderIdState) {
+      const newSuggestions = recentSearches.filter(
+        (search) => search.toLowerCase().includes(orderIdState.toLowerCase()) // Cek apakah input ada dalam pencarian terkini
+      );
+      setSuggestions(newSuggestions);
+    } else {
+      setSuggestions([]); // Kosongkan saran jika input kosong
+    }
+  }, [orderIdState]);
 
   return (
     <>
@@ -109,8 +134,8 @@ const Search = ({ setIsSearchOpen, onSearch }) => {
                 }}
               />
               <Input
-                value={orderId}
-                onChange={(e) => setOrderId(e.target.value)}
+                value={orderIdState}
+                onChange={(e) => setOrderIdState(e.target.value)}
                 onKeyPress={handleKeyPress}
                 variant="unstyled"
                 placeholder="Masukkan Nomor Penerbangan"
@@ -123,6 +148,29 @@ const Search = ({ setIsSearchOpen, onSearch }) => {
               <CloseButton onClick={() => setIsSearchOpen(false)} />
             </Box>
           </HStack>
+
+          {/* Menampilkan saran jika ada */}
+          {suggestions.length > 0 && (
+            <VStack spacing={1} px={5} width="100%">
+              {suggestions.map((suggestion) => (
+                <HStack
+                  key={suggestion}
+                  justifyContent="space-between"
+                  width="100%"
+                  borderBottom="1px solid #E2E8F0"
+                  pb={1}
+                >
+                  <Text
+                    cursor="pointer"
+                    onClick={() => handleSelectRecent(suggestion)}
+                    color="blue.500"
+                  >
+                    {suggestion}
+                  </Text>
+                </HStack>
+              ))}
+            </VStack>
+          )}
 
           {recentSearches.length > 0 ? (
             <>

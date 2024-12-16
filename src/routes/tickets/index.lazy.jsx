@@ -22,15 +22,18 @@ export const Route = createLazyFileRoute('/tickets/')({
 
 function RouteComponent() {
 	const navigate = useNavigate();
+	const location = useLocation();
 
 	const [tickets, setTickets] = useState([]);
 	const [selectedDay, setSelectedDay] = useState(0);
 	const [activeAccordion, setActiveAccordion] = useState(null);
 	const [isFilterOpen, setFilterOpen] = useState(false);
+	// state management transit
 	const [isTransitFilter, setIsTransitFilter] = useState(false);
 	const [isDirectFilter, setIsDirectFilter] = useState(false);
+	// state managenent airline
+	const [selectedAirline, setSelectedAirline] = useState(null);
 
-	const location = useLocation();
 	// Ambil parameter URL
 	const urlParams = new URLSearchParams(location.search);
 	const params = {
@@ -45,70 +48,17 @@ function RouteComponent() {
 		isTransit: urlParams.get('isTransit'),
 		orderBy: urlParams.get('orderBy') || 'price_asc',
 		passenger: parseInt(urlParams.get('adult')) + parseInt(urlParams.get('child')) + parseInt(urlParams.get('infant')),
+		airline: urlParams.get('airline'),
 	};
 
-	const { data, isLoading, isSuccess, isError } = useQuery({
-		queryKey: ['tickets', params],
-		queryFn: async () => {
-			const response = await getTicketsListing(params);
-			return response;
-		},
-		retry: 0,
-	});
-
+	// Cek apakah semua parameter yang diperlukan ada
 	useEffect(() => {
-		if (Array.isArray(data)) {
-			setTickets(data);
-		} else {
-			setTickets([]);
+		const hasRequiredParams = params.departureCity && params.arrivalCity && params.classType && params.flightDate;
+
+		if (!hasRequiredParams) {
+			navigate({ to: '/' }); // Arahkan ke halaman utama jika tidak ada parameter yang diperlukan
 		}
-	}, [data, isSuccess, params.flightDate]);
-
-	useEffect(() => {
-		const initialIsTransit = getIsTransitFromUrl();
-		setIsTransitFilter(initialIsTransit);
-	}, []);
-
-	useEffect(() => {
-		// Set filter berdasarkan status isTransitFilter dan isDirectFilter
-		if (data) {
-			setTickets(data);
-		}
-	}, [data]); // Memantau perubahan pada filter dan data
-
-	useEffect(() => {
-		// Update URL params setiap kali filter diubah
-		if (isDirectFilter && isTransitFilter) {
-			updateUrlParams('isTransit', undefined); // Hapus isTransit jika kedua filter aktif
-		} else if (isDirectFilter) {
-			updateUrlParams('isTransit', '0'); // Set isTransit ke 0 jika filter langsung aktif
-		} else if (isTransitFilter) {
-			updateUrlParams('isTransit', '1'); // Set isTransit ke 1 jika filter transit aktif
-		} else {
-			updateUrlParams('isTransit', undefined); // Hapus isTransit jika tidak ada filter
-		}
-	}, [isDirectFilter, isTransitFilter]); // Memantau perubahan pada filter
-
-	const updateTickets = selectedDate => {
-		// Perbarui data tickets berdasarkan tanggal
-		getTicketsListing({ ...params, flightDate: selectedDate }).then(data => {
-			setTickets(data);
-		});
-	};
-
-	const handleAccordionToggle = index => {
-		setActiveAccordion(prev => (prev === index ? null : index));
-	};
-
-	const handleApplyFilter = filteredData => {
-		setTickets(filteredData);
-	};
-
-	const getIsTransitFromUrl = () => {
-		const urlParams = new URLSearchParams(window.location.search);
-		const isTransit = urlParams.get('search[isTransit]');
-		return isTransit === '1';
-	};
+	}, [params, navigate]);
 
 	const updateUrlParams = (key, value) => {
 		const urlParams = new URLSearchParams(window.location.search);
@@ -121,12 +71,117 @@ function RouteComponent() {
 		window.history.replaceState({}, '', newUrl);
 	};
 
+	const { data, isLoading, isSuccess, isError } = useQuery({
+		queryKey: ['tickets', params],
+		queryFn: async () => {
+			const response = await getTicketsListing(params);
+			return response;
+		},
+		retry: 0,
+	});
+
+	// cek apakah data adalah valid array?
+	useEffect(() => {
+		if (Array.isArray(data)) {
+			setTickets(data);
+		} else {
+			setTickets([]);
+		}
+	}, [data, isSuccess, params.flightDate]);
+
+	// handle filter date
+	const updateTickets = selectedDate => {
+		// Perbarui data tickets berdasarkan tanggal
+		getTicketsListing({ ...params, flightDate: selectedDate }).then(data => {
+			setTickets(data);
+		});
+	};
+
+	// handle accordion
+	const handleAccordionToggle = index => {
+		setActiveAccordion(prev => (prev === index ? null : index));
+	};
+
+	// handle filter
+	const handleApplyFilter = filteredData => {
+		setTickets(filteredData);
+	};
+
+	// Mengambil Nilai Filter Transit dari URL
+	const getIsTransitFromUrl = () => {
+		const urlParams = new URLSearchParams(window.location.search);
+		const isTransit = urlParams.get('search[isTransit]');
+		return isTransit === '1';
+	};
+
+	useEffect(() => {
+		const initialIsTransit = getIsTransitFromUrl();
+		setIsTransitFilter(initialIsTransit);
+	}, []);
+
+	useEffect(() => {
+		// Update URL params setiap kali filter diubah
+		if (isDirectFilter && isTransitFilter) {
+			updateUrlParams('isTransit', undefined);
+		} else if (isDirectFilter) {
+			updateUrlParams('isTransit', '0');
+		} else if (isTransitFilter) {
+			updateUrlParams('isTransit', '1');
+		} else {
+			updateUrlParams('isTransit', undefined);
+		}
+	}, [isDirectFilter, isTransitFilter]);
+
+	useEffect(() => {
+		// Set filter berdasarkan status isTransitFilter dan isDirectFilter
+		if (data) {
+			setTickets(data);
+		}
+	}, [data]); // Memantau perubahan pada filter dan data
+
+	// Handler untuk Perubahan Filter Transit
 	const handleDirectFilterChange = e => {
 		setIsDirectFilter(e.target.checked);
 	};
 
 	const handleTransitFilterChange = e => {
 		setIsTransitFilter(e.target.checked);
+	};
+
+	// Handler untuk perubahan filter maskapai
+	const handleAirlineFilterChange = (airline, isChecked) => {
+		const updatedAirlines = isChecked ? [...(selectedAirline || []), airline] : (selectedAirline || []).filter(item => item !== airline);
+
+		setSelectedAirline(updatedAirlines);
+
+		// Perbarui parameter URL
+		updateUrlParams('search[airline]', updatedAirlines.join(','));
+	};
+
+	useEffect(() => {
+		// Memanggil backend saat filter maskapai diubah
+		const fetchFilteredTickets = async () => {
+			const updatedParams = {
+				...params,
+				airline: selectedAirline ? selectedAirline.join(',') : undefined, // Gabungkan maskapai terpilih
+			};
+
+			const response = await getTicketsListing(updatedParams);
+			setTickets(response);
+		};
+
+		if (selectedAirline) {
+			fetchFilteredTickets();
+		}
+	}, [selectedAirline]); // Bergantung pada perubahan selectedAirline
+
+	const getUniqueAirlines = tickets => {
+		if (!Array.isArray(tickets)) return [];
+
+		// Ekstrak nama maskapai dari flights[0].airline.name
+		const airlines = tickets.flatMap(ticket => ticket.flights?.map(flight => flight.airline.name) || []);
+
+		return [...new Set(airlines)]; // Hilangkan duplikat
 	};
 
 	// Inisialisasi state untuk ticketId1 dan ticketId2
@@ -141,7 +196,7 @@ function RouteComponent() {
 
 		// Jika ada returnDate (pulang-pergi)
 		if (params.returnDate) {
-			// Jika belum ada ticketId1, artinya ini adalah pemilihan tiket pergi
+			// Jika belum ada ticketId1, ini adalah pemilihan tiket pergi
 			if (!ticketId1) {
 				setTicketId1(ticketId); // Set ticketId1 untuk tiket pergi
 
@@ -160,7 +215,7 @@ function RouteComponent() {
 			}
 		}
 
-		// Jika sudah ada ticketId1, artinya ini adalah pemilihan tiket pulang
+		// Jika sudah ada ticketId1, ini adalah pemilihan tiket pulang
 		else if (!params.returnDate) {
 			if (ticketId1 === null) {
 				setTicketId2(ticketId); // Set ticketId2 untuk tiket pulang
@@ -256,48 +311,89 @@ function RouteComponent() {
 
 			<Grid mt={8}>
 				<Grid templateColumns={['1fr', '2fr 4fr']} gap={4} alignItems="flex-start">
-					<Box display="flex" width="100%" borderWidth="1px" borderRadius="md" px={6} py={4} shadow="sm" height="auto">
-						<AccordionRoot collapsible>
-							<AccordionItem>
-								<Box display="block" width="100%">
-									{/* Header */}
-									<Flex justify={'space-between'} alignItems="flex-start">
-										<Text fontSize={'lg'} fontWeight={'semibold'}>
-											Filter Lainnya
-										</Text>
-										<AccordionItemTrigger display={'inline-block'} width={'auto'} onClick={() => handleAccordionToggle()}>
-											<Text cursor={'pointer'} display={'flex'} alignItems={'flex-start'}>
-												<FontAwesomeIcon
-													icon={faChevronUp}
-													style={{
-														transition: 'transform 0.3s',
-														transform: activeAccordion ? 'rotate(180deg)' : 'rotate(0deg)',
-													}}
-												/>
+					<VStack gap={4}>
+						<Box display="flex" width="100%" borderWidth="1px" borderRadius="md" px={6} py={4} shadow="sm" height="auto">
+							<AccordionRoot collapsible>
+								<AccordionItem>
+									<Box display="block" width="100%">
+										{/* Header */}
+										<Flex justify={'space-between'} alignItems="flex-start">
+											<Text fontSize={'lg'} fontWeight={'semibold'}>
+												Filter Transit
 											</Text>
-										</AccordionItemTrigger>
-									</Flex>
+											<AccordionItemTrigger display={'inline-block'} width={'auto'} onClick={() => handleAccordionToggle()}>
+												<Text cursor={'pointer'} display={'flex'} alignItems={'flex-start'}>
+													<FontAwesomeIcon
+														icon={faChevronUp}
+														style={{
+															transition: 'transform 0.3s',
+															transform: activeAccordion ? 'rotate(180deg)' : 'rotate(0deg)',
+														}}
+													/>
+												</Text>
+											</AccordionItemTrigger>
+										</Flex>
 
-									{/* Accordion Content */}
-									<AccordionItemContent>
-										<Box display="flex" flexDirection="column" gap={4} py={4}>
+										{/* Accordion Content */}
+										<AccordionItemContent>
 											<Box display="flex" flexDirection="column" gap={4} py={4}>
-												{/* Checkbox Langsung */}
-												<Checkbox isChecked={isDirectFilter} onChange={handleDirectFilterChange} colorScheme="blue">
-													Tampilkan Tiket Langsung
-												</Checkbox>
+												<Box display="flex" flexDirection="column" gap={4} py={4}>
+													{/* Checkbox Langsung */}
+													<Checkbox isChecked={isDirectFilter} onChange={handleDirectFilterChange} colorScheme="blue">
+														Tampilkan Tiket Langsung
+													</Checkbox>
 
-												{/* Checkbox Transit */}
-												<Checkbox isChecked={isTransitFilter} onChange={handleTransitFilterChange} colorScheme="blue">
-													Tampilkan Tiket Transit
-												</Checkbox>
+													{/* Checkbox Transit */}
+													<Checkbox isChecked={isTransitFilter} onChange={handleTransitFilterChange} colorScheme="blue">
+														Tampilkan Tiket Transit
+													</Checkbox>
+												</Box>
 											</Box>
-										</Box>
-									</AccordionItemContent>
-								</Box>
-							</AccordionItem>
-						</AccordionRoot>
-					</Box>
+										</AccordionItemContent>
+									</Box>
+								</AccordionItem>
+							</AccordionRoot>
+						</Box>
+						<Box display="flex" width="100%" borderWidth="1px" borderRadius="md" px={6} py={4} shadow="sm" height="auto">
+							<AccordionRoot collapsible>
+								<AccordionItem>
+									<Box display="block" width="100%">
+										{/* Header */}
+										<Flex justify={'space-between'} alignItems="flex-start">
+											<Text fontSize={'lg'} fontWeight={'semibold'}>
+												Filter Maskapai
+											</Text>
+											<AccordionItemTrigger display={'inline-block'} width={'auto'} onClick={() => handleAccordionToggle()}>
+												<Text cursor={'pointer'} display={'flex'} alignItems={'flex-start'}>
+													<FontAwesomeIcon
+														icon={faChevronUp}
+														style={{
+															transition: 'transform 0.3s',
+															transform: activeAccordion ? 'rotate(180deg)' : 'rotate(0deg)',
+														}}
+													/>
+												</Text>
+											</AccordionItemTrigger>
+										</Flex>
+
+										{/* Accordion Content */}
+										<AccordionItemContent>
+											<Box display="flex" flexDirection="column" gap={4} py={4}>
+												<Box display="flex" flexDirection="column" gap={4} py={4}>
+													{/* TODO: mapping airlines dari tickets.flights.airline disetiap checkbox*/}
+													{getUniqueAirlines(tickets).map((airline, index) => (
+														<Checkbox key={index} isChecked={selectedAirline?.includes(airline)} onChange={e => handleAirlineFilterChange(airline, e.target.checked)} colorScheme="blue">
+															{airline}
+														</Checkbox>
+													))}
+												</Box>
+											</Box>
+										</AccordionItemContent>
+									</Box>
+								</AccordionItem>
+							</AccordionRoot>
+						</Box>
+					</VStack>
 					{/* Ticket Card */}
 					{isLoading ? (
 						<Box width="xs" textAlign="center" mx="auto" display="flex" flexDirection="column" alignItems="center">
@@ -328,7 +424,7 @@ function RouteComponent() {
 														<Flex align={'center'} gap={6}>
 															<Image src={ticket.flights[0].airline.logo} alt="Airline logo" boxSize="40px" />
 															<Text fontWeight="normal" fontSize={'md'}>
-																{ticket.flights[0].airline.name}
+																{ticket.flights[0].airline.name} - {ticket.class}
 															</Text>
 														</Flex>
 													</HStack>
@@ -421,6 +517,7 @@ function RouteComponent() {
 																			timeZone: 'UTC',
 																		}).format(new Date(flight.departure.time))}
 																	</Text>
+
 																	<Text fontSize="md" fontWeight="semibold">
 																		{flight.departure.airport.name}
 																	</Text>
@@ -434,6 +531,9 @@ function RouteComponent() {
 															<HStack align="center" w="100%" borderBottom="1px solid" borderColor="#A8B6B7" pb={6} pt={3} gap={6}>
 																<Image src={flight.airline.logo} alt="Airline logo" boxSize="40px" />
 																<VStack align="start" gap={1} spacing={0}>
+																	<Text fontSize="md" fontWeight="semibold">
+																		{ticket.flights[0].airline.name} - {ticket.class}
+																	</Text>
 																	<Text fontSize="md" fontWeight="bold">
 																		{flight.airplane}
 																	</Text>
