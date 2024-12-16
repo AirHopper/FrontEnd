@@ -22,7 +22,10 @@ export const Route = createLazyFileRoute('/payment/success')({
 })
 
 function PaymentSuccess() {
-    
+    const navigate = useNavigate();
+    const handleClick = () => {
+        navigate({ to: '/' })
+    }
     return (
         <>
             <Box bg="white" px={4}>
@@ -99,6 +102,7 @@ function PaymentSuccess() {
                         borderRadius="lg"
                         marginTop={5}
                         color="white"
+                        onClick={handleClick}
                         >
                         Cari Penerbangan Lain
                         </Button>
