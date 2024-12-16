@@ -10,6 +10,7 @@ export const getTicketsListing = async params => {
 	if (params.flightDate) queryParams.append('search[flightDate]', params.flightDate);
 	if (params.orderBy) queryParams.append('orderBy', params.orderBy);
 	if (params.isTransit) queryParams.append('search[isTransit]', params.isTransit);
+	if (params.airline) queryParams.append('search[airline]', params.airline);
 
 	const url = `${import.meta.env.VITE_API_URL}${import.meta.env.VITE_API_VERSION}/tickets?${queryParams.toString()}`;
 
