@@ -73,7 +73,7 @@ function Beranda() {
         zIndex="5"
       ></Box>
 
-      <Promo />
+      <Promo tickets={tickets} />
 
       <Stack gap={5} position="relative" top={{ base: "2", lg: "-5" }}>
         <SearchTicket

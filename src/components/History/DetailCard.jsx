@@ -13,10 +13,8 @@ const DetailCard = ({ order }) => {
     return <Text>No order selected.</Text>;
   }
 
-  console.log("Order data in DetailCard:", order);
-
   return (
-    <Box p={4} my={6}>
+    <Box p={4} my={6} id="history-detail">
       {/* Header */}
       <Box display="flex" justifyContent="space-between" mb={4}>
         <Text fontSize={"lg"} fontWeight={"bold"}>

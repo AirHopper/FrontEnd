@@ -44,49 +44,55 @@ const DatePicker = ({ dateRange, setDateRange, setIsPickerOpen, onSave }) => {
       left={0}
       width="100%"
       height="100%"
-      bg="rgba(0, 0, 0, 0.5)"
+      bg="rgba(0, 0, 0, 0.3)"
       zIndex="9"
     >
       <Box
         position="absolute"
-        top="50%"
-        left="50%"
+        top={{ base: "400px", sm: "325px", lg: "65%", xl: "50%" }}
+        left={{ base: "50%", sm: "75%", lg: "70%", xl: "70%" }}
         transform="translate(-50%, -50%)"
+        transition="all 0.3s ease"
         bg="white"
         shadow="lg"
+        zIndex="10"
         borderRadius="md"
-        p="4"
-        width="90%"
-        maxWidth="400px"
       >
         {/* Tombol X untuk menutup filter dengan lebar penuh */}
-        <Box
-          top="10px"
-          right="10px"
-          display="flex"
-          justifyContent="flex-end"
-          mb={4}
-        >
-          <CloseButton onClick={() => setIsPickerOpen(false)} />
-        </Box>
+        <HStack borderRadius="none" justifySelf="end">
+          <CloseButton
+            aria-label="Close Picker"
+            onClick={() => setIsPickerOpen(false)}
+            rounded="none"
+            borderTopRightRadius="md"
+          />
+        </HStack>
 
         {/* Date Range Picker */}
-        <DateRange
-          editableDateInputs={true}
-          onChange={(item) => setLocalDateRange([item.selection])}
-          moveRangeOnFirstSelection={false}
-          ranges={localDateRange}
-          showMonthAndYearPickers={false}
-          showDateDisplay={false}
-        />
+        <Box borderTopWidth="2px">
+          <DateRange
+            editableDateInputs={true}
+            onChange={(item) => setLocalDateRange([item.selection])}
+            moveRangeOnFirstSelection={false}
+            ranges={localDateRange}
+            color="#44b3f8"
+            rangeColors="#44b3f8"
+            showMonthAndYearPickers={false}
+            showDateDisplay={false}
+          />
+        </Box>
+
+        <HStack borderTopWidth="2px"></HStack>
 
         {/* Tombol Simpan di bagian bawah kanan */}
-        <HStack justifyContent="flex-end" mt={4}>
+        <HStack justifyContent="flex-end" p={3}>
           <Button
+            px="35px"
             colorScheme="blue"
             onClick={handleSave}
             bg={"#44B3F8"}
             _hover={{ bg: "#2078B8" }}
+            borderRadius="xl"
           >
             Simpan
           </Button>

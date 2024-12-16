@@ -1,6 +1,6 @@
 import { Stack, Text, Image, Card } from "@chakra-ui/react";
 
-const TicketCard = ({ ticket, discount, onSelectCard }) => {
+const TicketCard = ({ ticket, onSelectCard }) => {
   const formatDate = (dateString) => {
     const options = { day: "numeric", month: "long", year: "numeric" };
     const formatter = new Intl.DateTimeFormat("id-ID", options); // 'id-ID' for Bahasa Indonesia

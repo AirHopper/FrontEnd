@@ -64,11 +64,8 @@ function RouteComponent() {
   useEffect(() => {
     if (isSuccess) {
       setOrders(data);
-      console.log("Fetched history:", data);
     }
   }, [data, isSuccess]);
-
-  console.log("Order data:", orders);
 
   const filteredOrders = orders; // Tidak ada filter lagi, semua dilakukan di backend
 
@@ -93,7 +90,6 @@ function RouteComponent() {
       element.scrollIntoView({ behavior: "smooth" });
     }
   };
-  console.log("Selected Order ID in Route:", selectedOrderId);
 
   const toggleDatePicker = () => {
     setIsPickerOpen((prevState) => !prevState);

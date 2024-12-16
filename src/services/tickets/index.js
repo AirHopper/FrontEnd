@@ -52,8 +52,8 @@ export const getCities = async (query) => {
   return result?.data;
 };
 
-export const getDiscounts = async (id) => {
-  let url = `${import.meta.env.VITE_API_URL}${import.meta.env.VITE_API_VERSION}/discounts/${id}`;
+export const getDiscounts = async () => {
+  let url = `${import.meta.env.VITE_API_URL}${import.meta.env.VITE_API_VERSION}/discounts`;
 
   const response = await fetch(url, {
     method: "GET",
@@ -62,7 +62,6 @@ export const getDiscounts = async (id) => {
   // get data
   const result = await response.json();
 
-  console.log(result);
   if (!result?.success) {
     throw new Error(result?.message);
   }

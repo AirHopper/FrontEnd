@@ -56,10 +56,6 @@ function RouteComponent() {
 		retry: 0,
 	});
 
-	console.log('ini flight:', data);
-
-	console.log('cek: ', tickets);
-
 	useEffect(() => {
 		if (Array.isArray(data)) {
 			setTickets(data);

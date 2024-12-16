@@ -7,7 +7,6 @@ import {
   HStack,
   Button,
   VStack,
-  IconButton,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -27,6 +26,7 @@ const Search = ({ setIsSearchOpen, onSearch }) => {
   const handleSearch = () => {
     if (orderId) {
       // Update recent searches
+
       const updatedSearches = [
         orderId,
         ...recentSearches.filter((search) => search !== orderId),
