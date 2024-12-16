@@ -28,6 +28,7 @@ function RouteComponent() {
 	const [activeAccordion, setActiveAccordion] = useState(null);
 	const [isFilterOpen, setFilterOpen] = useState(false);
 	const [isTransitFilter, setIsTransitFilter] = useState(false);
+	const [isDirectFilter, setIsDirectFilter] = useState(false);
 
 	const location = useLocation();
 	// Ambil parameter URL
@@ -55,9 +56,15 @@ function RouteComponent() {
 		retry: 0,
 	});
 
+	console.log('ini flight:', data);
+
+	console.log('cek: ', tickets);
+
 	useEffect(() => {
 		if (Array.isArray(data)) {
 			setTickets(data);
+		} else {
+			setTickets([]);
 		}
 	}, [data, isSuccess, params.flightDate]);
 
@@ -65,6 +72,26 @@ function RouteComponent() {
 		const initialIsTransit = getIsTransitFromUrl();
 		setIsTransitFilter(initialIsTransit);
 	}, []);
+
+	useEffect(() => {
+		// Set filter berdasarkan status isTransitFilter dan isDirectFilter
+		if (data) {
+			setTickets(data);
+		}
+	}, [data]); // Memantau perubahan pada filter dan data
+
+	useEffect(() => {
+		// Update URL params setiap kali filter diubah
+		if (isDirectFilter && isTransitFilter) {
+			updateUrlParams('isTransit', undefined); // Hapus isTransit jika kedua filter aktif
+		} else if (isDirectFilter) {
+			updateUrlParams('isTransit', '0'); // Set isTransit ke 0 jika filter langsung aktif
+		} else if (isTransitFilter) {
+			updateUrlParams('isTransit', '1'); // Set isTransit ke 1 jika filter transit aktif
+		} else {
+			updateUrlParams('isTransit', undefined); // Hapus isTransit jika tidak ada filter
+		}
+	}, [isDirectFilter, isTransitFilter]); // Memantau perubahan pada filter
 
 	const updateTickets = selectedDate => {
 		// Perbarui data tickets berdasarkan tanggal
@@ -98,37 +125,21 @@ function RouteComponent() {
 		window.history.replaceState({}, '', newUrl);
 	};
 
-	const handleCheckboxChange = (isDirectChecked, isTransitChecked) => {
-		let updatedIsTransit = null;
+	const handleDirectFilterChange = e => {
+		setIsDirectFilter(e.target.checked);
+	};
 
-		if (isDirectChecked && isTransitChecked) {
-			updatedIsTransit = null;
-		} else if (isTransitChecked) {
-			updatedIsTransit = '1';
-		} else if (isDirectChecked) {
-			updatedIsTransit = '0';
-		} else {
-			updatedIsTransit = null;
-		}
-
-		updateUrlParams('search[isTransit]', updatedIsTransit);
-
-		setIsTransitFilter(isTransitChecked);
-		const updatedParams = { ...params };
-		if (updatedIsTransit !== null) {
-			updatedParams.isTransit = updatedIsTransit;
-		} else {
-			delete updatedParams.isTransit;
-		}
-
-		getTicketsListing(updatedParams).then(data => {
-			setTickets(data);
-		});
+	const handleTransitFilterChange = e => {
+		setIsTransitFilter(e.target.checked);
 	};
 
 	// Inisialisasi state untuk ticketId1 dan ticketId2
 	const [ticketId1, setTicketId1] = useState(null);
 	const [ticketId2, setTicketId2] = useState(null);
+
+	// Logika untuk menentukan apakah pemilihan tiket pulang sedang berlangsung
+	const isReturnTicketSelection = ticketId1 !== null && params.returnDate === undefined;
+
 	const handleSendSearch = ticketId => {
 		const searchParams = new URLSearchParams();
 
@@ -158,7 +169,7 @@ function RouteComponent() {
 			if (ticketId1 === null) {
 				setTicketId2(ticketId); // Set ticketId2 untuk tiket pulang
 
-				searchParams.append('ticketId', ticketId);
+				searchParams.append('ticketId1', ticketId);
 
 				if (params.classType) searchParams.append('classType', params.classType);
 				if (params.adult) searchParams.append('adult', params.adult);
@@ -228,7 +239,15 @@ function RouteComponent() {
 			</Grid>
 
 			{/* Filter Day */}
-			<FilterDay selectedDay={selectedDay} setSelectedDay={setSelectedDay} paramsDate={params.flightDate} onUpdateTickets={updateTickets} />
+			<FilterDay
+				selectedDay={selectedDay}
+				setSelectedDay={setSelectedDay}
+				paramsDate={params.flightDate}
+				params={params}
+				ticketId1={ticketId1} // Tambahkan properti ini
+				onUpdateTickets={updateTickets}
+				isReturnTicketSelection={isReturnTicketSelection}
+			/>
 
 			{/* Select Filter */}
 			<Box textAlign="right" mt={4}>
@@ -237,7 +256,7 @@ function RouteComponent() {
 				</Button>{' '}
 			</Box>
 
-			{isFilterOpen && <SelectFilter isFocused={isFilterOpen} onCloseClick={() => setFilterOpen(false)} tickets={tickets} onApplyFilter={handleApplyFilter} />}
+			{isFilterOpen && <SelectFilter onCloseClick={() => setFilterOpen(false)} onApplyFilter={handleApplyFilter} />}
 
 			<Grid mt={8}>
 				<Grid templateColumns={['1fr', '2fr 4fr']} gap={4} alignItems="flex-start">
@@ -268,21 +287,13 @@ function RouteComponent() {
 										<Box display="flex" flexDirection="column" gap={4} py={4}>
 											<Box display="flex" flexDirection="column" gap={4} py={4}>
 												{/* Checkbox Langsung */}
-												<Checkbox
-													isChecked={!isTransitFilter} // Langsung
-													onChange={e => handleCheckboxChange(e.target.checked, isTransitFilter)}
-													colorScheme="blue"
-												>
-													Langsung
+												<Checkbox isChecked={isDirectFilter} onChange={handleDirectFilterChange} colorScheme="blue">
+													Tampilkan Tiket Langsung
 												</Checkbox>
 
 												{/* Checkbox Transit */}
-												<Checkbox
-													isChecked={isTransitFilter} // Transit
-													onChange={e => handleCheckboxChange(!e.target.checked, e.target.checked)} // Perbaiki
-													colorScheme="blue"
-												>
-													Transit
+												<Checkbox isChecked={isTransitFilter} onChange={handleTransitFilterChange} colorScheme="blue">
+													Tampilkan Tiket Transit
 												</Checkbox>
 											</Box>
 										</Box>
@@ -321,7 +332,7 @@ function RouteComponent() {
 														<Flex align={'center'} gap={6}>
 															<Image src={ticket.flights[0].airline.logo} alt="Airline logo" boxSize="40px" />
 															<Text fontWeight="normal" fontSize={'md'}>
-																{ticket.flights[0].airplane}
+																{ticket.flights[0].airline.name}
 															</Text>
 														</Flex>
 													</HStack>
@@ -353,11 +364,13 @@ function RouteComponent() {
 														{/* Duration Info */}
 														<VStack align="center" mx={[4, 6]} gap={1}>
 															<Text fontWeight="normal" fontSize={'md'} color={'#A8B6B7'}>
-																{ticket.isTransit ? `${ticket.flights.length - 1} pemberhentian` : 'Langsung'}
+																{ticket.isTransits && ticket.flights.length > 0 ? `${ticket.flights.length - 1} Pemberhentian` : 'Langsung'}
 															</Text>
 															<Box fontWeight="normal" fontSize={'md'} borderBottom="2px solid red" width={['100%', '14vw']} />
 															<Text color={'#A8B6B7'}>
-																{Math.floor(ticket.flights[0].duration / 60)}h {ticket.flights[0].duration % 60}m
+																{ticket.isTransits && ticket.flights.length > 0
+																	? `${Math.floor(ticket.flights.reduce((total, flight) => total + flight.duration, 0) / 60)}h ${ticket.flights.reduce((total, flight) => total + flight.duration, 0) % 60}m`
+																	: `${Math.floor(ticket.flights[0].duration / 60)}h ${ticket.flights[0].duration % 60}m`}
 															</Text>
 														</VStack>
 
@@ -373,7 +386,7 @@ function RouteComponent() {
 
 													{/* Price and Button */}
 													<Grid gap={2} justifyItems="flex-end" mt={[4, 6]}>
-														<Text fontSize={['md', 'lg']} fontWeight="bold" color="#2078B8" textAlign="end">
+														<Text fontSize={['md', 'lg']} fontWeight="bold" color={ticket.discount ? 'red' : '#2078B8'} textAlign="end">
 															IDR. {new Intl.NumberFormat('id-ID').format(ticket.totalPrice)}
 														</Text>
 
@@ -392,7 +405,6 @@ function RouteComponent() {
 															<Text fontSize="md" fontWeight="bold" color="#2078B8">
 																Detail Penerbangan {index + 1}
 															</Text>
-															{console.log(ticket)}
 
 															{/* Keberangkatan */}
 															<HStack justify="space-between" align="start" w="100%" borderBottom="1px solid" borderColor="#A8B6B7" pb={6} pt={1}>
@@ -424,7 +436,7 @@ function RouteComponent() {
 
 															{/* Informasi Maskapai */}
 															<HStack align="center" w="100%" borderBottom="1px solid" borderColor="#A8B6B7" pb={6} pt={3} gap={6}>
-																<Image src={flight.airline} alt="Airline logo" boxSize="40px" />
+																<Image src={flight.airline.logo} alt="Airline logo" boxSize="40px" />
 																<VStack align="start" gap={1} spacing={0}>
 																	<Text fontSize="md" fontWeight="bold">
 																		{flight.airplane}

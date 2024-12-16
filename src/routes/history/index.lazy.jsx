@@ -2,15 +2,16 @@ import React, { useEffect, useState } from "react";
 import { createLazyFileRoute, Link } from "@tanstack/react-router";
 import {
   Box,
+  Button,
   Container,
   Grid,
   Heading,
+  Image,
   Spinner,
   Stack,
   Text,
-  Image,
+  VStack,
 } from "@chakra-ui/react";
-import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowLeft,
@@ -23,15 +24,24 @@ import DetailCard from "../../components/History/DetailCard";
 import DatePicker from "../../components/History/DatePicker";
 import Search from "../../components/History/Search";
 import { getHistory } from "../../services/history";
-import { NoList } from "../../assets/img";
+import NoList from "../../assets/img/no_list.png";
 
 export const Route = createLazyFileRoute("/history/")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const [selectedTicket, setSelectedTicket] = useState(null);
-  const [selectedTicketId, setSelectedTicketId] = useState(null);
+  // Ambil parameter URL
+  const urlParams = new URLSearchParams(window.location.search);
+
+  const [params, setParams] = useState({
+    startDate: urlParams.get("search[startFlightDate]"),
+    endDate: urlParams.get("search[endFlightDate]"),
+    orderId: urlParams.get("search[orderId]"),
+  });
+
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [dateRange, setDateRange] = useState([
     {
       startDate: new Date(),
@@ -40,59 +50,50 @@ function RouteComponent() {
     },
   ]);
 
-  // State untuk kontrol munculkan input
+  // State untuk kontrol munculkan inputx
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  const [tickets, setTickets] = useState([]);
+  const [orders, setOrders] = useState([]);
   const { data, isSuccess, isLoading, isError } = useQuery({
-    queryKey: ["history"],
-    queryFn: () => getHistory(),
+    queryKey: ["history", dateRange, params],
+    queryFn: () => getHistory(params),
     retry: 1,
   });
 
   useEffect(() => {
     if (isSuccess) {
-      setTickets(data);
+      setOrders(data);
+      console.log("Fetched history:", data);
     }
   }, [data, isSuccess]);
 
-  const filteredTickets = tickets.filter((ticket) => {
-    const ticketDeparture = new Date(ticket.departure.time);
-    const ticketArrival = new Date(ticket.arrival.time);
-    const startDate = dateRange[0].startDate;
-    let endDate = dateRange[0].endDate;
+  console.log("Order data:", orders);
 
-    // Perluas `endDate` ke akhir hari jika ada
-    if (endDate) {
-      endDate = new Date(endDate);
-      endDate.setHours(23, 59, 59, 999);
-    }
+  const filteredOrders = orders; // Tidak ada filter lagi, semua dilakukan di backend
 
-    if (startDate && endDate) {
-      // Tiket valid jika:
-      // 1. Berangkat dalam rentang waktu
-      // 2. Tiba dalam rentang waktu
-      // 3. Rentang waktu sepenuhnya mencakup tiket
-      return (
-        (ticketDeparture >= startDate && ticketDeparture <= endDate) ||
-        (ticketArrival >= startDate && ticketArrival <= endDate) ||
-        (ticketDeparture < startDate && ticketArrival > endDate)
-      );
-    }
-    return true; // Show all tickets if date range is not selected.
-  });
+  // Handle Simpan dari DatePicker
+  const handleSaveDateRange = ({ startDate, endDate }) => {
+    // Perbarui URL dengan parameter baru
+    const newUrl = new URL(window.location);
+    newUrl.searchParams.set("search[startFlightDate]", startDate);
+    newUrl.searchParams.set("search[endFlightDate]", endDate);
+    window.history.pushState({}, "", newUrl);
 
-  const handleSelectTicket = (tickets) => {
-    setSelectedTicket(tickets);
-    setSelectedTicketId(tickets.id);
+    // Set params ke state untuk memastikan URL dan data sinkron
+    setParams({ startDate, endDate });
+  };
+
+  const handleSelectOrder = (order) => {
+    setSelectedOrder(order);
+    setSelectedOrderId(order.id);
 
     const element = document.getElementById("history-detail");
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
     }
   };
-  console.log("Selected Ticket ID in Route:", selectedTicketId);
+  console.log("Selected Order ID in Route:", selectedOrderId);
 
   const toggleDatePicker = () => {
     setIsPickerOpen((prevState) => !prevState);
@@ -102,8 +103,26 @@ function RouteComponent() {
     setIsSearchOpen((prevState) => !prevState);
   };
 
+  const handleSearch = (orderId) => {
+    const newParams = { ...params, orderId };
+    setParams(newParams);
+
+    // Tutup detail order saat pencarian dijalankan
+    setSelectedOrder(null);
+    setSelectedOrderId(null);
+
+    // Update URL with new orderId parameter
+    const newUrl = new URL(window.location);
+    if (orderId) {
+      newUrl.searchParams.set("search[orderId]", orderId);
+    } else {
+      newUrl.searchParams.delete("search[orderId]");
+    }
+    window.history.pushState({}, "", newUrl); // Update the browser history
+  };
+
   return (
-    <Container maxW="10/12" py={6} px={0}>
+    <Container maxW="10/12" py={6}>
       <Heading as="h1" size="lg" mb={4} color="black" fontWeight="bold">
         Pilih Penerbangan
       </Heading>
@@ -125,6 +144,7 @@ function RouteComponent() {
           gap={4}
           display="flex"
           flexDirection={["column", "row"]}
+          _hover={{ bg: "#2078B8", color: "white" }}
         >
           <FontAwesomeIcon icon={faArrowLeft} size="lg" />
           <Text>Beranda</Text>
@@ -168,7 +188,9 @@ function RouteComponent() {
       </Grid>
 
       {/* Menampilkan Search ketika isSearchOpen true */}
-      {isSearchOpen && <Search />}
+      {isSearchOpen && (
+        <Search setIsSearchOpen={setIsSearchOpen} onSearch={handleSearch} />
+      )}
 
       {/* Menampilkan DatePicker ketika isPickerOpen true */}
       {isPickerOpen && (
@@ -176,10 +198,27 @@ function RouteComponent() {
           setIsPickerOpen={setIsPickerOpen}
           dateRange={dateRange}
           setDateRange={setDateRange}
+          onSave={handleSaveDateRange}
         />
       )}
 
-      {filteredTickets.length === 0 || isError ? (
+      {isLoading ? (
+        <Box
+          display="flex" // Mengaktifkan flexbox
+          justifyContent="center" // Menjadikan konten rata tengah secara horizontal
+          alignItems="center" // Menjadikan konten rata tengah secara vertikal
+          textAlign="center"
+          py={10}
+          height="50vh"
+        >
+          <VStack spacing={4}>
+            {" "}
+            {/* Menggunakan VStack untuk memisahkan Spinner dan Text */}
+            <Spinner size="lg" color="#44B3F8" />
+            <Text>Memuat data penerbangan...</Text>
+          </VStack>
+        </Box>
+      ) : filteredOrders.length === 0 || isError ? (
         <Stack alignItems="center" mt={5} py={10}>
           <Image
             src={NoList}
@@ -202,11 +241,6 @@ function RouteComponent() {
             Cari Penerbangan
           </Button>
         </Stack>
-      ) : isLoading ? (
-        <Box textAlign="center" py={10} height="100vh">
-          <Spinner size="lg" color="#44B3F8" />
-          <Text mt={4}>Memuat data penerbangan...</Text>
-        </Box>
       ) : (
         <Grid
           templateColumns={["1fr", "6fr 5fr"]}
@@ -221,13 +255,14 @@ function RouteComponent() {
             </Text>
             <Grid gap={4} pt={2}>
               <HistoryCard
-                tickets={filteredTickets}
-                onSelectTicket={handleSelectTicket}
-                selectedTicketId={selectedTicketId}
+                orders={filteredOrders}
+                onSelectOrder={handleSelectOrder}
+                selectedOrderId={selectedOrderId}
               />
             </Grid>
           </Box>
-          {selectedTicket && <DetailCard ticket={selectedTicket} />}
+          {/* Menampilkan DetailCard jika ada order yang dipilih */}
+          {selectedOrder && <DetailCard order={selectedOrder} />}
         </Grid>
       )}
     </Container>

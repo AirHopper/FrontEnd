@@ -275,7 +275,7 @@ const SearchTicket = ({
               From
             </Text>
             <Input
-              width={{ lg: "25.5vw" }}
+              width={{ lg: "25vw" }}
               placeholder="Pilih Lokasi"
               variant="flushed"
               value={selectedFrom}
@@ -330,7 +330,7 @@ const SearchTicket = ({
                       base: "46vw",
                       sm: "28vw",
                       md: "32vw",
-                      lg: "10.5vw",
+                      lg: "10vw",
                     }}
                   >
                     <Input

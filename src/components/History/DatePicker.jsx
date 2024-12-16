@@ -1,11 +1,39 @@
+import React, { useState } from "react";
+import { Box, Button, HStack } from "@chakra-ui/react";
 import { CloseButton } from "@/components/ui/close-button";
 import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import { Box, HStack } from "@chakra-ui/react";
 
-const DatePicker = ({ dateRange, setDateRange, setIsPickerOpen }) => {
-  const handleManualClose = () => {
+const DatePicker = ({ dateRange, setDateRange, setIsPickerOpen, onSave }) => {
+  const [localDateRange, setLocalDateRange] = useState(dateRange);
+
+  const handleSave = () => {
+    // Ambil startDate dan endDate dari localDateRange
+    const startDate = localDateRange[0].startDate;
+    let endDate = localDateRange[0].endDate;
+
+    // Jika endDate tidak dipilih, set endDate sama dengan startDate
+    if (!endDate) {
+      endDate = startDate;
+    }
+
+    // Mengonversi tanggal ke format ISO sesuai dengan zona waktu lokal
+    const startDateIso = new Date(
+      startDate.getTime() - startDate.getTimezoneOffset() * 60000
+    )
+      .toISOString()
+      .split("T")[0];
+    const endDateIso = new Date(
+      endDate.getTime() - endDate.getTimezoneOffset() * 60000
+    )
+      .toISOString()
+      .split("T")[0];
+
+    // Kirim parameter ke parent dengan format tanggal yang benar
+    onSave({ startDate: startDateIso, endDate: endDateIso });
+
+    // Tutup DatePicker
     setIsPickerOpen(false);
   };
 
@@ -16,42 +44,53 @@ const DatePicker = ({ dateRange, setDateRange, setIsPickerOpen }) => {
       left={0}
       width="100%"
       height="100%"
-      bg="rgba(0, 0, 0, 0.3)"
+      bg="rgba(0, 0, 0, 0.5)"
       zIndex="9"
     >
       <Box
         position="absolute"
-        top={{ base: "400px", sm: "325px", lg: "60%", xl: "50%" }}
-        left={{ base: "50%", sm: "75%", lg: "70%", xl: "70%" }}
+        top="50%"
+        left="50%"
         transform="translate(-50%, -50%)"
         bg="white"
         shadow="lg"
-        transition="all 0.3s ease"
-        zIndex="10"
         borderRadius="md"
+        p="4"
+        width="90%"
+        maxWidth="400px"
       >
-        <HStack borderRadius="none" justifySelf="end">
-          {/* CloseButton hanya akan menutup DatePicker */}
-          <CloseButton
-            aria-label="Close Picker"
-            onClick={handleManualClose}
-            rounded="none"
-            borderTopRightRadius="md"
-          />
-        </HStack>
-
-        <Box borderTopWidth="2px" pb="4">
-          <DateRange
-            editableDateInputs={true}
-            onChange={(item) => setDateRange([item.selection])}
-            color="#44b3f8"
-            ranges={dateRange}
-            rangeColors="#44b3f8"
-            showMonthAndYearPickers={false}
-            showDateDisplay={false}
-            moveRangeOnFirstSelection={false}
-          />
+        {/* Tombol X untuk menutup filter dengan lebar penuh */}
+        <Box
+          top="10px"
+          right="10px"
+          display="flex"
+          justifyContent="flex-end"
+          mb={4}
+        >
+          <CloseButton onClick={() => setIsPickerOpen(false)} />
         </Box>
+
+        {/* Date Range Picker */}
+        <DateRange
+          editableDateInputs={true}
+          onChange={(item) => setLocalDateRange([item.selection])}
+          moveRangeOnFirstSelection={false}
+          ranges={localDateRange}
+          showMonthAndYearPickers={false}
+          showDateDisplay={false}
+        />
+
+        {/* Tombol Simpan di bagian bawah kanan */}
+        <HStack justifyContent="flex-end" mt={4}>
+          <Button
+            colorScheme="blue"
+            onClick={handleSave}
+            bg={"#44B3F8"}
+            _hover={{ bg: "#2078B8" }}
+          >
+            Simpan
+          </Button>
+        </HStack>
       </Box>
     </Box>
   );
