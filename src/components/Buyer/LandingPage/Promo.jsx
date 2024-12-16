@@ -1,7 +1,57 @@
-import { Banner } from "../../../assets/img";
+import { useState, useEffect } from "react";
 import { Box, Image, Center, Heading, HStack } from "@chakra-ui/react";
+import { getDiscounts } from "../../../services/tickets";
+import { useQuery } from "@tanstack/react-query";
 
-const Promo = () => {
+const Promo = ({ tickets }) => {
+  const [currentImage, setCurrentImage] = useState("");
+  const [prevImage, setPrevImage] = useState("");
+  const [imageIndex, setImageIndex] = useState(0);
+  const [uniqueImages, setUniqueImages] = useState([]);
+  const [minDiscount, setMinDiscount] = useState(0);
+
+  const [discounts, setDiscounts] = useState([]);
+  // Use react query to fetch API
+  const { data, isPending, isSuccess } = useQuery({
+    queryKey: ["promo"],
+    queryFn: () => getDiscounts(),
+  });
+
+  useEffect(() => {
+    if (isSuccess) {
+      setDiscounts(data);
+    }
+  }, [data, isSuccess]);
+
+  useEffect(() => {
+    // Extract unique images from tickets
+    if (tickets) {
+      const images = tickets.map((ticket) => ticket.arrival.city.image);
+      const unique = [...new Set(images)];
+      setUniqueImages(unique);
+      setCurrentImage(unique[0]); // Initialize first image
+    }
+
+    // Find minimum discount percentage
+    if (discounts) {
+      const min = Math.min(...discounts.map((d) => d.percentage));
+      setMinDiscount(min);
+    }
+  }, [tickets, discounts]);
+
+  useEffect(() => {
+    if (uniqueImages.length === 0) return;
+
+    const interval = setInterval(() => {
+      // Update prevImage before changing currentImage
+      setPrevImage(currentImage);
+      setImageIndex((prevIndex) => (prevIndex + 1) % uniqueImages.length);
+      setCurrentImage(uniqueImages[(imageIndex + 1) % uniqueImages.length]);
+    }, 5000); // Change image every 5 seconds
+
+    return () => clearInterval(interval); // Cleanup interval on component unmount
+  }, [currentImage, uniqueImages, imageIndex]);
+
   return (
     <HStack justifyContent="center" alignItems="center" zIndex={-10}>
       <Box
@@ -23,7 +73,7 @@ const Promo = () => {
             fontStyle="italic"
             color="black"
           >
-            Diskon Hari Ini
+            Diskon dimulai dari
           </Heading>
           <Heading
             mt={1}
@@ -31,21 +81,42 @@ const Promo = () => {
             fontWeight="extrabold"
             color="#2078b8"
           >
-            85%!
+            {isPending ? "0" : minDiscount}%!
           </Heading>
         </Box>
 
+        {/* New image */}
         <Image
-          src={Banner}
-          alt="Banner Background"
+          src={currentImage}
+          alt="Current Promo"
           position="absolute"
           top="0"
           left="0"
           width="100%"
           height="100%"
           objectFit="cover"
+          // transition="opacity 1s ease-in-out"
+          opacity={1} // Fully visible
           zIndex={-1}
+          loading="lazy"
         />
+
+        {/* Previous image */}
+        <Image
+          src={prevImage}
+          alt="Previous Promo"
+          position="absolute"
+          top="0"
+          left="0"
+          width="100%"
+          height="100%"
+          objectFit="cover"
+          // transition="opacity 1s ease-in-out"
+          opacity={0} // Fade out
+          zIndex={-1}
+          loading="lazy"
+        />
+
         <Box
           position="absolute"
           top="0"
