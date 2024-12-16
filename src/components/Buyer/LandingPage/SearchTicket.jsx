@@ -225,7 +225,7 @@ const SearchTicket = ({
         shadow="md"
         borderRadius={10}
         pt={6}
-        px={5}
+        px={4}
       >
         <Heading size="lg" fontWeight="bold" marginBottom={5}>
           <Highlight query="AirHopper!" styles={{ color: "#2078b8" }}>
@@ -245,7 +245,7 @@ const SearchTicket = ({
               From
             </Text>
             <Input
-              width={{ lg: "23.5vw" }}
+              width={{ lg: "25.5vw" }}
               placeholder="Pilih Lokasi"
               variant="flushed"
               value={selectedFrom}
@@ -300,7 +300,7 @@ const SearchTicket = ({
                       base: "46vw",
                       sm: "28vw",
                       md: "32vw",
-                      lg: "9.5vw",
+                      lg: "10.5vw",
                     }}
                   >
                     <Input
@@ -326,7 +326,7 @@ const SearchTicket = ({
                       base: "46vw",
                       sm: "28vw",
                       md: "32vw",
-                      lg: "9.5vw",
+                      lg: "10.5vw",
                     }}
                   >
                     <Input
