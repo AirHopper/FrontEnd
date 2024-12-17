@@ -24,11 +24,11 @@ const DetailCard = ({ order }) => {
 	return (
 		<Box p={4} my={6}>
 			{/* Header */}
-			<Box display="flex" justifyContent="space-between" mb={4}>
-				<Text fontSize={'lg'} fontWeight={'bold'}>
+			<Box display="flex" justifyContent="space-between" mb={2}>
+				<Text fontSize={['md', 'lg']} fontWeight="bold">
 					Detail Pesanan
 				</Text>
-				<Text bg={order.orderStatus === 'Unpaid' ? 'red.500' : order.orderStatus === 'Issued' ? 'green.400' : 'gray.400'} color="white" borderRadius="2xl" px={4} py={1}>
+				<Text bg={order.orderStatus === 'Unpaid' ? 'red.500' : order.orderStatus === 'Issued' ? 'green.400' : 'gray.400'} color="white" borderRadius="2xl" px={4} py={1} fontSize={['xs', 'sm', 'md']}>
 					{order.orderStatus}
 				</Text>
 			</Box>
@@ -37,10 +37,10 @@ const DetailCard = ({ order }) => {
 			</Text>
 			{/* Booking Code */}
 			<HStack mb={4}>
-				<Text fontSize="lg" fontWeight="normal">
+				<Text fontSize={['sm', 'lg']} fontWeight="normal">
 					Booking Code:{' '}
 				</Text>
-				<Text as="span" fontSize={'lg'} fontWeight="bold" color={'#2078B8'}>
+				<Text as="span" fontSize={['sm', 'lg']} fontWeight="bold" color={'#2078B8'}>
 					{order.id}
 				</Text>
 			</HStack>
@@ -48,142 +48,164 @@ const DetailCard = ({ order }) => {
 			{/* Departure Details */}
 			<HStack align={'start'} justify={'space-between'} mb={4} borderBottom="1px solid #A8B6B7" pb={4}>
 				<VStack gap={0} align="flex-start">
-					<Text fontSize={'md'} fontWeight="bold">
+					<Text fontSize={['sm', 'md']} fontWeight="bold">
 						{new Date(order.outboundTicket.departure.time).toLocaleTimeString([], {
 							hour: '2-digit',
 							minute: '2-digit',
 						})}
 					</Text>
-					<Text fontSize={'md'}>
+					<Text fontSize={['sm', 'md']}>
 						{new Date(order.outboundTicket.departure.time).toLocaleDateString('id-ID', {
 							day: '2-digit',
 							month: 'long',
 							year: 'numeric',
 						})}
 					</Text>
-					<Text fontSize={'md'} fontWeight="normal">
+					<Text fontSize={['sm', 'md']} fontWeight="normal">
 						{order.outboundTicket.departure.airport.name}
 					</Text>
-					<Text fontSize={'md'} fontWeight="normal">
+					<Text fontSize={['sm', 'md']} fontWeight="normal">
 						{order.outboundTicket.flights[0].departure.terminal.name} - {order.outboundTicket.flights[0].departure.terminal.type}
 					</Text>
 				</VStack>
-				<Text fontSize={'sm'} fontWeight={'bold'} color={'#70CAFF'}>
+				<Text fontSize={['xs', 'sm']} fontWeight={'bold'} color={'#70CAFF'}>
 					Keberangkatan
 				</Text>
 			</HStack>
 
-			{/* Gambar Airline dan Pesawat */}
-			<HStack gap={4}>
+			{/* Airline Image and Flight Info */}
+			<HStack gap={4} mb={4}>
 				<Image src={order.outboundTicket.flights[0].airline.logo} alt={order.outboundTicket.flights[0].airline.name} boxSize="50px" />
-				<VStack align={'start'} mb={4} borderBottom="1px solid #A8B6B7" pb={4}>
-					<VStack align="flex-start">
-						<Text fontSize="md" fontWeight="bold">
-							{order.outboundTicket.flights[0].airline.name}
-						</Text>
-						<Text fontSize="md">Pesawat: {order.outboundTicket.flights[0].airplane}</Text>
-					</VStack>
-					{/* Passengers Information */}
-					<VStack align="flex-start" mb={4}>
-						<Text fontSize="lg" fontWeight="bold">
-							Informasi Penumpang
-						</Text>
-						{order.passengers.map((passenger, index) => (
-							<VStack align={'start'} key={index} fontSize="md">
-								<Text>
-									Penumpang {index + 1}: {passenger.title} {passenger.name} {passenger.familyName}
-								</Text>
-								<Text>ID: {passenger.identifierNumber}</Text>
-							</VStack>
-						))}
-					</VStack>
+				<VStack align={'start'} gap={1}>
+					<Text fontSize={['sm', 'md']} fontWeight="bold">
+						{order.outboundTicket.flights[0].airline.name}
+					</Text>
+					<Text fontSize={['sm', 'md']}>Pesawat: {order.outboundTicket.flights[0].airplane}</Text>
+
+					{/* Passenger Information */}
+					<Text fontSize={['md', 'lg']} fontWeight="bold">
+						Informasi Penumpang :
+					</Text>
+					{order.passengers.map((passenger, index) => (
+						<VStack align={'start'} key={index} fontSize={['sm', 'md']}>
+							<Text>
+								Penumpang {index + 1}: {passenger.title} {passenger.name} {passenger.familyName}
+							</Text>
+							<Text>ID: {passenger.identifierNumber}</Text>
+						</VStack>
+					))}
 				</VStack>
 			</HStack>
 
 			{/* Arrival Details */}
 			<HStack align={'start'} justify={'space-between'} mb={4} borderBottom="1px solid #A8B6B7" pb={4}>
 				<VStack gap={0} align="flex-start">
-					<Text fontSize={'md'} fontWeight="bold">
+					<Text fontSize={['sm', 'md']} fontWeight="bold">
 						{new Date(order.outboundTicket.arrival.time).toLocaleTimeString([], {
 							hour: '2-digit',
 							minute: '2-digit',
 						})}
 					</Text>
-					<Text fontSize={'md'}>
+					<Text fontSize={['sm', 'md']}>
 						{new Date(order.outboundTicket.arrival.time).toLocaleDateString('id-ID', {
 							day: '2-digit',
 							month: 'long',
 							year: 'numeric',
 						})}
 					</Text>
-					<Text fontSize={'md'} fontWeight="normal">
+					<Text fontSize={['sm', 'md']} fontWeight="normal">
 						{order.outboundTicket.arrival.airport.name}
 					</Text>
-					<Text fontSize={'md'} fontWeight="normal">
+					<Text fontSize={['sm', 'md']} fontWeight="normal">
 						{order.outboundTicket.flights[0].arrival.terminal.name} - {order.outboundTicket.flights[0].arrival.terminal.type}
 					</Text>
 				</VStack>
-				<Text fontSize={'sm'} fontWeight={'bold'} color={'#70CAFF'}>
+				<Text fontSize={['xs', 'sm']} fontWeight={'bold'} color={'#70CAFF'}>
 					Kedatangan
 				</Text>
 			</HStack>
 
-			{/* Render Return Ticket Details only if isRoundTrip is true */}
+			{/* Return Ticket Details */}
 			{order.isRoundTrip && order.returnTicket && (
 				<Box borderBottom="1px solid #A8B6B7" pb={4} mb={4}>
-					<Text fontSize="lg" fontWeight="bold" mb={2}>
+					<Text fontSize={['md', 'lg']} fontWeight="bold" mb={2}>
 						Detail Tiket Pulang
 					</Text>
+					{/* Return Ticket Departure */}
 					<HStack align={'start'} justify={'space-between'} mb={4}>
 						<VStack gap={0} align="flex-start">
-							<Text fontSize={'md'} fontWeight="bold">
+							<Text fontSize={['sm', 'md']} fontWeight="bold">
 								{new Date(order.returnTicket.departure.time).toLocaleTimeString([], {
 									hour: '2-digit',
 									minute: '2-digit',
 								})}
 							</Text>
-							<Text fontSize={'md'}>
+							<Text fontSize={['sm', 'md']}>
 								{new Date(order.returnTicket.departure.time).toLocaleDateString('id-ID', {
 									day: '2-digit',
 									month: 'long',
 									year: 'numeric',
 								})}
 							</Text>
-							<Text fontSize={'md'} fontWeight="normal">
+							<Text fontSize={['sm', 'md']} fontWeight="normal">
 								{order.returnTicket.departure.airport.name}
 							</Text>
-							<Text fontSize={'md'} fontWeight="normal">
+							<Text fontSize={['sm', 'md']} fontWeight="normal">
 								{order.returnTicket.flights[0].departure.terminal.name} - {order.returnTicket.flights[0].departure.terminal.type}
 							</Text>
 						</VStack>
-						<Text fontSize={'sm'} fontWeight={'bold'} color={'#70CAFF'}>
+						<Text fontSize={['xs', 'sm']} fontWeight={'bold'} color={'#70CAFF'}>
 							Keberangkatan
 						</Text>
 					</HStack>
 
+					{/* Airline Image and Flight Info */}
+					<HStack gap={4} mb={4}>
+						<Image src={order.returnTicket.flights[0].airline.logo} alt={order.returnTicket.flights[0].airline.name} boxSize="50px" />
+						<VStack align={'start'} gap={1}>
+							<Text fontSize={['sm', 'md']} fontWeight="bold">
+								{order.returnTicket.flights[0].airline.name}
+							</Text>
+							<Text fontSize={['sm', 'md']}>Pesawat: {order.returnTicket.flights[0].airplane}</Text>
+
+							{/* Passenger Information */}
+							<Text fontSize={['md', 'lg']} fontWeight="bold">
+								Informasi Penumpang :
+							</Text>
+							{order.passengers.map((passenger, index) => (
+								<VStack align={'start'} key={index} fontSize={['sm', 'md']}>
+									<Text>
+										Penumpang {index + 1}: {passenger.title} {passenger.name} {passenger.familyName}
+									</Text>
+									<Text>ID: {passenger.identifierNumber}</Text>
+								</VStack>
+							))}
+						</VStack>
+					</HStack>
+					{/* Return Ticket Arrival */}
 					<HStack align={'start'} justify={'space-between'} mb={4}>
 						<VStack gap={0} align="flex-start">
-							<Text fontSize={'md'} fontWeight="bold">
+							<Text fontSize={['sm', 'md']} fontWeight="bold">
 								{new Date(order.returnTicket.arrival.time).toLocaleTimeString([], {
 									hour: '2-digit',
 									minute: '2-digit',
 								})}
 							</Text>
-							<Text fontSize={'md'}>
+							<Text fontSize={['sm', 'md']}>
 								{new Date(order.returnTicket.arrival.time).toLocaleDateString('id-ID', {
 									day: '2-digit',
 									month: 'long',
 									year: 'numeric',
 								})}
 							</Text>
-							<Text fontSize={'md'} fontWeight="normal">
+							<Text fontSize={['sm', 'md']} fontWeight="normal">
 								{order.returnTicket.arrival.airport.name}
 							</Text>
-							<Text fontSize={'md'} fontWeight="normal">
+							<Text fontSize={['sm', 'md']} fontWeight="normal">
 								{order.returnTicket.flights[0].arrival.terminal.name} - {order.returnTicket.flights[0].arrival.terminal.type}
 							</Text>
 						</VStack>
-						<Text fontSize={'sm'} fontWeight={'bold'} color={'#70CAFF'}>
+						<Text fontSize={['xs', 'sm']} fontWeight={'bold'} color={'#70CAFF'}>
 							Kedatangan
 						</Text>
 					</HStack>
@@ -192,30 +214,30 @@ const DetailCard = ({ order }) => {
 
 			{/* Price Breakdown */}
 			<Flex mb={4} borderBottom="1px solid #A8B6B7" pb={4} gap={2} flexDirection="column">
-				<Text size="lg" fontWeight={'bold'} mb={1}>
+				<Text fontSize={['md', 'lg']} fontWeight={'bold'} mb={1}>
 					Rincian Harga
 				</Text>
 				{order.detailPrice.map((item, index) => (
 					<HStack key={index} align={'start'} justify={'space-between'}>
-						<Text fontSize={'md'} fontWeight="normal">
+						<Text fontSize={['sm', 'md']} fontWeight="normal">
 							({item.amount}) {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
 						</Text>
-						<Text fontSize={'sm'}>IDR. {new Intl.NumberFormat('id-ID').format(item.totalPrice)}</Text>
+						<Text fontSize={['sm', 'md']}>IDR. {new Intl.NumberFormat('id-ID').format(item.totalPrice)}</Text>
 					</HStack>
 				))}
 				<HStack align={'start'} justify={'space-between'}>
-					<Text fontSize={'md'} fontWeight="normal">
+					<Text fontSize={['sm', 'md']} fontWeight="normal">
 						Tax
 					</Text>
-					<Text fontSize={'sm'}>IDR. {new Intl.NumberFormat('id-ID').format(order.detailPrice.reduce((acc, curr) => acc + (curr.totalPrice || 0), 0))}</Text>
+					<Text fontSize={['sm', 'md']}></Text>
 				</HStack>
 			</Flex>
 
 			<HStack align={'start'} justify={'space-between'}>
-				<Text fontSize={'lg'} fontWeight="bold">
+				<Text fontSize={['md', 'lg']} fontWeight="bold">
 					Total
 				</Text>
-				<Text fontSize={'xl'} fontWeight={'bold'} color={'#2078B8'}>
+				<Text fontSize={['md', 'lg']} fontWeight={'bold'} color={'#2078B8'}>
 					IDR. {new Intl.NumberFormat('id-ID').format(parseFloat(order.payment.amount))}
 				</Text>
 			</HStack>
@@ -236,7 +258,6 @@ const DetailCard = ({ order }) => {
 					Cetak Tiket
 				</Button>
 			)}
-			{order.orderStatus === 'Cancelled' ? null : null}
 		</Box>
 	);
 };

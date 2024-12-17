@@ -131,15 +131,15 @@ function VerifyOtpPage() {
             onClick={handleVerifyOtp}
             isDisabled={timer === 0 || isSubmitting}
             isLoading={isSubmitting}
-            width="full" // Membuat tombol lebih lebar
-            size="lg" // Ukuran tombol lebih besar
+            width="full" 
+            size="lg" 
             borderRadius="10px"
-            color="white" // Set text color to white  
+            color="white" 
             bg="#44b3f8"
             _hover={{
-              bg: "#359dd7", // Change background color on hover
-              transform: "scale(1.02)", // Slightly enlarge the button on hover
-              boxShadow: "md", // Add a shadow for depth
+              bg: "#359dd7", 
+              transform: "scale(1.02)", 
+              boxShadow: "md", 
             }}
           >
             OTP verifikasi

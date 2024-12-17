@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createLazyFileRoute, useLocation, useNavigate } from '@tanstack/react-router';
-import { Box, Container, Grid, Heading, Text, Button } from '@chakra-ui/react';
+import { Box, Container, Grid, Heading, Text, Button, Stack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { getTicketsListing } from '../../services/ticketsListing';
 import FilterDay from '../../components/tickets/FilterDay';
@@ -33,6 +33,8 @@ function RouteComponent() {
 	const [isDirectFilter, setIsDirectFilter] = useState(false);
 	// state managenent airline
 	const [selectedAirline, setSelectedAirline] = useState(null);
+	// state navigate
+	const [isNavigating, setIsNavigating] = useState(false);
 
 	// Ambil parameter URL
 	const urlParams = new URLSearchParams(location.search);
@@ -51,14 +53,14 @@ function RouteComponent() {
 		airline: urlParams.get('airline'),
 	};
 
-	// Cek apakah semua parameter yang diperlukan ada
 	useEffect(() => {
 		const hasRequiredParams = params.departureCity && params.arrivalCity && params.classType && params.flightDate;
 
-		if (!hasRequiredParams) {
-			navigate({ to: '/' }); // Arahkan ke halaman utama jika tidak ada parameter yang diperlukan
+		// Hanya arahkan ke halaman utama jika tidak ada parameter yang diperlukan, dan tidak sedang navigasi
+		if (!hasRequiredParams && !isNavigating) {
+			navigate({ to: '/' });
 		}
-	}, [params, navigate]);
+	}, [params, navigate, isNavigating]);
 
 	const updateUrlParams = (key, value) => {
 		const urlParams = new URLSearchParams(window.location.search);
@@ -192,101 +194,98 @@ function RouteComponent() {
 	const isReturnTicketSelection = ticketId1 !== null && params.returnDate === undefined;
 
 	const handleSendSearch = ticketId => {
+		setIsNavigating(true); // Set navigasi aktif
 		const searchParams = new URLSearchParams();
 
-		// Jika ada returnDate (pulang-pergi)
 		if (params.returnDate) {
-			// Jika belum ada ticketId1, ini adalah pemilihan tiket pergi
 			if (!ticketId1) {
-				setTicketId1(ticketId); // Set ticketId1 untuk tiket pergi
-
-				searchParams.append('departure', params.arrivalCity); // Tukar asal dan tujuan
+				setTicketId1(ticketId);
+				searchParams.append('departure', params.arrivalCity);
 				searchParams.append('arrival', params.departureCity);
 				searchParams.append('classType', params.classType);
-				searchParams.append('departureDate', params.returnDate); // Gunakan returnDate untuk tiket pulang
-				searchParams.append('ticketId1', ticketId); // Kirim ticketId1 untuk tiket pergi
-
+				searchParams.append('departureDate', params.returnDate);
+				searchParams.append('ticketId1', ticketId);
 				if (params.adult) searchParams.append('adult', params.adult);
 				if (params.child) searchParams.append('child', params.child);
 				if (params.infant) searchParams.append('infant', params.infant);
-
-				const newUrl = `/tickets?${searchParams.toString()}`;
-				navigate({ to: newUrl });
+				navigate({ to: `/tickets?${searchParams.toString()}` });
 			}
-		}
-
-		// Jika sudah ada ticketId1, ini adalah pemilihan tiket pulang
-		else if (!params.returnDate) {
-			if (ticketId1 === null) {
-				setTicketId2(ticketId); // Set ticketId2 untuk tiket pulang
-
+		} else {
+			if (!ticketId1) {
+				setTicketId1(ticketId);
 				searchParams.append('ticketId1', ticketId);
-
 				if (params.classType) searchParams.append('classType', params.classType);
 				if (params.adult) searchParams.append('adult', params.adult);
 				if (params.child) searchParams.append('child', params.child);
 				if (params.infant) searchParams.append('infant', params.infant);
-
-				const newUrl = `/checkout?${searchParams.toString()}`;
-				navigate({ to: newUrl });
+				navigate({ to: `/checkout?${searchParams.toString()}` });
 			} else {
-				setTicketId2(ticketId); // Set ticketId2 untuk tiket pulang
-
+				setTicketId2(ticketId);
 				searchParams.append('ticketId1', ticketId1);
 				searchParams.append('ticketId2', ticketId);
-
 				if (params.classType) searchParams.append('classType', params.classType);
 				if (params.adult) searchParams.append('adult', params.adult);
 				if (params.child) searchParams.append('child', params.child);
 				if (params.infant) searchParams.append('infant', params.infant);
-
-				const newUrl = `/checkout?${searchParams.toString()}`;
-				navigate({ to: newUrl });
+				navigate({ to: `/checkout?${searchParams.toString()}` });
 			}
 		}
+
+		setTimeout(() => setIsNavigating(false)); // Reset navigasi setelah selesai
 	};
 
 	return (
-		<Container maxW={{ base: '100%', md: '90%', lg: '80%' }} py={6}>
+		<Container maxW={{ base: '100%', md: '90%', lg: '80%' }} py={6} minH="100vh">
 			<Heading as="h1" size="lg" mb={4} color="black" fontWeight="bold" textAlign={{ base: 'start', md: 'left' }}>
 				Pilih Penerbangan
 			</Heading>
-			<Grid templateColumns={['1fr', '4fr 1fr']} gap={4} alignItems="center">
-				<Button
+			<Grid templateColumns={['1fr', '5fr 2fr']} gap={4} alignItems="center">
+				<Stack
 					onClick={() => navigate({ to: '../' })}
-					py={6}
-					px={8}
+					py={3}
+					px={6}
 					bg="#44B3F8"
 					borderRadius="md"
 					color="#FDFFFE"
-					justifyContent="flex-start"
 					gap={4}
 					display="flex"
-					flexDirection={['column', 'row']}
+					flexDirection="row" // Menyusun elemen dalam satu baris
+					alignItems="center" // Vertikal center
+					justifyContent={{ base: 'center', md: 'start' }} // Menyusun teks di tengah untuk layar kecil, kiri untuk layar besar
 					fontSize={useBreakpointValue({ base: 'sm', md: 'md' })}
+					w="full" // Tombol mengisi lebar kontainer
+					maxW="100%" // Menghindari tombol terlalu lebar pada layar besar
 					_hover={{ bg: '#2078B8', color: '#FDFFFE' }}
 				>
 					<FontAwesomeIcon icon={faArrowLeft} size="sm" />
-					<Text display={['block', 'inline']}>
-						{params.departureCity}
-						<FontAwesomeIcon icon={faGreaterThan} size="sm" />
-						{params.arrivalCity} - {params.passenger} Penumpang - {params.classType}
+					<Text display="inline" pl={2}>
+						{/* Menghindari teks untuk membungkus */}
+						<span>{params.departureCity ? params.departureCity.replace(/\+/g, ' ') : ''}</span>
+						<FontAwesomeIcon icon={faGreaterThan} size="sm" style={{ marginLeft: 12, marginRight: 12 }} />
+						<span>{params.arrivalCity ? params.arrivalCity.replace(/\+/g, ' ') : ''}</span>
+						<span>
+							{' '}
+							- {params.passenger} Penumpang - {params.classType}
+						</span>
 					</Text>
-				</Button>
+				</Stack>
 
-				<Button
+				<Stack
 					onClick={() => navigate({ to: '../' })}
-					p={6}
+					py={3}
+					px={8}
 					bg="#F8D24D"
 					_hover={{ bg: '#D4B340', color: '#FDFFFE' }}
 					borderRadius="md"
 					color="#FDFFFE"
-					display={{ base: 'none', md: 'flex' }}
-					justifyContent="center"
+					display="flex" // Pastikan flex diterapkan pada semua ukuran layar
+					justifyContent="center" // Mengatur teks agar terpusat secara horizontal
+					alignItems="center" // Mengatur teks agar terpusat secara vertikal
+					flexDirection="row"
 					fontSize={useBreakpointValue({ base: 'sm', md: 'md' })}
 				>
-					Ubah Pencarian
-				</Button>
+					<Text display="inline">Ubah Pencarian</Text>
+				</Stack>
 			</Grid>
 
 			{/* Filter Day */}
@@ -310,15 +309,15 @@ function RouteComponent() {
 			{isFilterOpen && <SelectFilter onCloseClick={() => setFilterOpen(false)} onApplyFilter={handleApplyFilter} />}
 
 			<Grid mt={8}>
-				<Grid templateColumns={['1fr', '2fr 4fr']} gap={4} alignItems="flex-start">
+				<Grid templateColumns={['1fr', '1fr', '2fr 4fr']} gap={4} alignItems="flex-start">
 					<VStack gap={4}>
-						<Box display="flex" width="100%" borderWidth="1px" borderRadius="md" px={6} py={4} shadow="sm" height="auto">
+						<Box display="flex" width="100%" borderWidth="1px" borderRadius="md" px={6} py={{ base: '4', md: '6' }} shadow="sm" height="auto">
 							<AccordionRoot collapsible>
 								<AccordionItem>
 									<Box display="block" width="100%">
 										{/* Header */}
 										<Flex justify={'space-between'} alignItems="flex-start">
-											<Text fontSize={'lg'} fontWeight={'semibold'}>
+											<Text fontSize={{ base: 'md', md: 'lg' }} fontWeight={'semibold'}>
 												Filter Transit
 											</Text>
 											<AccordionItemTrigger display={'inline-block'} width={'auto'} onClick={() => handleAccordionToggle()}>
@@ -337,30 +336,28 @@ function RouteComponent() {
 										{/* Accordion Content */}
 										<AccordionItemContent>
 											<Box display="flex" flexDirection="column" gap={4} py={4}>
-												<Box display="flex" flexDirection="column" gap={4} py={4}>
-													{/* Checkbox Langsung */}
-													<Checkbox isChecked={isDirectFilter} onChange={handleDirectFilterChange} colorScheme="blue">
-														Tampilkan Tiket Langsung
-													</Checkbox>
+												{/* Checkbox Langsung */}
+												<Checkbox isChecked={isDirectFilter} onChange={handleDirectFilterChange} colorScheme="blue">
+													Tampilkan Tiket Langsung
+												</Checkbox>
 
-													{/* Checkbox Transit */}
-													<Checkbox isChecked={isTransitFilter} onChange={handleTransitFilterChange} colorScheme="blue">
-														Tampilkan Tiket Transit
-													</Checkbox>
-												</Box>
+												{/* Checkbox Transit */}
+												<Checkbox isChecked={isTransitFilter} onChange={handleTransitFilterChange} colorScheme="blue">
+													Tampilkan Tiket Transit
+												</Checkbox>
 											</Box>
 										</AccordionItemContent>
 									</Box>
 								</AccordionItem>
 							</AccordionRoot>
 						</Box>
-						<Box display="flex" width="100%" borderWidth="1px" borderRadius="md" px={6} py={4} shadow="sm" height="auto">
+						<Box display="flex" width="100%" borderWidth="1px" borderRadius="md" px={6} py={{ base: '4', md: '6' }} shadow="sm" height="auto">
 							<AccordionRoot collapsible>
 								<AccordionItem>
 									<Box display="block" width="100%">
 										{/* Header */}
 										<Flex justify={'space-between'} alignItems="flex-start">
-											<Text fontSize={'lg'} fontWeight={'semibold'}>
+											<Text fontSize={{ base: 'md', md: 'lg' }} fontWeight={'semibold'}>
 												Filter Maskapai
 											</Text>
 											<AccordionItemTrigger display={'inline-block'} width={'auto'} onClick={() => handleAccordionToggle()}>
@@ -379,14 +376,12 @@ function RouteComponent() {
 										{/* Accordion Content */}
 										<AccordionItemContent>
 											<Box display="flex" flexDirection="column" gap={4} py={4}>
-												<Box display="flex" flexDirection="column" gap={4} py={4}>
-													{/* TODO: mapping airlines dari tickets.flights.airline disetiap checkbox*/}
-													{getUniqueAirlines(tickets).map((airline, index) => (
-														<Checkbox key={index} isChecked={selectedAirline?.includes(airline)} onChange={e => handleAirlineFilterChange(airline, e.target.checked)} colorScheme="blue">
-															{airline}
-														</Checkbox>
-													))}
-												</Box>
+												{/* TODO: mapping airlines dari tickets.flights.airline disetiap checkbox*/}
+												{getUniqueAirlines(tickets).map((airline, index) => (
+													<Checkbox key={index} isChecked={selectedAirline?.includes(airline)} onChange={e => handleAirlineFilterChange(airline, e.target.checked)} colorScheme="blue">
+														{airline}
+													</Checkbox>
+												))}
 											</Box>
 										</AccordionItemContent>
 									</Box>
@@ -401,7 +396,7 @@ function RouteComponent() {
 							<Text p={2}>Loading...</Text>
 							<Image src={loadingImage} alt="Not Found" width="70%" />
 						</Box>
-					) : isError ? (
+					) : isError || tickets.length === 0 ? (
 						<Box width={'xs'} textAlign="center" mx="auto" display="flex" flexDirection="column">
 							<img src={notFoundTicket} alt="Not Found" />
 							<Text mt={6} fontSize="md" fontWeight="medium">
@@ -409,6 +404,15 @@ function RouteComponent() {
 							</Text>
 							<Text color="#2078B8" fontSize="md" fontWeight="medium">
 								Coba cari perjalanan lainnya!
+							</Text>
+						</Box>
+					) : tickets.length === 0 ? (
+						<Box width={'xs'} textAlign="center" mx="auto" display="flex" flexDirection="column">
+							<Text mt={6} fontSize="md" fontWeight="medium">
+								Tidak ada tiket yang ditemukan.
+							</Text>
+							<Text color="#2078B8" fontSize="md" fontWeight="medium">
+								Silakan coba pencarian lain!
 							</Text>
 						</Box>
 					) : (
@@ -444,7 +448,7 @@ function RouteComponent() {
 
 												{/* Content */}
 												<Flex justify="space-between" flexDirection={['column', 'row']} px={[0, 0]}>
-													<HStack>
+													<HStack gap={0}>
 														{/* Departure Info */}
 														<VStack gap={0} align={'flex-start'}>
 															<Text fontSize={['sm', 'lg']} fontWeight={'bold'}>
@@ -458,7 +462,17 @@ function RouteComponent() {
 															<Text fontWeight="normal" fontSize={'md'} color={'#A8B6B7'}>
 																{ticket.isTransits && ticket.flights.length > 0 ? `${ticket.flights.length - 1} Pemberhentian` : 'Langsung'}
 															</Text>
-															<Box fontWeight="normal" fontSize={'md'} borderBottom="2px solid red" width={['100%', '14vw']} />
+															<Box
+																fontWeight="normal"
+																fontSize={'md'}
+																borderBottom="2px solid red"
+																width={{
+																	base: '30vw',
+																	sm: '18vw',
+																	md: '12vw',
+																	lg: '13vw',
+																}}
+															/>
 															<Text color={'#A8B6B7'}>
 																{ticket.isTransits && ticket.flights.length > 0
 																	? `${Math.floor(ticket.flights.reduce((total, flight) => total + flight.duration, 0) / 60)}h ${ticket.flights.reduce((total, flight) => total + flight.duration, 0) % 60}m`
@@ -482,7 +496,7 @@ function RouteComponent() {
 															IDR. {new Intl.NumberFormat('id-ID').format(ticket.totalPrice)}
 														</Text>
 
-														<Button onClick={() => handleSendSearch(ticket.id)} bg={'#44B3F8'} px={[6, 10]} py={1} borderRadius={'md'} _hover={{ bg: '#2078B8' }}>
+														<Button onClick={() => handleSendSearch(ticket.id)} bg={'#44B3F8'} px={[8, 10]} py={1} borderRadius={'md'} _hover={{ bg: '#2078B8' }}>
 															Pilih
 														</Button>
 													</Grid>

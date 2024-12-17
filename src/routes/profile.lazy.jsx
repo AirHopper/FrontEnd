@@ -25,7 +25,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { changePassword, updateProfile } from "../services/user";
 import { setToken, setUser } from "../redux/slices/auth";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { toast } from 'react-toastify'; // Ensure toast is imported
+import { toast } from 'react-toastify'; 
 import { profile } from "../services/user";
 import Swal from "sweetalert2";
 
@@ -274,8 +274,8 @@ function ProfilePage() {
                         placeholder="Harry"
                         bg="gray.50"
                         w="full"
-                        value={fullName} // Set initial value from state
-                        onChange={(e) => setFullName(e.target.value)} // Update state on input change
+                        value={fullName} 
+                        onChange={(e) => setFullName(e.target.value)} 
                       />
                     </Box>
                     {/* Phone Number */}
@@ -288,8 +288,8 @@ function ProfilePage() {
                         placeholder="+62 897823232"
                         bg="gray.50"
                         w="full"
-                        value={phoneNumber} // Set initial value from state
-                        onChange={(e) => setPhoneNumber(e.target.value)} // Update state on input change
+                        value={phoneNumber} 
+                        onChange={(e) => setPhoneNumber(e.target.value)}
                       />
                     </Box>
                     {/* Email */}
@@ -303,8 +303,8 @@ function ProfilePage() {
                         bg="gray.50"
                         w="full"
                         disabled
-                        value={email} // Set initial value from state
-                        onChange={(e) => setEmail(e.target.value)} // Update state on input change
+                        value={email} 
+                        onChange={(e) => setEmail(e.target.value)} 
                       />
                     </Box>
                     {/* Save Button */}
@@ -315,12 +315,12 @@ function ProfilePage() {
                       w="full"
                       borderRadius="10px"
                       type="submit"
-                      color="white" // Set text color to white
+                      color="white" 
                       bg="#44b3f8"
                       _hover={{
-                        bg: "#359dd7", // Change background color on hover
-                        transform: "scale(1.02)", // Slightly enlarge the button on hover
-                        boxShadow: "md", // Add a shadow for depth
+                        bg: "#359dd7", 
+                        transform: "scale(1.02)", 
+                        boxShadow: "md", 
                       }}
                     >
                       Simpan
@@ -383,12 +383,12 @@ function ProfilePage() {
                     colorScheme="red"
                     borderRadius="10px"
                     type="submit"
-                    color="white" // Set text color to white
+                    color="white" 
                     bg="#44b3f8"
                     _hover={{
-                      bg: "#359dd7", // Change background color on hover
-                      transform: "scale(1.02)", // Slightly enlarge the button on hover
-                      boxShadow: "md", // Add a shadow for depth
+                      bg: "#359dd7", 
+                      transform: "scale(1.02)", 
+                      boxShadow: "md", 
                     }}
                   >
                     Ubah Password

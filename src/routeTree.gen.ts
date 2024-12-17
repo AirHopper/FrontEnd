@@ -23,6 +23,7 @@ const ProfileLazyImport = createFileRoute('/profile')()
 const NotificationLazyImport = createFileRoute('/notification')()
 const LoginLazyImport = createFileRoute('/login')()
 const ForgotPasswordLazyImport = createFileRoute('/forgot-password')()
+const AboutUsLazyImport = createFileRoute('/about-us')()
 const IndexLazyImport = createFileRoute('/')()
 const TicketsIndexLazyImport = createFileRoute('/tickets/')()
 const PaymentIndexLazyImport = createFileRoute('/payment/')()
@@ -78,6 +79,12 @@ const ForgotPasswordLazyRoute = ForgotPasswordLazyImport.update({
 } as any).lazy(() =>
   import('./routes/forgot-password.lazy').then((d) => d.Route),
 )
+
+const AboutUsLazyRoute = AboutUsLazyImport.update({
+  id: '/about-us',
+  path: '/about-us',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/about-us.lazy').then((d) => d.Route))
 
 const IndexLazyRoute = IndexLazyImport.update({
   id: '/',
@@ -136,6 +143,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/about-us': {
+      id: '/about-us'
+      path: '/about-us'
+      fullPath: '/about-us'
+      preLoaderRoute: typeof AboutUsLazyImport
       parentRoute: typeof rootRoute
     }
     '/forgot-password': {
@@ -236,6 +250,7 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
+  '/about-us': typeof AboutUsLazyRoute
   '/forgot-password': typeof ForgotPasswordLazyRoute
   '/login': typeof LoginLazyRoute
   '/notification': typeof NotificationLazyRoute
@@ -253,6 +268,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
+  '/about-us': typeof AboutUsLazyRoute
   '/forgot-password': typeof ForgotPasswordLazyRoute
   '/login': typeof LoginLazyRoute
   '/notification': typeof NotificationLazyRoute
@@ -271,6 +287,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
+  '/about-us': typeof AboutUsLazyRoute
   '/forgot-password': typeof ForgotPasswordLazyRoute
   '/login': typeof LoginLazyRoute
   '/notification': typeof NotificationLazyRoute
@@ -290,6 +307,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about-us'
     | '/forgot-password'
     | '/login'
     | '/notification'
@@ -306,6 +324,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about-us'
     | '/forgot-password'
     | '/login'
     | '/notification'
@@ -322,6 +341,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/about-us'
     | '/forgot-password'
     | '/login'
     | '/notification'
@@ -340,6 +360,7 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
+  AboutUsLazyRoute: typeof AboutUsLazyRoute
   ForgotPasswordLazyRoute: typeof ForgotPasswordLazyRoute
   LoginLazyRoute: typeof LoginLazyRoute
   NotificationLazyRoute: typeof NotificationLazyRoute
@@ -357,6 +378,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
+  AboutUsLazyRoute: AboutUsLazyRoute,
   ForgotPasswordLazyRoute: ForgotPasswordLazyRoute,
   LoginLazyRoute: LoginLazyRoute,
   NotificationLazyRoute: NotificationLazyRoute,
@@ -383,6 +405,7 @@ export const routeTree = rootRoute
       "filePath": "__root.jsx",
       "children": [
         "/",
+        "/about-us",
         "/forgot-password",
         "/login",
         "/notification",
@@ -400,6 +423,9 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.lazy.jsx"
+    },
+    "/about-us": {
+      "filePath": "about-us.lazy.jsx"
     },
     "/forgot-password": {
       "filePath": "forgot-password.lazy.jsx"
