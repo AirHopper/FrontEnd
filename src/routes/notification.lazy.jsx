@@ -221,7 +221,7 @@ function NotificationPage() {
                   {/* Info Notifikasi */}
                   <Box>
                     <Badge
-                      colorScheme={notif.type === "Promosi" ? "purple" : "gray"}
+                      colorPalette={notif.type === "Promosi" ? "blue" : "gray"}
                       mb={2}
                     >
                       {notif.type}
