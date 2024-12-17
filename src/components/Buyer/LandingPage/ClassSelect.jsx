@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Box, Text, Stack, HStack, List, Separator } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
-import { CloseButton } from "../../ui/close-button";
+import { CloseButton } from "@/components/ui/close-button";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 

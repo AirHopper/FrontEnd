@@ -161,18 +161,61 @@ function CheckoutCompleted() {
     const detailPrice = orderData?.detailPrice    
     for (let i = 0; i < detailPrice?.length; i++) {
       const item = detailPrice[i]; 
-      if (item.type === "Dewasa") {
+      if (item.type === "adult") {
         dewasa += item.amount;
         totalTicketDewasa += item.totalPrice; 
-      } else if (item.type === "Anak") {
+      } else if (item.type === "children") {
         anak += item.amount;
         totalTicketAnak += item.totalPrice;
-      } else if (item.type === "Bayi") {
+      } else if (item.type === "infant") {
         bayi += item.amount;
       }
     }    
   }
-
+  const selectedSeatsBerangkat = []
+  const selectedSeatsTransit1Berangkat = []
+  const selectedSeatsTransit2Berangkat = []
+  const selectedSeatsPulang = []
+  const selectedSeatsTransit1Pulang = []
+  const selectedSeatsTransit2Pulang = []
+  let index = 0
+  if(orderData?.outboundTicket?.flights[0]){
+    for (let i = 0; i < orderData?.passengers?.length; i++){
+      selectedSeatsBerangkat.push(orderData?.passengers[i]?.seat[index].id)
+    }
+    index += 1
+  }
+  if(orderData?.outboundTicket?.flights[1]){
+    for (let i = 0; i < orderData?.passengers?.length; i++){
+      selectedSeatsTransit1Berangkat.push(orderData?.passengers[i]?.seat[index].id)
+    }
+    index += 1
+  }
+  if(orderData?.outboundTicket?.flights[2]){
+    for (let i = 0; i < orderData?.passengers?.length; i++){
+      selectedSeatsTransit2Berangkat.push(orderData?.passengers[i]?.seat[index].id)
+    }
+    index += 1
+  }
+  if(orderData?.returnTicket?.flights[0]){
+    for (let i = 0; i < orderData?.passengers?.length; i++){
+      selectedSeatsPulang.push(orderData?.passengers[i]?.seat[index].id)
+    }
+    index += 1
+  }
+  if(orderData?.returnTicket?.flights[1]){
+    for (let i = 0; i < orderData?.passengers?.length; i++){
+      selectedSeatsTransit1Pulang.push(orderData?.passengers[i]?.seat[index].id)
+    }
+    index += 1
+  }
+  if(orderData?.returnTicket?.flights[2]){
+    for (let i = 0; i < orderData?.passengers?.length; i++){
+      selectedSeatsTransit2Pulang.push(orderData?.passengers[i]?.seat[index].id)
+    }
+    index += 1
+  }
+  
   return (
     <>
       <Box bg="white" px={4}>
@@ -457,16 +500,16 @@ function CheckoutCompleted() {
                     Pilih Kursi Berangkat
                   </Text>
                   {kelas === "Economy" && (
-                    <SeatPickerEkonomi setSelected={setSelectedBerangkat} data={someData} seat={seatBerangkat}/>
+                    <SeatPickerEkonomi setSelected={setSelectedBerangkat} data={someData} seat={seatBerangkat} selectedSeats={selectedSeatsBerangkat}/>
                   )}
                   {kelas === "Premium+Economy" && (
-                    <SeatPickerPremiunEkonomi setSelected={setSelectedBerangkat} data={someData} seat={seatBerangkat}/>
+                    <SeatPickerPremiunEkonomi setSelected={setSelectedBerangkat} data={someData} seat={seatBerangkat} selectedSeats={selectedSeatsBerangkat}/>
                   )}
                   {kelas === "Business" &&(
-                    <SeatPickerBisnis setSelected={setSelectedBerangkat} data={someData} seat={seatBerangkat}/>
+                    <SeatPickerBisnis setSelected={setSelectedBerangkat} data={someData} seat={seatBerangkat} selectedSeats={selectedSeatsBerangkat}/>
                   )}
                   {kelas == "First+Class" && (
-                    <SeatPickerEksekutif setSelected={setSelectedBerangkat} data={someData} seat={seatBerangkat}/>
+                    <SeatPickerEksekutif setSelected={setSelectedBerangkat} data={someData} seat={seatBerangkat} selectedSeats={selectedSeatsBerangkat}/>
                   )}
                   {orderData?.outboundTicket?.isTransits === true && (
                     <>
@@ -480,16 +523,16 @@ function CheckoutCompleted() {
                       Pilih Kursi Transit 1 Berangkat
                     </Text>
                     {kelas === "Economy" && (
-                      <SeatPickerEkonomi setSelected={setSelectedTransit1Berangkat} data={someData} seat={seatTransit1Berangkat}/>
+                      <SeatPickerEkonomi setSelected={setSelectedTransit1Berangkat} data={someData} seat={seatTransit1Berangkat} selectedSeats={selectedSeatsTransit1Berangkat}/>
                     )}
                     {kelas === "Premium+Economy" && (
-                      <SeatPickerPremiunEkonomi setSelected={setSelectedTransit1Berangkat} data={someData} seat={seatTransit1Berangkat}/>
+                      <SeatPickerPremiunEkonomi setSelected={setSelectedTransit1Berangkat} data={someData} seat={seatTransit1Berangkat} selectedSeats={selectedSeatsTransit1Berangkat}/>
                     )}
                     {kelas === "Business" &&(
-                      <SeatPickerBisnis setSelected={setSelectedTransit1Berangkat} data={someData} seat={seatTransit1Berangkat}/>
+                      <SeatPickerBisnis setSelected={setSelectedTransit1Berangkat} data={someData} seat={seatTransit1Berangkat} selectedSeats={selectedSeatsTransit1Berangkat}/>
                     )}
                     {kelas == "First+Class" && (
-                      <SeatPickerEksekutif setSelected={setSelectedTransit1Berangkat} data={someData} seat={seatTransit1Berangkat}/>
+                      <SeatPickerEksekutif setSelected={setSelectedTransit1Berangkat} data={someData} seat={seatTransit1Berangkat} selectedSeats={selectedSeatsTransit1Berangkat}/>
                     )}
                     </>
                   )}
@@ -505,20 +548,20 @@ function CheckoutCompleted() {
                       Pilih Kursi Transit 2 Berangkat
                     </Text>
                     {kelas === "Economy" && (
-                      <SeatPickerEkonomi setSelected={setSelectedTransit2Berangkat} data={someData} seat={seatTransit2Berangkat}/>
+                      <SeatPickerEkonomi setSelected={setSelectedTransit2Berangkat} data={someData} seat={seatTransit2Berangkat} selectedSeats={selectedSeatsTransit2Berangkat}/>
                     )}
                     {kelas === "Premium+Economy" && (
-                      <SeatPickerPremiunEkonomi setSelected={setSelectedTransit2Berangkat} data={someData} seat={seatTransit2Berangkat}/>
+                      <SeatPickerPremiunEkonomi setSelected={setSelectedTransit2Berangkat} data={someData} seat={seatTransit2Berangkat} selectedSeats={selectedSeatsTransit2Berangkat}/>
                     )}
                     {kelas === "Business" &&(
-                      <SeatPickerBisnis setSelected={setSelectedTransit2Berangkat} data={someData} seat={seatTransit2Berangkat}/>
+                      <SeatPickerBisnis setSelected={setSelectedTransit2Berangkat} data={someData} seat={seatTransit2Berangkat} selectedSeats={selectedSeatsTransit2Berangkat}/>
                     )}
                     {kelas == "First+Class" && (
-                      <SeatPickerEksekutif setSelected={setSelectedTransit2Berangkat} data={someData} seat={seatTransit2Berangkat}/>
+                      <SeatPickerEksekutif setSelected={setSelectedTransit2Berangkat} data={someData} seat={seatTransit2Berangkat} selectedSeats={selectedSeatsTransit2Berangkat}/>
                     )}
                     </>
                   )}
-                  {flightDetails2 && (
+                  {flightDetails2.length > 0 && (
                     <>
                     <Box height={5} />
                     <Text
@@ -530,16 +573,16 @@ function CheckoutCompleted() {
                       Pilih Kursi Pulang
                     </Text>
                     {kelas === "Economy" && (
-                      <SeatPickerEkonomi setSelected={setSelectedPulang} data={someData} seat={seatPulang}/>
+                      <SeatPickerEkonomi setSelected={setSelectedPulang} data={someData} seat={seatPulang} selectedSeats={selectedSeatsPulang}/>
                     )}
                     {kelas === "Premium+Economy" && (
-                      <SeatPickerPremiunEkonomi setSelected={setSelectedPulang} data={someData} seat={seatPulang}/>
+                      <SeatPickerPremiunEkonomi setSelected={setSelectedPulang} data={someData} seat={seatPulang} selectedSeats={selectedSeatsPulang}/>
                     )}
                     {kelas === "Business" &&(
-                      <SeatPickerBisnis setSelected={setSelectedPulang} data={someData} seat={seatPulang}/>
+                      <SeatPickerBisnis setSelected={setSelectedPulang} data={someData} seat={seatPulang} selectedSeats={selectedSeatsPulang}/>
                     )}
                     {kelas == "First+Class" && (
-                      <SeatPickerEksekutif setSelected={setSelectedPulang} data={someData} seat={seatPulang}/>
+                      <SeatPickerEksekutif setSelected={setSelectedPulang} data={someData} seat={seatPulang} selectedSeats={selectedSeatsPulang}/>
                     )}
                     </>
                   )}
@@ -555,16 +598,16 @@ function CheckoutCompleted() {
                       Pilih Kursi Transit 1 Pulang
                     </Text>
                     {kelas === "Economy" && (
-                      <SeatPickerEkonomi setSelected={setSelectedTransit1Pulang} data={someData} seat={seatTransit1Pulang}/>
+                      <SeatPickerEkonomi setSelected={setSelectedTransit1Pulang} data={someData} seat={seatTransit1Pulang} selectedSeats={selectedSeatsTransit1Pulang}/>
                     )}
                     {kelas === "Premium+Economy" && (
-                      <SeatPickerPremiunEkonomi setSelected={setSelectedTransit1Pulang} data={someData} seat={seatTransit1Pulang}/>
+                      <SeatPickerPremiunEkonomi setSelected={setSelectedTransit1Pulang} data={someData} seat={seatTransit1Pulang} selectedSeats={selectedSeatsTransit1Pulang}/>
                     )}
                     {kelas === "Business" &&(
-                      <SeatPickerBisnis setSelected={setSelectedTransit1Pulang} data={someData} seat={seatTransit1Pulang}/>
+                      <SeatPickerBisnis setSelected={setSelectedTransit1Pulang} data={someData} seat={seatTransit1Pulang} selectedSeats={selectedSeatsTransit1Pulang}/>
                     )}
                     {kelas == "First+Class" && (
-                      <SeatPickerEksekutif setSelected={setSelectedTransit1Pulang} data={someData} seat={seatTransit1Pulang}/>
+                      <SeatPickerEksekutif setSelected={setSelectedTransit1Pulang} data={someData} seat={seatTransit1Pulang} selectedSeats={selectedSeatsTransit1Pulang}/>
                     )}
                     </>
                   )}
@@ -580,16 +623,16 @@ function CheckoutCompleted() {
                       Pilih Kursi Transit 2 Pulang
                     </Text>
                     {kelas === "Economy" && (
-                      <SeatPickerEkonomi setSelected={setSelectedTransit2Pulang} data={someData} seat={seatTransit2Pulang}/>
+                      <SeatPickerEkonomi setSelected={setSelectedTransit2Pulang} data={someData} seat={seatTransit2Pulang} selectedSeats={selectedSeatsTransit2Pulang}/>
                     )}
                     {kelas === "Premium+Economy" && (
-                      <SeatPickerPremiunEkonomi setSelected={setSelectedTransit2Pulang} data={someData} seat={seatTransit2Pulang}/>
+                      <SeatPickerPremiunEkonomi setSelected={setSelectedTransit2Pulang} data={someData} seat={seatTransit2Pulang} selectedSeats={selectedSeatsTransit2Pulang}/>
                     )}
                     {kelas === "Business" &&(
-                      <SeatPickerBisnis setSelected={setSelectedTransit2Pulang} data={someData} seat={seatTransit2Pulang}/>
+                      <SeatPickerBisnis setSelected={setSelectedTransit2Pulang} data={someData} seat={seatTransit2Pulang} selectedSeats={selectedSeatsTransit2Pulang}/>
                     )}
                     {kelas == "First+Class" && (
-                      <SeatPickerEksekutif setSelected={setSelectedTransit2Pulang} data={someData} seat={seatTransit2Pulang}/>
+                      <SeatPickerEksekutif setSelected={setSelectedTransit2Pulang} data={someData} seat={seatTransit2Pulang} selectedSeats={selectedSeatsTransit2Pulang}/>
                     )}
                     </>
                   )}
@@ -616,7 +659,7 @@ function CheckoutCompleted() {
                   border="none"
                 >
                   <Card.Header>
-                    <Card.Title fontWeight="bold">
+                    <Card.Title fontWeight="bold" color="blue">
                       Detail Penerbangan
                     </Card.Title>
                   </Card.Header>
@@ -695,7 +738,7 @@ function CheckoutCompleted() {
                         marginTop={3}
                       />
                       <Flex direction="column" marginLeft={7} marginTop={3}>
-                        <Text fontWeight="bold">{secondFlight?.airplane} - {ticketData?.class}</Text>
+                        <Text fontWeight="bold">{secondFlight?.airplane} - {orderData?.outboundTicket?.class}</Text>
                       </Flex>
                       <Flex align="center" marginTop={3}>
                         <FontAwesomeIcon
@@ -755,7 +798,7 @@ function CheckoutCompleted() {
                         marginTop={3}
                       />
                       <Flex direction="column" marginLeft={7} marginTop={3}>
-                        <Text fontWeight="bold">{thirdFlight?.airplane} - {ticketData?.class}</Text>
+                        <Text fontWeight="bold">{thirdFlight?.airplane} - {orderData?.outboundTicket?.class}</Text>
                       </Flex>
                       <Flex align="center" marginTop={3}>
                         <FontAwesomeIcon
@@ -790,7 +833,7 @@ function CheckoutCompleted() {
                       </Text>
                       </>
                     )}
-                    {flightDetails2 && (
+                    {flightDetails2.length > 0 && (
                       <>
                       <Box
                         borderBottom="2px solid"
@@ -875,7 +918,7 @@ function CheckoutCompleted() {
                         marginTop={3}
                       />
                       <Flex direction="column" marginLeft={7} marginTop={3}>
-                        <Text fontWeight="bold">{secondReturnFlight?.airplane} - {ticketData?.class}</Text>
+                        <Text fontWeight="bold">{secondReturnFlight?.airplane} - {orderData?.returnTicket?.class}</Text>
                       </Flex>
                       <Flex align="center" marginTop={3}>
                         <FontAwesomeIcon
@@ -935,7 +978,7 @@ function CheckoutCompleted() {
                         marginTop={3}
                       />
                       <Flex direction="column" marginLeft={7} marginTop={3}>
-                        <Text fontWeight="bold">{thirdReturnFlight?.airplane} - {ticketData?.class}</Text>
+                        <Text fontWeight="bold">{thirdReturnFlight?.airplane} - {orderData?.returnTicket?.class}</Text>
                       </Flex>
                       <Flex align="center" marginTop={3}>
                         <FontAwesomeIcon

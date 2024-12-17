@@ -10,13 +10,15 @@ import {
   Separator,
 } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
-import { CloseButton } from "../../ui/close-button";
+import { CloseButton } from "@/components/ui/close-button";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState, useEffect } from "react";
 import { NoResult } from "../../../assets/img";
+import { getCities } from "../../../services/tickets";
+import { useQuery } from "@tanstack/react-query";
 
-const InputLocation = ({ isFocused, onCloseClick, tickets, onCitySelect }) => {
+const InputLocation = ({ isFocused, onCloseClick, onCitySelect }) => {
   const [query, setQuery] = useState("");
   const [history, setHistory] = useState([]);
 
@@ -41,16 +43,54 @@ const InputLocation = ({ isFocused, onCloseClick, tickets, onCitySelect }) => {
     setQuery(newQuery);
   };
 
-  // Handle pilih city
+  // getData
+  const [cities, setCities] = useState([]);
+  const { data, isSuccess, isError } = useQuery({
+    queryKey: ["cities", { query }],
+    queryFn: () => getCities({ departureCity: query }),
+    enabled: query.length > 0,
+    retry: 1,
+  });
+
+  // Filter cities based on search query
+  const filteredCityNames = cities
+    .flatMap((item) => [
+      { name: item.departure.city.name, code: item.departure.city.code },
+      { name: item.arrival.city.name, code: item.arrival.city.code },
+    ]) // Combine departure and arrival cities
+    .filter(
+      (city, index, self) =>
+        self.findIndex((c) => c.name === city.name) === index // Remove duplicates
+    )
+    .filter((city) => {
+      const lowerQuery = query.toLowerCase();
+      return (
+        city.name.toLowerCase().includes(lowerQuery) || // Filter by city name
+        city.code.toLowerCase().includes(lowerQuery) // Filter by city code
+      );
+    });
+
+  useEffect(() => {
+    if (isSuccess) {
+      // Update state data
+      setCities(data || []);
+    }
+  }, [data, isSuccess]);
+
+  // Handle city selection
   const handleCitySelect = (city) => {
-    // Update history with selected city if not already present
-    const newHistory = [
-      ...history.filter((item) => item.code !== city.code), // Remove duplicates
-      city,
-    ];
-    saveHistory(newHistory);
-    onCitySelect(city); // Pass selected city to parent
-    setQuery(""); // Clear query after selection
+    // Check if the city is already in history
+    const isCityInHistory = history.some((item) => item.code === city.code);
+
+    if (!isCityInHistory) {
+      // Add city to history if not already present
+      const updatedHistory = [city, ...history];
+      saveHistory(updatedHistory);
+    }
+
+    onCitySelect(city);
+    // Clear query after selection
+    setQuery("");
   };
 
   const handleRemoveHistory = (code) => {
@@ -61,21 +101,6 @@ const InputLocation = ({ isFocused, onCloseClick, tickets, onCitySelect }) => {
   const handleClearHistory = () => {
     saveHistory([]);
   };
-
-  const filteredCities = tickets
-    .map((item) => item.departure.city) // Ambil hanya data departure.city
-    .concat(tickets.map((item) => item.arrival.city)) // Tambahkan data arrival.city
-    .filter(
-      (city, index, self) =>
-        index === self.findIndex((c) => c.name === city.name)
-    )
-    .filter((city) => {
-      const lowerQuery = query.toLowerCase();
-      return (
-        city.name.toLowerCase().includes(lowerQuery) || // Filter nama
-        city.code.toLowerCase().includes(lowerQuery) // Filter kode
-      );
-    });
 
   return (
     <Box
@@ -126,25 +151,7 @@ const InputLocation = ({ isFocused, onCloseClick, tickets, onCitySelect }) => {
       </HStack>
 
       <List.Root as={Stack} listStyle="none">
-        {filteredCities.length > 0 ? (
-          query.length > 0 &&
-          filteredCities.map((city, index) => (
-            <List.Item
-              _hover={{ bgColor: "gray.300" }}
-              px={5}
-              mt={2}
-              key={index}
-              onClick={() => handleCitySelect(city)}
-            >
-              <HStack justifyContent="space-between" alignItems="center">
-                <Text py={2} cursor="default">
-                  {city?.name}
-                </Text>
-              </HStack>
-              <Separator />
-            </List.Item>
-          ))
-        ) : (
+        {isError ? (
           <Stack alignItems="center" mt={5}>
             <Image
               src={NoResult}
@@ -157,6 +164,25 @@ const InputLocation = ({ isFocused, onCloseClick, tickets, onCitySelect }) => {
               Coba cari lokasi lainnya
             </Text>
           </Stack>
+        ) : (
+          filteredCityNames.length > 0 &&
+          query.length > 0 &&
+          filteredCityNames.map((city, index) => (
+            <List.Item
+              _hover={{ bgColor: "gray.300" }}
+              px={5}
+              mt={2}
+              key={index}
+              onClick={() => handleCitySelect(city)}
+            >
+              <HStack justifyContent="space-between" alignItems="center">
+                <Text py={2} cursor="default">
+                  {city.name}
+                </Text>
+              </HStack>
+              <Separator />
+            </List.Item>
+          ))
         )}
       </List.Root>
 
