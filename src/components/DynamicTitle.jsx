@@ -31,6 +31,18 @@ const DynamicTitle = () => {
       case "/verify-otp":
         document.title = "Verify - AirHopper";
         break;
+      case "/tickets":
+        document.title = "Tickets - AirHopper";
+        break;
+      case "/Checkout/":
+        document.title = "Checkout - AirHopper";
+        break;
+      case "/Checkout/completed":
+        document.title = "Complete - AirHopper";
+        break;
+      case "/history":
+        document.title = "History - AirHopper";
+        break;
       // Tambahkan case untuk URL lain sesuai kebutuhan
       default:
         document.title = "AirHopper";

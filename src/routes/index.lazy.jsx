@@ -1,4 +1,4 @@
-import * as React from 'react'
+import * as React from "react";
 import { useState, useEffect } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -29,7 +29,7 @@ function Beranda() {
   const [tickets, setTickets] = useState([]);
 
   // Use react query to fetch API
-  const { data, isSuccess } = useQuery({
+  const { data, isPending, isSuccess } = useQuery({
     queryKey: ["tickets"],
     queryFn: () => getTickets(),
     enabled: true,
@@ -73,7 +73,7 @@ function Beranda() {
         zIndex="5"
       ></Box>
 
-      <Promo />
+      <Promo tickets={tickets} isTicketsPending={isPending} />
 
       <Stack gap={5} position="relative" top={{ base: "2", lg: "-5" }}>
         <SearchTicket

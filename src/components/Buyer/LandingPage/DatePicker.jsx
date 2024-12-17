@@ -19,17 +19,12 @@ const DatePicker = ({
 
     setDateRange((prevDateRange) => {
       const currentStartDate = prevDateRange[0].startDate;
-      const currentEndDate = prevDateRange[0].endDate;
-
-      // Perbarui berdasarkan fokus (focusedRange)
       if (focusedRange[1] === 0) {
         // Fokus pada startDate
         return [
           {
             startDate,
-            endDate:
-              isRangeMode &&
-              (currentEndDate > startDate ? currentEndDate : null),
+            endDate: isRangeMode && endDate >= startDate ? endDate : null,
           },
         ];
       } else if (focusedRange[1] === 1) {
@@ -37,7 +32,7 @@ const DatePicker = ({
         return [
           {
             startDate: currentStartDate,
-            endDate: isRangeMode ? endDate : null,
+            endDate: endDate >= currentStartDate ? endDate : null,
           },
         ];
       }
@@ -47,9 +42,12 @@ const DatePicker = ({
   };
 
   const handleSingleDateChange = (date) => {
-    setDateRange([{ startDate: date, endDate: null }]);
-    setIsPickerOpen(false);
-    handleClose();
+    if (date >= new Date()) {
+      // Allow setting only if the date is today or in the future
+      setDateRange([{ startDate: date, endDate: null }]);
+      setIsPickerOpen(false);
+      handleClose();
+    }
   };
 
   // Handle clicks outside the picker
@@ -72,7 +70,7 @@ const DatePicker = ({
       mt={4}
       position="absolute"
       top={{ base: "400px", sm: "325px", lg: "215px" }}
-      left={{ base: "6%", sm: "21%", lg: "20.5%", xl: "23%" }}
+      left={{ base: "6%", sm: "21%", lg: "20%", xl: "23%" }}
       bg="white"
       shadow="lg"
       transition="all 0.3s ease"
@@ -81,9 +79,9 @@ const DatePicker = ({
     >
       {isRangeMode ? (
         <DateRange
-          editableDateInputs
           onChange={handleRangeChange}
           color="#44b3f8"
+          rangeColors="#44b3f8"
           ranges={[
             {
               startDate: dateRange[0].startDate,
@@ -91,14 +89,16 @@ const DatePicker = ({
               key: "selection",
             },
           ]}
-          preventSnapRefocus={true}
           retainEndDateOnRangeChange={false}
+          moveRangeOnFirstSelection={false}
           focusedRange={focusedRange} // Pastikan Anda melacak focusedRange
+          minDate={new Date()} // Disable dates before today
         />
       ) : (
         <Calendar
           date={dateRange[0].startDate}
           color="#44b3f8"
+          minDate={new Date()}
           onChange={handleSingleDateChange}
         />
       )}
