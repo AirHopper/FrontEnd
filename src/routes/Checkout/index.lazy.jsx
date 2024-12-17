@@ -45,7 +45,7 @@ import { getDetailTickets } from '../../services/tickets/index.js'
 import Overlay from '../../components/Overlay/index.jsx'
 import { createOrder } from '../../services/order/index.js'
 
-export const Route = createLazyFileRoute('/Checkout/')({
+export const Route = createLazyFileRoute('/checkout/')({
   component: CheckoutIndex,
 })
 
@@ -136,7 +136,7 @@ function CheckoutIndex() {
     if (!token && !user) {
       setOverlayVisible(true)
       setMessage('Anda harus login terlebih dahulu!')
-      setTujuan('/payment')
+      setTujuan('/login')
     }
   }, [navigate, token, user])
 
@@ -293,7 +293,7 @@ function CheckoutIndex() {
       navigate({
         to: '/checkout/completed',
         state: {
-          orderId: result.id,
+          orderId: result.data.id,
         },
       })
     },
@@ -301,14 +301,6 @@ function CheckoutIndex() {
       toast.error(error.message)
     },
   })
-  const handleClickTesting = () => {
-    navigate({
-      to: '/checkout/completed',
-      state: {
-        orderId: '0Diduz3j',
-      },
-    })
-  }
   const handleClick = () => {
     const updatedOrder = order?.map((item, index) => ({
       ...item,
@@ -350,24 +342,22 @@ function CheckoutIndex() {
       finalPrice: totalTicketDewasa + totalTicketAnak,
       detailPrice: [
         ...(dewasa > 0
-          ? [{ type: 'adult', jumlah: dewasa, totalPrice: totalTicketDewasa }]
+          ? [{ type: 'adult', amount: dewasa, totalPrice: totalTicketDewasa }]
           : []),
         ...(anak > 0
-          ? [{ type: 'children', jumlah: anak, totalPrice: totalTicketAnak }]
+          ? [{ type: 'children', amount: anak, totalPrice: totalTicketAnak }]
           : []),
-        ...(bayi > 0 ? [{ type: 'bayi', jumlah: bayi, totalPrice: 0 }] : []),
+        ...(bayi > 0 ? [{ type: 'bayi', amount: bayi, totalPrice: 0 }] : []),
       ],
-      passangers: updatedOrder,
+      passengers: updatedOrder,
     }
     mutation.mutate(dataOrder)
   }
 
   const listTitle = createListCollection({
     items: [
-      { label: 'Mr.', value: 'Mr.' },
-      { label: 'Mrs.', value: 'Mrs.' },
-      { label: 'Dr.', value: 'Dr.' },
-      { label: 'Prof.', value: 'Prof.' },
+      { label: 'Mr', value: 'Mr' },
+      { label: 'Ms', value: 'Ms' },
     ],
   })
   const listCountry = createListCollection({
@@ -383,7 +373,7 @@ function CheckoutIndex() {
     if (timeLeft <= 0) {
       setOverlayVisible(true)
       setMessage('Waktu anda telah habis. Mohon untuk mencoba lagi!')
-      setTujuan('/payment')
+      setTujuan('/')
       return
     }
 
@@ -1011,14 +1001,6 @@ function CheckoutIndex() {
                   onClick={handleClick}
                 >
                   Simpan
-                </Button>
-                <Button
-                  colorPalette={'purple'}
-                  width="100%"
-                  borderRadius="lg"
-                  onClick={handleClickTesting}
-                >
-                  Testing
                 </Button>
               </Box>
               <Box>
