@@ -29,7 +29,7 @@ function Beranda() {
   const [tickets, setTickets] = useState([]);
 
   // Use react query to fetch API
-  const { data, isSuccess } = useQuery({
+  const { data, isPending, isSuccess } = useQuery({
     queryKey: ["tickets"],
     queryFn: () => getTickets(),
     enabled: true,
@@ -73,7 +73,7 @@ function Beranda() {
         zIndex="5"
       ></Box>
 
-      <Promo tickets={tickets} />
+      <Promo tickets={tickets} isTicketsPending={isPending} />
 
       <Stack gap={5} position="relative" top={{ base: "2", lg: "-5" }}>
         <SearchTicket
