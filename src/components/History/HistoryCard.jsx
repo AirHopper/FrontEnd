@@ -79,7 +79,10 @@ function HistoryCard({ orders, onSelectOrder, selectedOrderId }) {
 										})}
 									</Text>
 									<Text fontSize={'sm'} fontWeight="bold">
-										{new Date(order.outboundTicket.arrival.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+										{new Date(order.outboundTicket.arrival.time).toLocaleTimeString([], {
+											hour: '2-digit',
+											minute: '2-digit',
+										})}
 									</Text>
 								</VStack>
 							</HStack>
