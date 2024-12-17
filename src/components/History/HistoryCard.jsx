@@ -58,9 +58,9 @@ function HistoryCard({ orders, onSelectOrder, selectedOrderId }) {
 								</VStack>
 							</HStack>
 
-							<VStack spacing={2} align="center" mx={[4, 0]} fontSize={'sm'}>
+							<VStack spacing={2} align="center" mx={[4, 0]} my={[3, 0]} fontSize={'sm'}>
 								{`${Math.floor((new Date(order.outboundTicket.arrival.time) - new Date(order.outboundTicket.departure.time)) / 60000 / 60)}h ${((new Date(order.outboundTicket.arrival.time) - new Date(order.outboundTicket.departure.time)) / 60000) % 60}m`}
-								<Box borderBottom="2px solid red" width={['100%', '10vw']} />
+								<Box borderBottom="2px solid red" width={['30vw', '10vw']} />
 							</VStack>
 
 							<HStack align="start" spacing={4}>
