@@ -28,6 +28,7 @@ import { enableNotification } from "../../../script";
 const Navbar = () => {
   const dispatch = useDispatch();
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
+  const [errorToastShown, setErrorToastShown] = useState(false);
 
   const { user, token } = useSelector((state) => state.auth);
 
@@ -36,20 +37,21 @@ const Navbar = () => {
     queryKey: ["profile"],
     queryFn: profile,
     enabled: !!token,
+    retry: false,
   });
 
-  // Update Redux state jika data berhasil diambil
   useEffect(() => {
     if (isSuccess && token) {
       dispatch(setUser(data));
-      // Periksa apakah ada notifikasi yang belum dibaca
       const unreadExists = data.Notification.some((notif) => !notif.isRead);
       setHasUnreadNotifications(unreadExists);
-    } else if (isError) {
+      setErrorToastShown(false); // Reset ketika sukses
+    } else if (isError && !errorToastShown) {
       toast.error("Ada yang salah, silahkan login kembali");
+      setErrorToastShown(true); // Tandai bahwa error toast sudah muncul
       dispatch(setToken(null));
     }
-  }, [isSuccess, isError, data, dispatch, token]);
+  }, [isSuccess, isError, data, dispatch, token, errorToastShown]);
 
   return (
     <Box

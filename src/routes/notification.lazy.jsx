@@ -20,9 +20,11 @@ import {
 } from "@/components/ui/menu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faFilter, faBell } from "@fortawesome/free-solid-svg-icons";
-import { useQuery } from "@tanstack/react-query"; // Import React Query
+import { useQuery, useMutation, useQueryClient  } from "@tanstack/react-query"; // Import React Query
 import { notifications } from "../services/notification";
 import { useSelector } from "react-redux";
+import { clearNotifications } from "../services/notification";
+import Swal from "sweetalert2";
 
 export const Route = createLazyFileRoute("/notification")({
   component: NotificationPage,
@@ -32,7 +34,7 @@ function NotificationPage() {
 
   const { token, user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
-  
+  const queryClient = useQueryClient();
 
   const [notification, setNotification] = useState([]);
   const [filterType, setFilterType] = useState("all"); 
@@ -69,6 +71,40 @@ function NotificationPage() {
   // Handler untuk filter perubahan
   const handleFilterChange = (type) => {
     setFilterType(type);
+  };
+
+   // Adjust mutation function to include correctly
+   const { mutate: clearAllNotifications } = useMutation({
+    mutationFn: () => clearNotifications(),
+    onSuccess: () => {
+        queryClient.invalidateQueries(["notifications"]);
+        toast.success("Berhasil menghapus notif");
+    },
+    onError: (err) => {
+        toast.error(err?.message || "Tidak Bisa Hapus Notif");
+    },
+  });
+
+  const handleClearNotifications = () => {
+    Swal.fire({
+      title: "Apakah Anda yakin?",
+      text: "Semua notifikasi akan dihapus dan tidak dapat dikembalikan!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Ya, hapus!",
+      cancelButtonText: "Batal",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        clearAllNotifications(); // Panggil fungsi mutation untuk menghapus notifikasi
+        Swal.fire(
+          "Dihapus!",
+          "Semua notifikasi berhasil dihapus.",
+          "success"
+        );
+      }
+    });
   };
 
   // Loading and error states
@@ -127,9 +163,9 @@ function NotificationPage() {
                   </Button>
                 </MenuTrigger>
                 <MenuContent>
-                  <MenuItem onClick={() => handleFilterChange("all")}>Semua</MenuItem>
-                  <MenuItem onClick={() => handleFilterChange("promosi")}>Promosi</MenuItem>
-                  <MenuItem onClick={() => handleFilterChange("notifikasi")}>
+                  <MenuItem value="semua" onClick={() => handleFilterChange("all")}>Semua</MenuItem>
+                  <MenuItem value="promosi" onClick={() => handleFilterChange("promosi")}>Promosi</MenuItem>
+                  <MenuItem value= "notifikasi" onClick={() => handleFilterChange("notifikasi")}>
                     Notifikasi
                   </MenuItem>
                 </MenuContent>
@@ -141,6 +177,15 @@ function NotificationPage() {
                 onChange={(e) => setSearchQuery(e.target.value)} // Update search query
               />
             </Flex>
+            {/* Tombol Clear All */}
+            <Button
+              onClick={handleClearNotifications}
+              colorPalette="red"
+              colorScheme="red"
+              size="sm"
+            >
+              Clear All
+            </Button>
           </Flex>
         </Container>
       </Box>
@@ -176,7 +221,7 @@ function NotificationPage() {
                   {/* Info Notifikasi */}
                   <Box>
                     <Badge
-                      colorScheme={notif.type === "Promosi" ? "purple" : "gray"}
+                      colorPalette={notif.type === "Promosi" ? "blue" : "gray"}
                       mb={2}
                     >
                       {notif.type}
