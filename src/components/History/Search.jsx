@@ -12,81 +12,68 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { CloseButton } from "@/components/ui/close-button";
+import { getOrderId } from "../../services/history";
+import { useQuery } from "@tanstack/react-query";
 
-const Search = ({ setIsSearchOpen, onSearch, orderId }) => {
-  const [orderIdState, setOrderIdState] = useState(orderId || "");
+const Search = ({ setIsSearchOpen }) => {
+  const [orderQuery, setOrderQuery] = useState("");
   const [recentSearches, setRecentSearches] = useState([]);
-  const [suggestions, setSuggestions] = useState([]);
 
-  // Load recent searches from localStorage
+  const [orderIds, setOrderIds] = useState([]);
+  const { data, isSuccess, isError } = useQuery({
+    queryKey: ["orders", { orderQuery }],
+    queryFn: () => getOrderId({ orderQuery }),
+    enabled: orderQuery.length > 0,
+  });
+
   useEffect(() => {
-    const storedSearches =
-      JSON.parse(localStorage.getItem("recentSearches")) || [];
-    setRecentSearches(storedSearches);
+    if (isSuccess) {
+      // Update state data
+      setOrderIds(data.map((order) => order.id));
+    }
+  }, [data, isSuccess]);
+
+  // Fungsi untuk mendapatkan history dari localStorage
+  const loadHistory = () => {
+    const savedHistory = localStorage.getItem("searchHistory");
+    return savedHistory ? JSON.parse(savedHistory) : [];
+  };
+
+  useEffect(() => {
+    setRecentSearches(loadHistory());
   }, []);
 
-  // Tambahkan useEffect untuk memberikan saran berdasarkan input
-  useEffect(() => {
-    if (orderIdState) {
-      const filteredSuggestions = recentSearches.filter(
-        (search) => search.includes(orderIdState) // Cek apakah input ada dalam pencarian terkini
-      );
-      setSuggestions(filteredSuggestions);
-    } else {
-      setSuggestions([]); // Kosongkan saran jika input kosong
-    }
-  }, [orderIdState, recentSearches]);
-
-  const handleSearch = () => {
-    if (orderIdState) {
-      // Update recent searches
-      const updatedSearches = [
-        orderIdState,
-        ...recentSearches.filter((search) => search !== orderIdState),
-      ].slice(0, 3);
-      setRecentSearches(updatedSearches);
-      localStorage.setItem("recentSearches", JSON.stringify(updatedSearches));
-
-      onSearch(orderIdState);
-    }
-    setIsSearchOpen(false);
+  const saveHistory = (newHistory) => {
+    const updatedHistory = newHistory.slice(0, 5); // Batasi 5 pencarian terakhir
+    localStorage.setItem("searchHistory", JSON.stringify(updatedHistory)); // Simpan ke localStorage
+    setRecentSearches(updatedHistory); // Update state history
   };
 
-  const handleSelectRecent = (search) => {
-    setOrderIdState(search);
-    onSearch(search);
-    setIsSearchOpen(false);
-  };
-
-  const handleRemoveRecent = (search) => {
-    const updatedSearches = recentSearches.filter((item) => item !== search);
-    setRecentSearches(updatedSearches);
-    localStorage.setItem("recentSearches", JSON.stringify(updatedSearches));
+  // handle history
+  const handleRemoveRecent = (orderId) => {
+    // Pastikan untuk menghapus hanya ID dari pencarian terbaru
+    const updatedHistory = recentSearches.filter((item) => item !== orderId);
+    saveHistory(updatedHistory); // Simpan kembali ke localStorage
   };
 
   const handleClearAllRecent = () => {
-    setRecentSearches([]); // Kosongkan state recentSearches
-    localStorage.removeItem("recentSearches"); // Hapus dari localStorage
+    saveHistory([]);
   };
 
-  // Tambahkan event listener untuk menangkap tombol Enter
-  const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
-      handleSearch();
-    }
+  // Handle pencarian baru
+  const handleOrderIdSearch = (newQuery) => {
+    setOrderQuery(newQuery);
   };
 
-  // Tambahkan useEffect untuk memberikan saran berdasarkan orderId
-  useEffect(() => {
-    if (orderIdState) {
-      const newSuggestions = recentSearches.filter(
-        (search) => search.toLowerCase().includes(orderIdState.toLowerCase()) // Cek apakah input ada dalam pencarian terkini
-      );
-      setSuggestions(newSuggestions);
-    } else {
-      setSuggestions([]); // Kosongkan saran jika input kosong
+  // Handle orderId selection
+  const handleOrderIdSelect = (orderId) => {
+    // Pastikan hanya menambahkan ID yang valid, bukan objek
+    if (!recentSearches.includes(orderId)) {
+      saveHistory([orderId, ...recentSearches]);
     }
-  }, [orderIdState]);
+    setIsSearchOpen(false); // Tutup pencarian setelah memilih
+    setOrderQuery(""); // Clear query setelah pemilihan
+  };
 
   return (
     <>
@@ -134,9 +121,7 @@ const Search = ({ setIsSearchOpen, onSearch, orderId }) => {
                 }}
               />
               <Input
-                value={orderIdState}
-                onChange={(e) => setOrderIdState(e.target.value)}
-                onKeyPress={handleKeyPress}
+                onChange={(event) => handleOrderIdSearch(event.target.value)}
                 variant="unstyled"
                 placeholder="Masukkan Nomor Penerbangan"
                 width="25vw"
@@ -150,22 +135,44 @@ const Search = ({ setIsSearchOpen, onSearch, orderId }) => {
           </HStack>
 
           {/* Menampilkan saran jika ada */}
-          {suggestions.length > 0 && (
+          {/* {orderIds.length > 0 && (
             <VStack spacing={1} px={5} width="100%">
-              {suggestions.map((suggestion) => (
+              <HStack
+                key={booking}
+                justifyContent="space-between"
+                width="100%"
+                borderBottom="1px solid #E2E8F0"
+                pb={1}
+              >
+                {orderIds.map((booking) => (
+                  <Text
+                    cursor="pointer"
+                    onClick={() => handleOrderIdSelect(booking.id)}
+                    color="blue.500"
+                  >
+                    {booking.id}
+                  </Text>
+                ))}
+              </HStack>
+            </VStack>
+          )} */}
+
+          {isSuccess && Array.isArray(data) && data.length > 0 && (
+            <VStack spacing={1} align="start" width="100%">
+              {data.map((order) => (
                 <HStack
-                  key={suggestion}
-                  justifyContent="space-between"
+                  key={order.id} // Gunakan `order.id` sebagai key
+                  justify="space-between"
                   width="100%"
-                  borderBottom="1px solid #E2E8F0"
                   pb={1}
+                  borderBottom="1px solid #E2E8F0"
                 >
                   <Text
                     cursor="pointer"
-                    onClick={() => handleSelectRecent(suggestion)}
                     color="blue.500"
+                    onClick={() => handleOrderIdSelect(order.id)} // Pilih berdasarkan `order.id`
                   >
-                    {suggestion}
+                    {order.id} {/* Menampilkan ID dari setiap order */}
                   </Text>
                 </HStack>
               ))}
@@ -201,7 +208,7 @@ const Search = ({ setIsSearchOpen, onSearch, orderId }) => {
                   >
                     <Text
                       cursor="pointer"
-                      onClick={() => handleSelectRecent(search)}
+                      onClick={() => handleOrderIdSelect(search.id)}
                       color="blue.500"
                     >
                       {search}

@@ -281,6 +281,7 @@ const SearchTicket = ({
               value={selectedFrom}
               onFocus={() => handleLocationInput("from")}
               fontWeight="semibold"
+              readOnly
             />
           </GridItem>
           <GridItem
@@ -308,6 +309,7 @@ const SearchTicket = ({
               value={selectedTo}
               onFocus={() => handleLocationInput("to")}
               fontWeight="semibold"
+              readOnly
             />
           </GridItem>
           <GridItem

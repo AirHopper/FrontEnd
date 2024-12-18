@@ -1,29 +1,58 @@
-export const getHistory = async params => {
-	const queryParams = new URLSearchParams();
+export const getHistory = async (startDate, endDate, orderId) => {
+  let params = {};
+  if (startDate) {
+    params["search[startBookingDate]"] = startDate;
+  }
+  if (endDate) {
+    params["search[endBookingDate]"] = endDate;
+  }
+  if (orderId) {
+    params["search[orderId]"] = orderId;
+  }
 
-	if (params.startDate) queryParams.append('search[startBookingDate]', params.startDate);
-	if (params.endDate) queryParams.append('search[endBookingDate]', params.endDate);
-	if (params.orderId) queryParams.append('search[orderId]', params.orderId);
+  let url =
+    `${import.meta.env.VITE_API_URL}${import.meta.env.VITE_API_VERSION}/orders?` +
+    new URLSearchParams(params);
 
-	const token = localStorage.getItem('token');
-	const url = `${import.meta.env.VITE_API_URL}${import.meta.env.VITE_API_VERSION}/orders?${queryParams.toString()}`;
+  const token = localStorage.getItem("token");
 
-	try {
-		const response = await fetch(url, {
-			headers: {
-				authorization: `Bearer ${token}`,
-			},
-			method: 'GET',
-		});
-		const result = await response.json();
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
 
-		if (!result?.success) {
-			throw new Error(result?.message);
-		}
+  const result = await response.json();
+  if (!result?.success) {
+    throw new Error(result?.message);
+  }
+  return result?.data;
+};
 
-		return result?.data;
-	} catch (error) {
-		console.error('Error fetching tickets:', error.message);
-		throw error;
-	}
+export const getOrderId = async (query) => {
+  let params = {};
+
+  if (query) {
+    params["search[orderId]"] = orderId;
+  }
+
+  let url =
+    `${import.meta.env.VITE_API_URL}${import.meta.env.VITE_API_VERSION}/orders?` +
+    new URLSearchParams(params);
+
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
+
+  const result = await response.json();
+  if (!result?.success) {
+    throw new Error(result?.message);
+  }
+  return result?.data;
 };
