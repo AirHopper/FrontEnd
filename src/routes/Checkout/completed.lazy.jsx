@@ -10,7 +10,6 @@ import {
   Text,
   Grid,
   Card,
-  createListCollection,
 } from '@chakra-ui/react'
 import '../../components/Buyer/Calendar/Calendarcss.css'
 import {
@@ -59,7 +58,6 @@ function CheckoutCompleted() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [passengersData, setPassengersData] = useState([]);
-  const someData = {  };
   const { data, isSuccess} = useQuery({
     queryKey: ["order", orderId],
     queryFn: async()=>{
@@ -100,12 +98,12 @@ function CheckoutCompleted() {
   }, [flights]);
   useEffect(() => {
     if (flightDetails?.length > 0) {
-      setSeatBerangkat(flightDetails[0]?.seats);
+      setSeatBerangkat(flightDetails[0]?.seat);
       if (flightDetails.length > 1) {
-        setSeatTransit1Berangkat(flightDetails[1]?.seats);
+        setSeatTransit1Berangkat(flightDetails[1]?.seat);
       }
       if (flightDetails.length > 2) {
-        setSeatTransit2Berangkat(flightDetails[2]?.seats);
+        setSeatTransit2Berangkat(flightDetails[2]?.seat);
       }
     }
   }, [flightDetails, seatBerangkat]); 
@@ -172,6 +170,42 @@ function CheckoutCompleted() {
       }
     }    
   }
+  const bookedSeatBerangkat = []
+  seatBerangkat.forEach((seat) => {
+    if (seat.isOccupied) {
+      bookedSeatBerangkat.push(seat.id)
+    }
+  })
+  const bookedSeatTransit1Berangkat = []
+  seatTransit1Berangkat.forEach((seat) => {
+    if (seat.isOccupied) {
+      bookedSeatTransit1Berangkat.push(seat.id)
+    }
+  })
+  const bookedSeatTransit2Berangkat = []
+  seatTransit2Berangkat.forEach((seat) => {
+    if (seat.isOccupied) {
+      bookedSeatTransit2Berangkat.push(seat.id)
+    }
+  })
+  const bookedSeatPulang = []
+  seatPulang.forEach((seat) => {
+    if (seat.isOccupied) {
+      bookedSeatPulang.push(seat.id)
+    }
+  })
+  const bookedSeatTransit1Pulang = []
+  seatTransit1Pulang.forEach((seat) => {
+    if (seat.isOccupied) {
+      bookedSeatTransit1Pulang.push(seat.id)
+    }
+  })
+  const bookedSeatTransit2Pulang = []
+  seatTransit2Pulang.forEach((seat) => {
+    if (seat.isOccupied) {
+      bookedSeatTransit2Pulang.push(seat.id)
+    }
+  })
   const selectedSeatsBerangkat = []
   const selectedSeatsTransit1Berangkat = []
   const selectedSeatsTransit2Berangkat = []
@@ -500,16 +534,16 @@ function CheckoutCompleted() {
                     Pilih Kursi Berangkat
                   </Text>
                   {kelas === "Economy" && (
-                    <SeatPickerEkonomi setSelected={setSelectedBerangkat} data={someData} seat={seatBerangkat} selectedSeats={selectedSeatsBerangkat}/>
+                    <SeatPickerEkonomi setSelected={setSelectedBerangkat} seat={seatBerangkat} bookedSeats={bookedSeatBerangkat} selectedSeats={selectedSeatsBerangkat}/>
                   )}
                   {kelas === "Premium+Economy" && (
-                    <SeatPickerPremiunEkonomi setSelected={setSelectedBerangkat} data={someData} seat={seatBerangkat} selectedSeats={selectedSeatsBerangkat}/>
+                    <SeatPickerPremiunEkonomi setSelected={setSelectedBerangkat} seat={seatBerangkat} bookedSeats={bookedSeatBerangkat} selectedSeats={selectedSeatsBerangkat}/>
                   )}
                   {kelas === "Business" &&(
-                    <SeatPickerBisnis setSelected={setSelectedBerangkat} data={someData} seat={seatBerangkat} selectedSeats={selectedSeatsBerangkat}/>
+                    <SeatPickerBisnis setSelected={setSelectedBerangkat} seat={seatBerangkat} bookedSeats={bookedSeatBerangkat} selectedSeats={selectedSeatsBerangkat}/>
                   )}
                   {kelas == "First+Class" && (
-                    <SeatPickerEksekutif setSelected={setSelectedBerangkat} data={someData} seat={seatBerangkat} selectedSeats={selectedSeatsBerangkat}/>
+                    <SeatPickerEksekutif setSelected={setSelectedBerangkat} seat={seatBerangkat} bookedSeats={bookedSeatBerangkat} selectedSeats={selectedSeatsBerangkat}/>
                   )}
                   {orderData?.outboundTicket?.isTransits === true && (
                     <>
@@ -523,16 +557,16 @@ function CheckoutCompleted() {
                       Pilih Kursi Transit 1 Berangkat
                     </Text>
                     {kelas === "Economy" && (
-                      <SeatPickerEkonomi setSelected={setSelectedTransit1Berangkat} data={someData} seat={seatTransit1Berangkat} selectedSeats={selectedSeatsTransit1Berangkat}/>
+                      <SeatPickerEkonomi setSelected={setSelectedTransit1Berangkat} seat={seatTransit1Berangkat} bookedSeats={bookedSeatTransit1Berangkat} selectedSeats={selectedSeatsTransit1Berangkat}/>
                     )}
                     {kelas === "Premium+Economy" && (
-                      <SeatPickerPremiunEkonomi setSelected={setSelectedTransit1Berangkat} data={someData} seat={seatTransit1Berangkat} selectedSeats={selectedSeatsTransit1Berangkat}/>
+                      <SeatPickerPremiunEkonomi setSelected={setSelectedTransit1Berangkat} seat={seatTransit1Berangkat} bookedSeats={bookedSeatTransit1Berangkat} selectedSeats={selectedSeatsTransit1Berangkat}/>
                     )}
                     {kelas === "Business" &&(
-                      <SeatPickerBisnis setSelected={setSelectedTransit1Berangkat} data={someData} seat={seatTransit1Berangkat} selectedSeats={selectedSeatsTransit1Berangkat}/>
+                      <SeatPickerBisnis setSelected={setSelectedTransit1Berangkat} seat={seatTransit1Berangkat} bookedSeats={bookedSeatTransit1Berangkat} selectedSeats={selectedSeatsTransit1Berangkat}/>
                     )}
                     {kelas == "First+Class" && (
-                      <SeatPickerEksekutif setSelected={setSelectedTransit1Berangkat} data={someData} seat={seatTransit1Berangkat} selectedSeats={selectedSeatsTransit1Berangkat}/>
+                      <SeatPickerEksekutif setSelected={setSelectedTransit1Berangkat} seat={seatTransit1Berangkat} bookedSeats={bookedSeatTransit1Berangkat} selectedSeats={selectedSeatsTransit1Berangkat}/>
                     )}
                     </>
                   )}
@@ -548,16 +582,16 @@ function CheckoutCompleted() {
                       Pilih Kursi Transit 2 Berangkat
                     </Text>
                     {kelas === "Economy" && (
-                      <SeatPickerEkonomi setSelected={setSelectedTransit2Berangkat} data={someData} seat={seatTransit2Berangkat} selectedSeats={selectedSeatsTransit2Berangkat}/>
+                      <SeatPickerEkonomi setSelected={setSelectedTransit2Berangkat} seat={seatTransit2Berangkat} bookedSeats={bookedSeatTransit2Berangkat} selectedSeats={selectedSeatsTransit2Berangkat}/>
                     )}
                     {kelas === "Premium+Economy" && (
-                      <SeatPickerPremiunEkonomi setSelected={setSelectedTransit2Berangkat} data={someData} seat={seatTransit2Berangkat} selectedSeats={selectedSeatsTransit2Berangkat}/>
+                      <SeatPickerPremiunEkonomi setSelected={setSelectedTransit2Berangkat} seat={seatTransit2Berangkat} bookedSeats={bookedSeatTransit2Berangkat} selectedSeats={selectedSeatsTransit2Berangkat}/>
                     )}
                     {kelas === "Business" &&(
-                      <SeatPickerBisnis setSelected={setSelectedTransit2Berangkat} data={someData} seat={seatTransit2Berangkat} selectedSeats={selectedSeatsTransit2Berangkat}/>
+                      <SeatPickerBisnis setSelected={setSelectedTransit2Berangkat} seat={seatTransit2Berangkat} bookedSeats={bookedSeatTransit2Berangkat} selectedSeats={selectedSeatsTransit2Berangkat}/>
                     )}
                     {kelas == "First+Class" && (
-                      <SeatPickerEksekutif setSelected={setSelectedTransit2Berangkat} data={someData} seat={seatTransit2Berangkat} selectedSeats={selectedSeatsTransit2Berangkat}/>
+                      <SeatPickerEksekutif setSelected={setSelectedTransit2Berangkat} seat={seatTransit2Berangkat} bookedSeats={bookedSeatTransit2Berangkat} selectedSeats={selectedSeatsTransit2Berangkat}/>
                     )}
                     </>
                   )}
@@ -573,16 +607,16 @@ function CheckoutCompleted() {
                       Pilih Kursi Pulang
                     </Text>
                     {kelas === "Economy" && (
-                      <SeatPickerEkonomi setSelected={setSelectedPulang} data={someData} seat={seatPulang} selectedSeats={selectedSeatsPulang}/>
+                      <SeatPickerEkonomi setSelected={setSelectedPulang} seat={seatPulang} bookedSeats={bookedSeatPulang} selectedSeats={selectedSeatsPulang}/>
                     )}
                     {kelas === "Premium+Economy" && (
-                      <SeatPickerPremiunEkonomi setSelected={setSelectedPulang} data={someData} seat={seatPulang} selectedSeats={selectedSeatsPulang}/>
+                      <SeatPickerPremiunEkonomi setSelected={setSelectedPulang} seat={seatPulang} bookedSeats={bookedSeatPulang} selectedSeats={selectedSeatsPulang}/>
                     )}
                     {kelas === "Business" &&(
-                      <SeatPickerBisnis setSelected={setSelectedPulang} data={someData} seat={seatPulang} selectedSeats={selectedSeatsPulang}/>
+                      <SeatPickerBisnis setSelected={setSelectedPulang} seat={seatPulang} bookedSeats={bookedSeatPulang} selectedSeats={selectedSeatsPulang}/>
                     )}
                     {kelas == "First+Class" && (
-                      <SeatPickerEksekutif setSelected={setSelectedPulang} data={someData} seat={seatPulang} selectedSeats={selectedSeatsPulang}/>
+                      <SeatPickerEksekutif setSelected={setSelectedPulang} seat={seatPulang} bookedSeats={bookedSeatPulang} selectedSeats={selectedSeatsPulang}/>
                     )}
                     </>
                   )}
@@ -598,16 +632,16 @@ function CheckoutCompleted() {
                       Pilih Kursi Transit 1 Pulang
                     </Text>
                     {kelas === "Economy" && (
-                      <SeatPickerEkonomi setSelected={setSelectedTransit1Pulang} data={someData} seat={seatTransit1Pulang} selectedSeats={selectedSeatsTransit1Pulang}/>
+                      <SeatPickerEkonomi setSelected={setSelectedTransit1Pulang} seat={seatTransit1Pulang} bookedSeats={bookedSeatTransit1Pulang} selectedSeats={selectedSeatsTransit1Pulang}/>
                     )}
                     {kelas === "Premium+Economy" && (
-                      <SeatPickerPremiunEkonomi setSelected={setSelectedTransit1Pulang} data={someData} seat={seatTransit1Pulang} selectedSeats={selectedSeatsTransit1Pulang}/>
+                      <SeatPickerPremiunEkonomi setSelected={setSelectedTransit1Pulang} seat={seatTransit1Pulang} bookedSeats={bookedSeatTransit1Pulang} selectedSeats={selectedSeatsTransit1Pulang}/>
                     )}
                     {kelas === "Business" &&(
-                      <SeatPickerBisnis setSelected={setSelectedTransit1Pulang} data={someData} seat={seatTransit1Pulang} selectedSeats={selectedSeatsTransit1Pulang}/>
+                      <SeatPickerBisnis setSelected={setSelectedTransit1Pulang} seat={seatTransit1Pulang} bookedSeats={bookedSeatTransit1Pulang} selectedSeats={selectedSeatsTransit1Pulang}/>
                     )}
                     {kelas == "First+Class" && (
-                      <SeatPickerEksekutif setSelected={setSelectedTransit1Pulang} data={someData} seat={seatTransit1Pulang} selectedSeats={selectedSeatsTransit1Pulang}/>
+                      <SeatPickerEksekutif setSelected={setSelectedTransit1Pulang} seat={seatTransit1Pulang} bookedSeats={bookedSeatTransit1Pulang} selectedSeats={selectedSeatsTransit1Pulang}/>
                     )}
                     </>
                   )}
@@ -623,16 +657,16 @@ function CheckoutCompleted() {
                       Pilih Kursi Transit 2 Pulang
                     </Text>
                     {kelas === "Economy" && (
-                      <SeatPickerEkonomi setSelected={setSelectedTransit2Pulang} data={someData} seat={seatTransit2Pulang} selectedSeats={selectedSeatsTransit2Pulang}/>
+                      <SeatPickerEkonomi setSelected={setSelectedTransit2Pulang} seat={seatTransit2Pulang} bookedSeats={bookedSeatTransit2Pulang} selectedSeats={selectedSeatsTransit2Pulang}/>
                     )}
                     {kelas === "Premium+Economy" && (
-                      <SeatPickerPremiunEkonomi setSelected={setSelectedTransit2Pulang} data={someData} seat={seatTransit2Pulang} selectedSeats={selectedSeatsTransit2Pulang}/>
+                      <SeatPickerPremiunEkonomi setSelected={setSelectedTransit2Pulang} seat={seatTransit2Pulang} bookedSeats={bookedSeatTransit2Pulang} selectedSeats={selectedSeatsTransit2Pulang}/>
                     )}
                     {kelas === "Business" &&(
-                      <SeatPickerBisnis setSelected={setSelectedTransit2Pulang} data={someData} seat={seatTransit2Pulang} selectedSeats={selectedSeatsTransit2Pulang}/>
+                      <SeatPickerBisnis setSelected={setSelectedTransit2Pulang} seat={seatTransit2Pulang} bookedSeats={bookedSeatTransit2Pulang} selectedSeats={selectedSeatsTransit2Pulang}/>
                     )}
                     {kelas == "First+Class" && (
-                      <SeatPickerEksekutif setSelected={setSelectedTransit2Pulang} data={someData} seat={seatTransit2Pulang} selectedSeats={selectedSeatsTransit2Pulang}/>
+                      <SeatPickerEksekutif setSelected={setSelectedTransit2Pulang} seat={seatTransit2Pulang} bookedSeats={bookedSeatTransit2Pulang} selectedSeats={selectedSeatsTransit2Pulang}/>
                     )}
                     </>
                   )}

@@ -5,7 +5,10 @@ import {
   Flex,   
   Text, 
   Spinner,
+  Box,
 } from '@chakra-ui/react';
+import { faCircleCheck } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 export default class App extends Component {
   addSeatCallback = ({ row, number, id }, addCb) => {
@@ -61,18 +64,24 @@ export default class App extends Component {
     ];
     row.forEach((rowData) => {
       rowData.forEach((seat) => {
-        if (seat && bookedSeats.includes(seat.id)) {
+        if (
+          seat &&
+          bookedSeats.includes(seat.id) &&
+          !selectedSeats.includes(seat.id)
+        ) {
           seat.isReserved = true;
         }
       });
-    });
-    row.forEach((rowData) => {
-      rowData.forEach((seat) => {
-        if (seat && selectedSeats.includes(seat.id)) {
-          seat.isSelected = true;
-        }
+    });    
+    if(!!selectedSeats){
+      row.forEach((rowData) => {
+        rowData.forEach((seat) => {
+          if (seat && selectedSeats.includes(seat.id)) {
+            seat.isSelected = true;
+          }
+        });
       });
-    });
+    }
     const availableSeats = row.reduce((count, row) => {
       const availableInRow = row.filter((seat) => seat && !seat.isReserved).length;
       return count + availableInRow;
@@ -86,21 +95,61 @@ export default class App extends Component {
     return (
       <div className="seat-container">
         {!!data &&(
-          <Flex justifyContent="center" bg="#73CA5C" color="white" p={2} borderRadius="md" w="92%" marginLeft={5}>
-            <Text fontFamily="Inter, sans-serif">Bisnis - {availableSeats} Kursi Tersedia</Text>
-          </Flex>
+          <>
+            <Flex justifyContent="center" bg="#73CA5C" color="white" p={2} borderRadius="md" w="92%" marginLeft={5}>
+              <Text fontFamily="Inter, sans-serif">Bisnis - {availableSeats} Kursi Tersedia</Text>
+            </Flex>
+            <div className="seat-picker-container">
+            <SeatPicker
+                addSeatCallback={this.addSeatCallback.bind(this)} 
+                removeSeatCallback={this.removeSeatCallback.bind(this)}
+                rows={modifiedRow}
+                maxReservableSeats={data?.totalPassengers}
+                alpha
+                visible
+                readOnly
+                selectedByDefault
+              />
+            </div>
+          </>
         )}
-        <div className="seat-picker-container">
-        <SeatPicker
-            addSeatCallback={this.addSeatCallback.bind(this)}
-            removeSeatCallback={this.removeSeatCallback.bind(this)}
-            rows={modifiedRow}
-            maxReservableSeats={data?.totalPassengers}
-            alpha
-            visible
-            selectedByDefault
-          />
-        </div>
+        {!!!data &&(
+          <>
+            <Flex justifyContent="center">
+              <Flex
+                bg="#3C3C3C"
+                color="white"
+                borderTopRadius="lg"
+                h={10}
+                justifyContent="space-between"
+                width="90%"
+              >
+                <Text marginLeft={4} marginTop={2}>
+                  Bisnis - {selectedSeats.length} Kursi Dipilih
+                </Text>
+                <Box marginTop={2} marginRight={5}>
+                  <FontAwesomeIcon
+                    icon={faCircleCheck}
+                    color="#73CA5C"
+                    size="lg"
+                  />
+                </Box>
+              </Flex>
+            </Flex>
+            <div className="seat-picker-container">
+            <SeatPicker
+                addSeatCallback={null}
+                removeSeatCallback={null}
+                rows={modifiedRow}
+                maxReservableSeats={selectedSeats.length}
+                alpha
+                visible
+                readOnly
+                selectedByDefault
+              />
+            </div>
+          </>
+        )}
       </div>
     );
   }
