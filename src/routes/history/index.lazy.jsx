@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { createLazyFileRoute, Link, useLocation, useNavigate } from '@tanstack/react-router';
 import { Box, Button, Container, Grid, Heading, Image, Spinner, Stack, Text, VStack, useBreakpointValue } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -11,6 +11,7 @@ import Search from '../../components/History/Search';
 import { getHistory } from '../../services/history';
 import NoList from '../../assets/img/no_list.png';
 import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 
 export const Route = createLazyFileRoute('/history/')({
 	component: RouteComponent,
@@ -26,7 +27,18 @@ function RouteComponent() {
 
 	useEffect(() => {
 		if (!token && !user) {
-			navigate({ to: '/' });
+			toast.error('Silahkan login terlebih dahulu!', {
+				position: 'top-right',
+				autoClose: 3000, // Durasi toast
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: false,
+				draggable: false,
+				theme: 'colored',
+			});
+			setTimeout(() => {
+				navigate({ to: '/login' });
+			}, 1000);
 		}
 	}, [navigate, token, user]);
 
@@ -48,6 +60,30 @@ function RouteComponent() {
 			key: 'selection',
 		},
 	]);
+
+	// State untuk kontrol munculkan input
+	const [isPickerOpen, setIsPickerOpen] = useState(false);
+	const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+	const [orders, setOrders] = useState([]);
+
+	const queryParams = useMemo(() => {
+		return { ...params, dateRange };
+	}, [params, dateRange]);
+
+	const { data, isSuccess, isLoading, isError } = useQuery({
+		queryKey: ['history', queryParams],
+		queryFn: () => getHistory(queryParams),
+		retry: 0,
+		enabled: !!token && !!user, // Only run the query if the user is logged in
+	});
+
+	useEffect(() => {
+		if (isSuccess) {
+			setOrders(data);
+		}
+	}, [data, isSuccess]);
+
 	// Pastikan state diperbarui jika query parameter berubah
 	useEffect(() => {
 		setDateRange([
@@ -58,23 +94,6 @@ function RouteComponent() {
 			},
 		]);
 	}, [startBookingDate, endBookingDate]);
-
-	// State untuk kontrol munculkan input
-	const [isPickerOpen, setIsPickerOpen] = useState(false);
-	const [isSearchOpen, setIsSearchOpen] = useState(false);
-
-	const [orders, setOrders] = useState([]);
-	const { data, isSuccess, isLoading, isError } = useQuery({
-		queryKey: ['history', dateRange, params],
-		queryFn: () => getHistory(params),
-		retry: 1,
-	});
-
-	useEffect(() => {
-		if (isSuccess) {
-			setOrders(data);
-		}
-	}, [data, isSuccess]);
 
 	const filteredOrders = orders; // Tidak ada filter lagi, semua dilakukan di backend
 
@@ -136,7 +155,7 @@ function RouteComponent() {
 			<Heading as="h1" size="lg" mb={4} color="black" fontWeight="bold">
 				Pilih Penerbangan
 			</Heading>
-			<Grid templateColumns={['1fr', '1fr', '14fr 2fr 1fr']} gap={4} alignItems="center">
+			<Grid templateColumns={['1fr', '1fr', '13fr 2fr 1fr']} gap={4} alignItems="center">
 				<Stack
 					as={Link}
 					to="/"
@@ -181,27 +200,22 @@ function RouteComponent() {
 			{isPickerOpen && <DatePicker setIsPickerOpen={setIsPickerOpen} dateRange={dateRange} setDateRange={setDateRange} onSave={handleSaveDateRange} />}
 
 			{isLoading ? (
-				<Box
-					display="flex" // Mengaktifkan flexbox
-					justifyContent="center" // Menjadikan konten rata tengah secara horizontal
-					alignItems="center" // Menjadikan konten rata tengah secara vertikal
-					textAlign="center"
-					py={10}
-					height="50vh"
-				>
-					<VStack spacing={4}>
-						{' '}
-						{/* Menggunakan VStack untuk memisahkan Spinner dan Text */}
+				<Box display="flex" justifyContent="center" alignItems="center" textAlign="center" py={10} height="50vh">
+					<VStack spacing={4} align="center" justify="center" height="100vh">
 						<Spinner size="lg" color="#44B3F8" />
 						<Text>Memuat history penerbangan...</Text>
 					</VStack>
 				</Box>
 			) : filteredOrders.length === 0 || isError ? (
-				<Stack alignItems="center" mt={5} py={10}>
-					<Image src={NoList} alt="No list Image" width="25%" objectFit="cover" />
-					<Text color="#44b3f8">Oops! Riwayat pesanan kosong!</Text>
-					<Text mt={-2}>Anda belum melakukan pemesanan penerbangan</Text>
-					<Button as={Link} to="/" rounded="xl" width="29vw" mt={5} py={2} bgColor="#44b3f8" _hover={{ bgColor: '#2078b8' }}>
+				<Stack alignItems="center" justifyContent="center" textAlign="center" mt={{ base: 2, sm: 5, md: 8, lg: 10 }} py={{ base: 5, sm: 10 }}>
+					<Image src={NoList} alt="No list Image" width={{ base: '50%', sm: '40%', md: '30%', lg: '25%' }} objectFit="cover" />
+					<Text color="#44b3f8" fontSize={{ base: 'sm', sm: 'md', md: 'lg', lg: 'xl' }}>
+						Oops! Riwayat pesanan kosong!
+					</Text>
+					<Text mt={-2} fontSize={{ base: 'xs', sm: 'sm', md: 'md', lg: 'lg' }}>
+						Anda belum melakukan pemesanan penerbangan
+					</Text>
+					<Button as={Link} to="/" rounded="xl" mt={{ base: 3, sm: 4, md: 5 }} py={2} bgColor="#44b3f8" _hover={{ bgColor: '#2078b8' }} fontSize={{ base: 'sm', sm: 'md', md: 'lg' }}>
 						Cari Penerbangan
 					</Button>
 				</Stack>
