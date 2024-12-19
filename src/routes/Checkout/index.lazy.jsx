@@ -78,22 +78,16 @@ function CheckoutIndex() {
   const [phoneNumber, setPhoneNumber] = useState('')
   const [email, setEmail] = useState('')
   const dewasa = parseInt(params.get('adult'), 10) || 0
-  const anak = parseInt(params.get('children'), 10) || 0
+  const anak = parseInt(params.get('child'), 10) || 0
   const bayi = parseInt(params.get('infant'), 10) || 0
   const kelas = params.get('classType') || ''
   const ticketId1 = parseInt(params.get('ticketId1'), 10) || 0
   const ticketId2 = parseInt(params.get('ticketId2'), 10) || 0
   const passengerCount = dewasa + anak
-  const ticket1Dewasa = parseInt(ticketData?.totalPrice || 0) * dewasa
-  const ticket1Anak = Math.ceil(
+  const totalTicketDewasa = parseInt(ticketData?.totalPrice || 0) * dewasa
+  const totalTicketAnak = Math.ceil(
     ((parseInt(ticketData?.totalPrice || 0) * 80) / 100) * anak,
   )
-  const ticket2Dewasa = parseInt(ticketData?.totalPrice || 0) * dewasa
-  const ticket2Anak = Math.ceil(
-    ((parseInt(ticketData?.totalPrice || 0) * 80) / 100) * anak,
-  )
-  const totalTicketDewasa = ticket1Dewasa + ticket2Dewasa
-  const totalTicketAnak = ticket1Anak + ticket2Anak
   const bookedSeatBerangkat = []
   seatBerangkat.forEach((seat) => {
     if (seat.isOccupied) {
