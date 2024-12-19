@@ -25,7 +25,10 @@ import {
   subhan,
   bima,
   ryan,
-  kak_reza
+  kak_reza,
+  royhan,
+  zaky,
+  kak_mughie
 } from '../assets/img';
 
 export const Route = createLazyFileRoute('/about-us')({
@@ -39,7 +42,7 @@ function AboutUsPage() {
     {
       name: 'Mughie Arief Mughoni',
       role: 'Fasilitator Back End',
-      avatar: ridhwan,
+      avatar: kak_mughie,
     },
     {
       name: 'Fahmi Alfareza',
@@ -53,7 +56,7 @@ function AboutUsPage() {
     {
       name: 'Muhamad Royhan Fadhli',
       role: 'Back End Developer',
-      avatar: ridhwan,
+      avatar: royhan,
       links: {
         github: 'https://github.com/MRoyhanF',
         linkedin: 'https://www.linkedin.com/in/muhamad-royhan-fadhli-7b2aa5167/',
@@ -113,7 +116,7 @@ function AboutUsPage() {
     {
       name: 'M. Zaky Pria Maulana',
       role: 'Front End Developer',
-      avatar: ridhwan,
+      avatar: zaky,
       links: {
         github: 'https://github.com/zkyymaulana',
         linkedin: 'https://www.linkedin.com/in/m-zaky-pria-maulana/',
