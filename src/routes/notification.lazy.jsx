@@ -25,27 +25,24 @@ import { notifications } from "../services/notification";
 import { useSelector } from "react-redux";
 import { clearNotifications } from "../services/notification";
 import Swal from "sweetalert2";
+import Protected from "../components/Auth/Protected";
 
 export const Route = createLazyFileRoute("/notification")({
-  component: NotificationPage,
+  component: () => (
+    <Protected >
+        <NotificationPage />
+    </Protected>
+),
 });
 
 function NotificationPage() {
 
-  const { token, user } = useSelector((state) => state.auth);
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const [notification, setNotification] = useState([]);
   const [filterType, setFilterType] = useState("all"); 
   const [searchQuery, setSearchQuery] = useState(""); 
   const [debouncedQuery, setDebouncedQuery] = useState("");
-
-  useEffect(() => {
-    if (!token && !user) {
-      navigate({ to: "/" });
-    }
-  }, [navigate, token, user]);
 
   // Debounce search input
   useEffect(() => {

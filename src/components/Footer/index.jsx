@@ -46,10 +46,10 @@ const Footer = () => {
           {/* Links */}
           <Flex
             direction={{ base: "column", md: "row" }}
-            mt={{ base: 6, md: 0 }}
+            mt={{ base: 3, md: 0 }}
             align={{ base: "flex-start", md: "center" }}
           >
-            <VStack align="flex-start" spacing={2} mr={{ base: 0, md: 8 }}>
+            <VStack align="flex-start" spacing={2} mr={{ base: 0, md: 8 }} mt={{ base: 4}}>
               <Text fontWeight="semibold" textTransform="uppercase">
                 Ikuti Kami
               </Text>
@@ -66,7 +66,7 @@ const Footer = () => {
                 Tentang Kami
               </Text>
             </VStack>
-            <VStack align="flex-start" spacing={2}>
+            <VStack align="flex-start" spacing={2} mt={{ base: 4}}>
               <Text fontWeight="semibold" textTransform="uppercase">
                 Penerbangan
               </Text>

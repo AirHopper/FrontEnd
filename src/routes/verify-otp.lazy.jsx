@@ -8,6 +8,7 @@ import {
   Heading,
   Text,
   HStack,
+  useBreakpointValue
 } from "@chakra-ui/react";
 import { PinInput } from "@/components/ui/pin-input";
 import { createLazyFileRoute, Link, useLocation, useNavigate } from "@tanstack/react-router";
@@ -16,6 +17,8 @@ import { verifyOTP, resendOtp } from "../services/auth";
 import { toast } from 'react-toastify';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import OtpInput from 'react-otp-input';
+import { useSelector } from 'react-redux';
 
 export const Route = createLazyFileRoute("/verify-otp")({
   component: VerifyOtpPage,
@@ -29,6 +32,21 @@ function VerifyOtpPage() {
   const [email, setEmail] = useState(location.state?.email || ""); // Email from registration
   const [timer, setTimer] = useState(60); // Timer 3 minutes
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { token } = useSelector((state) => state.auth);
+
+  // Breakpoint values for responsive input size
+  const inputSize = useBreakpointValue({
+    base: "30px", // Small screens
+    md: "40px", // Medium screens
+    lg: "45px", // Large screens
+  });
+
+  useEffect(() => {
+    if (token) {
+      navigate({ to: "/" });
+    }
+  }, [token, navigate]);
 
   // Countdown timer
   useEffect(() => {
@@ -51,7 +69,7 @@ function VerifyOtpPage() {
       toast.error("Silakan masukkan kode OTP 6 digit yang valid.");
       return;
     }
-  
+    console.log(otpCode)
     setIsSubmitting(true);
   
     try {  
@@ -110,11 +128,30 @@ function VerifyOtpPage() {
           </Text>
 
           {/* OTP Input */}
-          <HStack>
-            <PinInput
-              otp
-              onChange={(value) => setOtpCode(value)} // Ensure only OTP value is passed
-              isDisabled={isSubmitting}
+          <HStack spacing={4}>
+            <OtpInput
+              value={otpCode}
+              onChange={setOtpCode}
+              numInputs={6}
+              renderSeparator={<span>-</span>}
+              renderInput={(props) => (
+                <input
+                  {...props}
+                  style={{
+                    width: inputSize,
+                    height: inputSize,
+                    margin: "0 4px",
+                    fontSize: "16px",
+                    textAlign: "center",
+                    border: "2px solid #ccc",
+                    borderRadius: "4px",
+                    outline: "none",
+                    transition: "border-color 0.3s",
+                  }}
+                  onFocus={(e) => (e.target.style.borderColor = "#2078b8")}
+                  onBlur={(e) => (e.target.style.borderColor = "#ccc")}
+                />
+              )}
             />
           </HStack>
 
