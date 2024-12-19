@@ -107,7 +107,6 @@ function LoginPage() {
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: (tokenResponse) => {
       googleLoginUser(tokenResponse.access_token);
-      console.log(tokenResponse);
     },
     onError: (err) => {
       console.error(err);

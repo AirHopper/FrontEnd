@@ -19,7 +19,6 @@ const DatePicker = ({
 
     setDateRange((prevDateRange) => {
       const currentStartDate = prevDateRange[0].startDate;
-
       if (focusedRange[1] === 0) {
         // Fokus pada startDate
         return [

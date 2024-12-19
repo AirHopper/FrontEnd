@@ -56,13 +56,14 @@ function PaymentIndex() {
     }
     }, [navigate, token, user])
 
-    useEffect(() => {
-        if (!orderId) {
-            setOverlayVisible(true)
-            setMessage('Order Id Tidak Ditemukan!')
-            setTujuan('/')
-        }
-    }, [navigate, token, user])
+    // useEffect(() => {
+    //     if (!orderId) {
+    //         setOverlayVisible(true)
+    //         setMessage('Order Id Tidak Ditemukan!')
+    //         setTujuan('/')
+    //     }
+    // }, [navigate, orderId])
+
     useEffect(() => {
     if (isOverlayVisible) {
         const timer = setTimeout(() => {
@@ -78,6 +79,7 @@ function PaymentIndex() {
             setOrderData(dataBaru);
         }   
     }, [data, isSuccess]);
+
     useEffect(() => {
         const query = new URLSearchParams(location.search);
         const transactionStatus = query.get("transaction_status");
@@ -95,7 +97,11 @@ function PaymentIndex() {
                 toast.success("Pembayaran berhasil!", {
                     autoClose: 3000,
                 });
-                navigate({to:"/payment/success"});
+                
+                navigate({
+                    to:"/payment/success", 
+                    state: {orderId: orderId},
+                });
             } else {
                 toast.error("Terjadi kesalahan saat pembayaran.", {
                     autoClose: 3000,
@@ -108,7 +114,7 @@ function PaymentIndex() {
     const load_payment = () => {
         window.snap.embed(tokenPayment, {
             embedId: "snap-container",
-            onSuccess: function (result) {
+            onSuccess: function () {
                 toast.success("Pembayaran berhasil!", {
                     autoClose: 3000,
                 });
@@ -116,7 +122,7 @@ function PaymentIndex() {
                     to: "/payment/success",
                 });
             },
-            onPending: function (result) {
+            onPending: function () {
                 toast.info("Pembayaran sedang menunggu.", {
                     autoClose: 3000,
                 });
@@ -124,7 +130,7 @@ function PaymentIndex() {
                     to: "/",
                 });
             },
-            onError: function (result) {
+            onError: function () {
                 toast.error("Terjadi kesalahan saat pembayaran.", {
                     autoClose: 3000,
                 });

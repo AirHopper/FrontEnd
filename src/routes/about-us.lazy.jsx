@@ -21,7 +21,14 @@ import {
   Msib, 
   ridhwan,
   joe,
-  juan
+  juan,
+  subhan,
+  bima,
+  ryan,
+  kak_reza,
+  royhan,
+  zaky,
+  kak_mughie
 } from '../assets/img';
 
 export const Route = createLazyFileRoute('/about-us')({
@@ -35,12 +42,12 @@ function AboutUsPage() {
     {
       name: 'Mughie Arief Mughoni',
       role: 'Fasilitator Back End',
-      avatar: ridhwan,
+      avatar: kak_mughie,
     },
     {
       name: 'Fahmi Alfareza',
       role: 'Fasilitator FSW',
-      avatar: ridhwan,
+      avatar: kak_reza,
     },
   ];
 
@@ -49,7 +56,7 @@ function AboutUsPage() {
     {
       name: 'Muhamad Royhan Fadhli',
       role: 'Back End Developer',
-      avatar: ridhwan,
+      avatar: royhan,
       links: {
         github: 'https://github.com/MRoyhanF',
         linkedin: 'https://www.linkedin.com/in/muhamad-royhan-fadhli-7b2aa5167/',
@@ -69,7 +76,7 @@ function AboutUsPage() {
     {
       name: 'Bima Rizqy Ramadhan',
       role: 'Back End Developer',
-      avatar: ridhwan,
+      avatar: bima,
       links: {
         github: 'https://github.com/BIMASKUY',
         linkedin: 'https://www.linkedin.com/in/bima-rizqy-ramadhan/',
@@ -79,7 +86,7 @@ function AboutUsPage() {
     {
       name: 'Ahmad Subhan Daryhadi',
       role: 'Back End Developer',
-      avatar: ridhwan,
+      avatar: subhan,
       links: {
         github: 'https://github.com/ahmadsubhand',
         linkedin: 'https://www.linkedin.com/in/ahmadsubhand/',
@@ -99,7 +106,7 @@ function AboutUsPage() {
     {
       name: 'Ryan Nicholas Purba',
       role: 'Front End Developer',
-      avatar: ridhwan,
+      avatar: ryan,
       links: {
         github: 'https://github.com/ryanlikestocode44',
         linkedin: 'https://www.linkedin.com/in/ryan-nicholas-purba-717036326',
@@ -109,7 +116,7 @@ function AboutUsPage() {
     {
       name: 'M. Zaky Pria Maulana',
       role: 'Front End Developer',
-      avatar: ridhwan,
+      avatar: zaky,
       links: {
         github: 'https://github.com/zkyymaulana',
         linkedin: 'https://www.linkedin.com/in/m-zaky-pria-maulana/',

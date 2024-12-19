@@ -17,7 +17,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 
 const DetailCard = ({ order }) => {
-  console.log("Selected Order:", order);
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -40,8 +39,8 @@ const DetailCard = ({ order }) => {
   const { mutate: executeCancelBooking } = useMutation({
     mutationFn: (orderId) => cancelBooking(orderId), // Ini adalah fungsi server
     onSuccess: () => {
-      queryClient.invalidateQueries(["history"]);
       toast.success("Pemesanan berhasil dibatalkan.");
+      queryClient.invalidateQueries(["history"]);
     },
     onError: (error) => {
       toast.error(
@@ -68,7 +67,6 @@ const DetailCard = ({ order }) => {
     }).then((result) => {
       if (result.isConfirmed) {
         executeCancelBooking(order.id); // Pastikan ID pesanan dikirimkan dengan benar
-        Swal.fire("Pemesanan Berhasil Dibatalkan!", "success");
       }
     });
   };
