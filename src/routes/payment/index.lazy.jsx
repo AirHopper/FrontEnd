@@ -20,8 +20,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { toast } from "react-toastify";
 import { getDetailOrder } from '../../services/order'
 import { useQuery } from "@tanstack/react-query";
-import { useSelector } from "react-redux";
-import Overlay from '../../components/Overlay/index.jsx';
 
 export const Route = createLazyFileRoute('/payment/')({
   component: PaymentIndex,
@@ -30,12 +28,8 @@ export const Route = createLazyFileRoute('/payment/')({
 function PaymentIndex() {
     const navigate = useNavigate();
     const { state } = useLocation();
-    const { user, token } = useSelector((state) => state.auth);
-    const [isOverlayVisible, setOverlayVisible] = useState(false)
-    const [message, setMessage] = useState('')
-    const [tujuan, setTujuan] = useState('')
     const orderId = state.orderId;
-    let tokenPayment = "";
+    let token = "";
     const [orderData, setOrderData] = useState([]);
     const [flightDetails, setFlightDetails] = useState([]);
     const [flightDetails2, setFlightDetails2] = useState([]);
@@ -48,30 +42,6 @@ function PaymentIndex() {
         },
         enabled: !!orderId,
     });
-    useEffect(() => {
-    if (!token && !user) {
-        setOverlayVisible(true)
-        setMessage('Anda harus login terlebih dahulu!')
-        setTujuan('/login')
-    }
-    }, [navigate, token, user])
-
-    useEffect(() => {
-        if (!orderId) {
-            setOverlayVisible(true)
-            setMessage('Order Id Tidak Ditemukan!')
-            setTujuan('/')
-        }
-    }, [navigate, token, user])
-    useEffect(() => {
-    if (isOverlayVisible) {
-        const timer = setTimeout(() => {
-        navigate({ to: tujuan })
-        }, 4000)
-
-        return () => clearTimeout(timer)
-    }
-    }, [isOverlayVisible, navigate, tujuan])
     useEffect(() => {
         if (isSuccess) {
             const dataBaru = data.data
@@ -106,7 +76,7 @@ function PaymentIndex() {
     }, [location, navigate]);
     
     const load_payment = () => {
-        window.snap.embed(tokenPayment, {
+        window.snap.embed(token, {
             embedId: "snap-container",
             onSuccess: function (result) {
                 toast.success("Pembayaran berhasil!", {
@@ -159,13 +129,13 @@ function PaymentIndex() {
     
     useEffect(()=>{
         if(orderData?.id){
-            tokenPayment = orderData?.payment.token
+            token = orderData?.payment.token
             if(snapLoaded){
                 load_payment()
                 setSnapLoaded(false)
             }
         }
-    }, [snapLoaded, orderData, tokenPayment])
+    }, [snapLoaded, orderData, token])
     const flights = orderData?.outboundTicket?.flights
     useEffect(() => {
         if(flights){
@@ -216,7 +186,6 @@ function PaymentIndex() {
     }
     return (
         <>
-        <Overlay isVisible={isOverlayVisible} message={message} />
         <Box bg="white" px={4}>
             <Flex
             w="100%"
@@ -230,6 +199,7 @@ function PaymentIndex() {
                 <Stack color="black" marginTop={10} marginLeft={30} marginBottom={5}>
                 <BreadcrumbRoot size="lg">
                     <BreadcrumbLink
+                    href="/checkout"
                     color="black"
                     fontWeight="bold"
                     >
@@ -238,7 +208,7 @@ function PaymentIndex() {
                     <BreadcrumbCurrentLink color="black" fontWeight="bold">
                     Bayar
                     </BreadcrumbCurrentLink>
-                    <BreadcrumbLink color="grey" fontWeight="bold">
+                    <BreadcrumbLink href="#" color="grey" fontWeight="bold">
                     Selesai
                     </BreadcrumbLink>
                 </BreadcrumbRoot>

@@ -10,7 +10,7 @@ import {
   Text,
   Grid,
   Card,
-  Spinner
+  createListCollection,
 } from '@chakra-ui/react'
 import '../../components/Buyer/Calendar/Calendarcss.css'
 import {
@@ -28,7 +28,6 @@ import SeatPickerEksekutif from '../../components/Buyer/Seat/seatEksekutif.lazy.
 import { getDetailOrder } from '../../services/order/index.js'
 import { useQuery } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
-import Overlay from '../../components/Overlay/index.jsx';
 
 export const Route = createLazyFileRoute('/checkout/completed')({
   component: CheckoutCompleted,
@@ -39,9 +38,6 @@ function CheckoutCompleted() {
   const { state } = useLocation();
   const orderId = state.orderId;
   const { user, token } = useSelector((state) => state.auth);
-  const [isOverlayVisible, setOverlayVisible] = useState(false)
-  const [message, setMessage] = useState('')
-  const [tujuan, setTujuan] = useState('')
   const [selected, setSelected] = React.useState(null);
   const [orderData, setOrderData] = useState([]);
   const [flightDetails, setFlightDetails] = useState([]);
@@ -63,6 +59,7 @@ function CheckoutCompleted() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [passengersData, setPassengersData] = useState([]);
+  const someData = {  };
   const { data, isSuccess} = useQuery({
     queryKey: ["order", orderId],
     queryFn: async()=>{
@@ -71,33 +68,6 @@ function CheckoutCompleted() {
     },
     enabled: !!orderId,
   });
-
-  useEffect(() => {
-    if (!token && !user) {
-      setOverlayVisible(true)
-      setMessage('Anda harus login terlebih dahulu!')
-      setTujuan('/login')
-    }
-  }, [navigate, token, user])
-
-  useEffect(() => {
-    if (!orderId) {
-      setOverlayVisible(true)
-      setMessage('Order Id Tidak Ditemukan !')
-      setTujuan('/')
-    }
-  }, [navigate, token, user])
-
-  useEffect(() => {
-    if (isOverlayVisible) {
-      const timer = setTimeout(() => {
-        navigate({ to: tujuan })
-      }, 4000)
-
-      return () => clearTimeout(timer)
-    }
-  }, [isOverlayVisible, navigate, tujuan])
-
   useEffect(() => {
     if(user){
         setFullName(user.user?.fullName)
@@ -130,12 +100,12 @@ function CheckoutCompleted() {
   }, [flights]);
   useEffect(() => {
     if (flightDetails?.length > 0) {
-      setSeatBerangkat(flightDetails[0]?.seat);
+      setSeatBerangkat(flightDetails[0]?.seats);
       if (flightDetails.length > 1) {
-        setSeatTransit1Berangkat(flightDetails[1]?.seat);
+        setSeatTransit1Berangkat(flightDetails[1]?.seats);
       }
       if (flightDetails.length > 2) {
-        setSeatTransit2Berangkat(flightDetails[2]?.seat);
+        setSeatTransit2Berangkat(flightDetails[2]?.seats);
       }
     }
   }, [flightDetails, seatBerangkat]); 
@@ -202,42 +172,6 @@ function CheckoutCompleted() {
       }
     }    
   }
-  const bookedSeatBerangkat = []
-  seatBerangkat.forEach((seat) => {
-    if (seat.isOccupied) {
-      bookedSeatBerangkat.push(seat.id)
-    }
-  })
-  const bookedSeatTransit1Berangkat = []
-  seatTransit1Berangkat.forEach((seat) => {
-    if (seat.isOccupied) {
-      bookedSeatTransit1Berangkat.push(seat.id)
-    }
-  })
-  const bookedSeatTransit2Berangkat = []
-  seatTransit2Berangkat.forEach((seat) => {
-    if (seat.isOccupied) {
-      bookedSeatTransit2Berangkat.push(seat.id)
-    }
-  })
-  const bookedSeatPulang = []
-  seatPulang.forEach((seat) => {
-    if (seat.isOccupied) {
-      bookedSeatPulang.push(seat.id)
-    }
-  })
-  const bookedSeatTransit1Pulang = []
-  seatTransit1Pulang.forEach((seat) => {
-    if (seat.isOccupied) {
-      bookedSeatTransit1Pulang.push(seat.id)
-    }
-  })
-  const bookedSeatTransit2Pulang = []
-  seatTransit2Pulang.forEach((seat) => {
-    if (seat.isOccupied) {
-      bookedSeatTransit2Pulang.push(seat.id)
-    }
-  })
   const selectedSeatsBerangkat = []
   const selectedSeatsTransit1Berangkat = []
   const selectedSeatsTransit2Berangkat = []
@@ -284,7 +218,6 @@ function CheckoutCompleted() {
   
   return (
     <>
-      <Overlay isVisible={isOverlayVisible} message={message} />
       <Box bg="white" px={4}>
         <Flex
           w="100%"
@@ -303,6 +236,7 @@ function CheckoutCompleted() {
             >
               <BreadcrumbRoot size="lg">
                 <BreadcrumbLink
+                  href="/checkout"
                   color="black"
                   fontWeight="bold"
                 >
@@ -311,7 +245,7 @@ function CheckoutCompleted() {
                 <BreadcrumbCurrentLink color="black" fontWeight="bold">
                   Bayar
                 </BreadcrumbCurrentLink>
-                <BreadcrumbLink color="grey" fontWeight="bold">
+                <BreadcrumbLink href="/payment/success" color="grey" fontWeight="bold">
                   Selesai
                 </BreadcrumbLink>
               </BreadcrumbRoot>
@@ -373,7 +307,7 @@ function CheckoutCompleted() {
                     </Flex>
                     <Stack gap="4" px={4} marginTop={2}>
                       <Field
-                        color="#006ec1"
+                        color="#4B1979"
                         label="Nama Lengkap"
                         labelProps={{ fontWeight: 'bold' }}
                       >
@@ -384,7 +318,7 @@ function CheckoutCompleted() {
                         />
                       </Field>
                       <Field
-                        color="#006ec1"
+                        color="#4B1979"
                         label="Nomor Telepon"
                         labelProps={{ fontWeight: 'bold' }}
                       >
@@ -395,7 +329,7 @@ function CheckoutCompleted() {
                         />
                       </Field>
                       <Field
-                        color="#006ec1"
+                        color="#4B1979"
                         label="Email"
                         labelProps={{ fontWeight: 'bold' }}
                       >
@@ -422,140 +356,130 @@ function CheckoutCompleted() {
                     </Card.Title>
                   </Card.Header>
                   <Card.Body marginBottom={5}>
-                    {!passengersData &&(
-                      <Flex justifyContent="center" alignItems="center" height="100vh" bg="gray.100">
-                        <Spinner size="xl" color="teal.500" />
-                        <Text ml={4} fontSize="lg" color="gray.700" fontFamily="Inter, sans-serif">
-                          Memuat Data Penumpang...
-                        </Text>
-                      </Flex>
-                    )}
-                    {!!passengersData &&(
-                      <Box>
+                    <Box>
                       {[...Array(passengersData.length)].map((_, index) => (
-                          <Box key={index} mb={6} color="black">
-                            <Flex bg="#3C3C3C" color="white" borderTopRadius="lg" h={10} mb={2} justifyContent="space-between">
-                              <Text ml={4} pt={2}>Data Diri Penumpang {index + 1} - {passengersData[index]?.type}</Text>
-                              <Box marginTop={2} marginRight={5}>
-                                <FontAwesomeIcon
-                                  icon={faCircleCheck}
-                                  color="#73CA5C"
-                                  size="lg"
-                                />
-                              </Box>
-                            </Flex>
-                            <Stack gap="4" px={4}>
+                        <Box key={index} mb={6} color="black">
+                          <Flex bg="#3C3C3C" color="white" borderTopRadius="lg" h={10} mb={2} justifyContent="space-between">
+                            <Text ml={4} pt={2}>Data Diri Penumpang {index + 1} - {passengersData[index]?.type}</Text>
+                            <Box marginTop={2} marginRight={5}>
+                              <FontAwesomeIcon
+                                icon={faCircleCheck}
+                                color="#73CA5C"
+                                size="lg"
+                              />
+                            </Box>
+                          </Flex>
+                          <Stack gap="4" px={4}>
+                            <Field
+                              color="#4B1979"
+                              label="Title"
+                              labelProps={{ fontWeight: 'bold' }}
+                            >
+                              <Input
+                                value={passengersData[index]?.title}
+                                disabled
+                                borderColor="gray.300"
+                              />
+                            </Field>
+                            <Field
+                              color="#4B1979"
+                              label="Nama Lengkap"
+                              labelProps={{ fontWeight: 'bold' }}
+                            >
+                              <Input
+                                value={passengersData[index]?.name}
+                                disabled
+                                borderColor="gray.300"
+                              />
+                            </Field>
+                            {passengersData[index]?.familyName && (
                               <Field
-                                color="#006ec1"
-                                label="Title"
+                                color="#4B1979"
+                                label="Nama Keluarga"
                                 labelProps={{ fontWeight: 'bold' }}
                               >
                                 <Input
-                                  value={passengersData[index]?.title}
+                                  value={passengersData[index]?.familyName}
                                   disabled
                                   borderColor="gray.300"
                                 />
                               </Field>
-                              <Field
-                                color="#006ec1"
-                                label="Nama Lengkap"
-                                labelProps={{ fontWeight: 'bold' }}
-                              >
-                                <Input
-                                  value={passengersData[index]?.name}
-                                  disabled
-                                  borderColor="gray.300"
-                                />
-                              </Field>
-                              {passengersData[index]?.familyName && (
-                                <Field
-                                  color="#006ec1"
-                                  label="Nama Keluarga"
-                                  labelProps={{ fontWeight: 'bold' }}
-                                >
-                                  <Input
-                                    value={passengersData[index]?.familyName}
-                                    disabled
-                                    borderColor="gray.300"
-                                  />
-                                </Field>
-                              )}
-                              <Field
-                                color="#006ec1"
-                                label="Tanggal Lahir"
-                                labelProps={{ fontWeight: 'bold' }}
-                              >
-                                <Input
-                                  value={
-                                    passengersData[index]?.dateOfBirth
-                                      ? new Date(passengersData[index]?.dateOfBirth).toLocaleDateString('id-ID', {
-                                          day: '2-digit',
-                                          month: 'long',
-                                          year: 'numeric',
-                                        })
-                                      : ''
-                                  }
-                                  disabled
-                                  borderColor="gray.300"
-                                />
-                              </Field>
-                              <Field
-                                color="#006ec1"
-                                label="Kewarganegaraan"
-                                labelProps={{ fontWeight: 'bold' }}
-                              >
-                                <Input
-                                  value={passengersData[index]?.nationality}
-                                  disabled
-                                  borderColor="gray.300"
-                                />
-                              </Field>
-                              <Field
-                                color="#006ec1"
-                                label="KTP/Paspor"
-                                labelProps={{ fontWeight: 'bold' }}
-                              >
-                                <Input
-                                  value={passengersData[index]?.identifierNumber}
-                                  disabled
-                                  borderColor="gray.300"
-                                />
-                              </Field>
-                              <Field
-                                color="#006ec1"
-                                label="Negara Penerbit"
-                                labelProps={{ fontWeight: 'bold' }}
-                              >
-                                <Input
-                                  value={passengersData[index]?.issuedCountry}
-                                  disabled
-                                  borderColor="gray.300"
-                                />
-                              </Field>
-                              <Field
-                                color="#006ec1"
-                                label="Berlaku Sampai"
-                                labelProps={{ fontWeight: 'bold' }}
-                              >
-                                <Input
-                                  value={
-                                    passengersData[index]?.idValidUntil
-                                      ? new Date(passengersData[index]?.idValidUntil).toLocaleDateString('id-ID', {
-                                          day: '2-digit',
-                                          month: 'long',
-                                          year: 'numeric',
-                                        })
-                                      : ''
-                                  }
-                                  disabled
-                                  borderColor="gray.300"
-                                />
-                              </Field>
-                            </Stack>
-                          </Box>
-                        ))}
-                      </Box>
-                    )}
+                            )}
+                            <Field
+                              color="#4B1979"
+                              label="Tanggal Lahir"
+                              labelProps={{ fontWeight: 'bold' }}
+                            >
+                              <Input
+                                value={
+                                  passengersData[index]?.dateOfBirth
+                                    ? new Date(passengersData[index]?.dateOfBirth).toLocaleDateString('id-ID', {
+                                        day: '2-digit',
+                                        month: 'long',
+                                        year: 'numeric',
+                                      })
+                                    : ''
+                                }
+                                disabled
+                                borderColor="gray.300"
+                              />
+                            </Field>
+                            <Field
+                              color="#4B1979"
+                              label="Kewarganegaraan"
+                              labelProps={{ fontWeight: 'bold' }}
+                            >
+                              <Input
+                                value={passengersData[index]?.nationality}
+                                disabled
+                                borderColor="gray.300"
+                              />
+                            </Field>
+                            <Field
+                              color="#4B1979"
+                              label="KTP/Paspor"
+                              labelProps={{ fontWeight: 'bold' }}
+                            >
+                              <Input
+                                value={passengersData[index]?.identifierNumber}
+                                disabled
+                                borderColor="gray.300"
+                              />
+                            </Field>
+                            <Field
+                              color="#4B1979"
+                              label="Negara Penerbit"
+                              labelProps={{ fontWeight: 'bold' }}
+                            >
+                              <Input
+                                value={passengersData[index]?.issuedCountry}
+                                disabled
+                                borderColor="gray.300"
+                              />
+                            </Field>
+                            <Field
+                              color="#4B1979"
+                              label="Berlaku Sampai"
+                              labelProps={{ fontWeight: 'bold' }}
+                            >
+                              <Input
+                                value={
+                                  passengersData[index]?.idValidUntil
+                                    ? new Date(passengersData[index]?.idValidUntil).toLocaleDateString('id-ID', {
+                                        day: '2-digit',
+                                        month: 'long',
+                                        year: 'numeric',
+                                      })
+                                    : ''
+                                }
+                                disabled
+                                borderColor="gray.300"
+                              />
+                            </Field>
+                          </Stack>
+                        </Box>
+                      ))}
+                    </Box>
                   </Card.Body>
                 </Card.Root>
                 <Card.Root
@@ -576,16 +500,16 @@ function CheckoutCompleted() {
                     Pilih Kursi Berangkat
                   </Text>
                   {kelas === "Economy" && (
-                    <SeatPickerEkonomi setSelected={setSelectedBerangkat} seat={seatBerangkat} bookedSeats={bookedSeatBerangkat} selectedSeats={selectedSeatsBerangkat}/>
+                    <SeatPickerEkonomi setSelected={setSelectedBerangkat} data={someData} seat={seatBerangkat} selectedSeats={selectedSeatsBerangkat}/>
                   )}
                   {kelas === "Premium+Economy" && (
-                    <SeatPickerPremiunEkonomi setSelected={setSelectedBerangkat} seat={seatBerangkat} bookedSeats={bookedSeatBerangkat} selectedSeats={selectedSeatsBerangkat}/>
+                    <SeatPickerPremiunEkonomi setSelected={setSelectedBerangkat} data={someData} seat={seatBerangkat} selectedSeats={selectedSeatsBerangkat}/>
                   )}
                   {kelas === "Business" &&(
-                    <SeatPickerBisnis setSelected={setSelectedBerangkat} seat={seatBerangkat} bookedSeats={bookedSeatBerangkat} selectedSeats={selectedSeatsBerangkat}/>
+                    <SeatPickerBisnis setSelected={setSelectedBerangkat} data={someData} seat={seatBerangkat} selectedSeats={selectedSeatsBerangkat}/>
                   )}
                   {kelas == "First+Class" && (
-                    <SeatPickerEksekutif setSelected={setSelectedBerangkat} seat={seatBerangkat} bookedSeats={bookedSeatBerangkat} selectedSeats={selectedSeatsBerangkat}/>
+                    <SeatPickerEksekutif setSelected={setSelectedBerangkat} data={someData} seat={seatBerangkat} selectedSeats={selectedSeatsBerangkat}/>
                   )}
                   {orderData?.outboundTicket?.isTransits === true && (
                     <>
@@ -599,16 +523,16 @@ function CheckoutCompleted() {
                       Pilih Kursi Transit 1 Berangkat
                     </Text>
                     {kelas === "Economy" && (
-                      <SeatPickerEkonomi setSelected={setSelectedTransit1Berangkat} seat={seatTransit1Berangkat} bookedSeats={bookedSeatTransit1Berangkat} selectedSeats={selectedSeatsTransit1Berangkat}/>
+                      <SeatPickerEkonomi setSelected={setSelectedTransit1Berangkat} data={someData} seat={seatTransit1Berangkat} selectedSeats={selectedSeatsTransit1Berangkat}/>
                     )}
                     {kelas === "Premium+Economy" && (
-                      <SeatPickerPremiunEkonomi setSelected={setSelectedTransit1Berangkat} seat={seatTransit1Berangkat} bookedSeats={bookedSeatTransit1Berangkat} selectedSeats={selectedSeatsTransit1Berangkat}/>
+                      <SeatPickerPremiunEkonomi setSelected={setSelectedTransit1Berangkat} data={someData} seat={seatTransit1Berangkat} selectedSeats={selectedSeatsTransit1Berangkat}/>
                     )}
                     {kelas === "Business" &&(
-                      <SeatPickerBisnis setSelected={setSelectedTransit1Berangkat} seat={seatTransit1Berangkat} bookedSeats={bookedSeatTransit1Berangkat} selectedSeats={selectedSeatsTransit1Berangkat}/>
+                      <SeatPickerBisnis setSelected={setSelectedTransit1Berangkat} data={someData} seat={seatTransit1Berangkat} selectedSeats={selectedSeatsTransit1Berangkat}/>
                     )}
                     {kelas == "First+Class" && (
-                      <SeatPickerEksekutif setSelected={setSelectedTransit1Berangkat} seat={seatTransit1Berangkat} bookedSeats={bookedSeatTransit1Berangkat} selectedSeats={selectedSeatsTransit1Berangkat}/>
+                      <SeatPickerEksekutif setSelected={setSelectedTransit1Berangkat} data={someData} seat={seatTransit1Berangkat} selectedSeats={selectedSeatsTransit1Berangkat}/>
                     )}
                     </>
                   )}
@@ -624,16 +548,16 @@ function CheckoutCompleted() {
                       Pilih Kursi Transit 2 Berangkat
                     </Text>
                     {kelas === "Economy" && (
-                      <SeatPickerEkonomi setSelected={setSelectedTransit2Berangkat} seat={seatTransit2Berangkat} bookedSeats={bookedSeatTransit2Berangkat} selectedSeats={selectedSeatsTransit2Berangkat}/>
+                      <SeatPickerEkonomi setSelected={setSelectedTransit2Berangkat} data={someData} seat={seatTransit2Berangkat} selectedSeats={selectedSeatsTransit2Berangkat}/>
                     )}
                     {kelas === "Premium+Economy" && (
-                      <SeatPickerPremiunEkonomi setSelected={setSelectedTransit2Berangkat} seat={seatTransit2Berangkat} bookedSeats={bookedSeatTransit2Berangkat} selectedSeats={selectedSeatsTransit2Berangkat}/>
+                      <SeatPickerPremiunEkonomi setSelected={setSelectedTransit2Berangkat} data={someData} seat={seatTransit2Berangkat} selectedSeats={selectedSeatsTransit2Berangkat}/>
                     )}
                     {kelas === "Business" &&(
-                      <SeatPickerBisnis setSelected={setSelectedTransit2Berangkat} seat={seatTransit2Berangkat} bookedSeats={bookedSeatTransit2Berangkat} selectedSeats={selectedSeatsTransit2Berangkat}/>
+                      <SeatPickerBisnis setSelected={setSelectedTransit2Berangkat} data={someData} seat={seatTransit2Berangkat} selectedSeats={selectedSeatsTransit2Berangkat}/>
                     )}
                     {kelas == "First+Class" && (
-                      <SeatPickerEksekutif setSelected={setSelectedTransit2Berangkat} seat={seatTransit2Berangkat} bookedSeats={bookedSeatTransit2Berangkat} selectedSeats={selectedSeatsTransit2Berangkat}/>
+                      <SeatPickerEksekutif setSelected={setSelectedTransit2Berangkat} data={someData} seat={seatTransit2Berangkat} selectedSeats={selectedSeatsTransit2Berangkat}/>
                     )}
                     </>
                   )}
@@ -649,16 +573,16 @@ function CheckoutCompleted() {
                       Pilih Kursi Pulang
                     </Text>
                     {kelas === "Economy" && (
-                      <SeatPickerEkonomi setSelected={setSelectedPulang} seat={seatPulang} bookedSeats={bookedSeatPulang} selectedSeats={selectedSeatsPulang}/>
+                      <SeatPickerEkonomi setSelected={setSelectedPulang} data={someData} seat={seatPulang} selectedSeats={selectedSeatsPulang}/>
                     )}
                     {kelas === "Premium+Economy" && (
-                      <SeatPickerPremiunEkonomi setSelected={setSelectedPulang} seat={seatPulang} bookedSeats={bookedSeatPulang} selectedSeats={selectedSeatsPulang}/>
+                      <SeatPickerPremiunEkonomi setSelected={setSelectedPulang} data={someData} seat={seatPulang} selectedSeats={selectedSeatsPulang}/>
                     )}
                     {kelas === "Business" &&(
-                      <SeatPickerBisnis setSelected={setSelectedPulang} seat={seatPulang} bookedSeats={bookedSeatPulang} selectedSeats={selectedSeatsPulang}/>
+                      <SeatPickerBisnis setSelected={setSelectedPulang} data={someData} seat={seatPulang} selectedSeats={selectedSeatsPulang}/>
                     )}
                     {kelas == "First+Class" && (
-                      <SeatPickerEksekutif setSelected={setSelectedPulang} seat={seatPulang} bookedSeats={bookedSeatPulang} selectedSeats={selectedSeatsPulang}/>
+                      <SeatPickerEksekutif setSelected={setSelectedPulang} data={someData} seat={seatPulang} selectedSeats={selectedSeatsPulang}/>
                     )}
                     </>
                   )}
@@ -674,16 +598,16 @@ function CheckoutCompleted() {
                       Pilih Kursi Transit 1 Pulang
                     </Text>
                     {kelas === "Economy" && (
-                      <SeatPickerEkonomi setSelected={setSelectedTransit1Pulang} seat={seatTransit1Pulang} bookedSeats={bookedSeatTransit1Pulang} selectedSeats={selectedSeatsTransit1Pulang}/>
+                      <SeatPickerEkonomi setSelected={setSelectedTransit1Pulang} data={someData} seat={seatTransit1Pulang} selectedSeats={selectedSeatsTransit1Pulang}/>
                     )}
                     {kelas === "Premium+Economy" && (
-                      <SeatPickerPremiunEkonomi setSelected={setSelectedTransit1Pulang} seat={seatTransit1Pulang} bookedSeats={bookedSeatTransit1Pulang} selectedSeats={selectedSeatsTransit1Pulang}/>
+                      <SeatPickerPremiunEkonomi setSelected={setSelectedTransit1Pulang} data={someData} seat={seatTransit1Pulang} selectedSeats={selectedSeatsTransit1Pulang}/>
                     )}
                     {kelas === "Business" &&(
-                      <SeatPickerBisnis setSelected={setSelectedTransit1Pulang} seat={seatTransit1Pulang} bookedSeats={bookedSeatTransit1Pulang} selectedSeats={selectedSeatsTransit1Pulang}/>
+                      <SeatPickerBisnis setSelected={setSelectedTransit1Pulang} data={someData} seat={seatTransit1Pulang} selectedSeats={selectedSeatsTransit1Pulang}/>
                     )}
                     {kelas == "First+Class" && (
-                      <SeatPickerEksekutif setSelected={setSelectedTransit1Pulang} seat={seatTransit1Pulang} bookedSeats={bookedSeatTransit1Pulang} selectedSeats={selectedSeatsTransit1Pulang}/>
+                      <SeatPickerEksekutif setSelected={setSelectedTransit1Pulang} data={someData} seat={seatTransit1Pulang} selectedSeats={selectedSeatsTransit1Pulang}/>
                     )}
                     </>
                   )}
@@ -699,16 +623,16 @@ function CheckoutCompleted() {
                       Pilih Kursi Transit 2 Pulang
                     </Text>
                     {kelas === "Economy" && (
-                      <SeatPickerEkonomi setSelected={setSelectedTransit2Pulang} seat={seatTransit2Pulang} bookedSeats={bookedSeatTransit2Pulang} selectedSeats={selectedSeatsTransit2Pulang}/>
+                      <SeatPickerEkonomi setSelected={setSelectedTransit2Pulang} data={someData} seat={seatTransit2Pulang} selectedSeats={selectedSeatsTransit2Pulang}/>
                     )}
                     {kelas === "Premium+Economy" && (
-                      <SeatPickerPremiunEkonomi setSelected={setSelectedTransit2Pulang} seat={seatTransit2Pulang} bookedSeats={bookedSeatTransit2Pulang} selectedSeats={selectedSeatsTransit2Pulang}/>
+                      <SeatPickerPremiunEkonomi setSelected={setSelectedTransit2Pulang} data={someData} seat={seatTransit2Pulang} selectedSeats={selectedSeatsTransit2Pulang}/>
                     )}
                     {kelas === "Business" &&(
-                      <SeatPickerBisnis setSelected={setSelectedTransit2Pulang} seat={seatTransit2Pulang} bookedSeats={bookedSeatTransit2Pulang} selectedSeats={selectedSeatsTransit2Pulang}/>
+                      <SeatPickerBisnis setSelected={setSelectedTransit2Pulang} data={someData} seat={seatTransit2Pulang} selectedSeats={selectedSeatsTransit2Pulang}/>
                     )}
                     {kelas == "First+Class" && (
-                      <SeatPickerEksekutif setSelected={setSelectedTransit2Pulang} seat={seatTransit2Pulang} bookedSeats={bookedSeatTransit2Pulang} selectedSeats={selectedSeatsTransit2Pulang}/>
+                      <SeatPickerEksekutif setSelected={setSelectedTransit2Pulang} data={someData} seat={seatTransit2Pulang} selectedSeats={selectedSeatsTransit2Pulang}/>
                     )}
                     </>
                   )}
