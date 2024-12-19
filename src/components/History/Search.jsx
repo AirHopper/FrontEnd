@@ -1,221 +1,173 @@
-import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Text,
-  Flex,
-  Input,
-  HStack,
-  Button,
-  VStack,
-  IconButton,
-} from "@chakra-ui/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import { CloseButton } from "@/components/ui/close-button";
+import React, { useEffect, useState, useMemo } from 'react';
+import { Box, Text, Flex, Input, HStack, VStack, IconButton } from '@chakra-ui/react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMagnifyingGlass, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { CloseButton } from '@/components/ui/close-button';
+import { fetchRecommendations } from '../../services/history';
 
 const Search = ({ setIsSearchOpen, onSearch, orderId }) => {
-  const [orderIdState, setOrderIdState] = useState(orderId || "");
-  const [recentSearches, setRecentSearches] = useState([]);
-  const [suggestions, setSuggestions] = useState([]);
+	const [orderIdState, setOrderIdState] = useState(orderId || '');
+	const [suggestions, setSuggestions] = useState([]);
+	const [error, setError] = useState(null);
+	const [isLoading, setIsLoading] = useState(false); // Track loading state
+	const [recentSearches, setRecentSearches] = useState([]);
 
-  // Load recent searches from localStorage
-  useEffect(() => {
-    const storedSearches =
-      JSON.parse(localStorage.getItem("recentSearches")) || [];
-    setRecentSearches(storedSearches);
-  }, []);
+	// Debouncing: Menunggu 500ms setelah pengguna berhenti mengetik
+	const [debouncedOrderId, setDebouncedOrderId] = useState(orderIdState);
 
-  // Tambahkan useEffect untuk memberikan saran berdasarkan input
-  useEffect(() => {
-    if (orderIdState) {
-      const filteredSuggestions = recentSearches.filter(
-        (search) => search.includes(orderIdState) // Cek apakah input ada dalam pencarian terkini
-      );
-      setSuggestions(filteredSuggestions);
-    } else {
-      setSuggestions([]); // Kosongkan saran jika input kosong
-    }
-  }, [orderIdState, recentSearches]);
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setDebouncedOrderId(orderIdState);
+		}, 500);
 
-  const handleSearch = () => {
-    if (orderIdState) {
-      // Update recent searches
-      const updatedSearches = [
-        orderIdState,
-        ...recentSearches.filter((search) => search !== orderIdState),
-      ].slice(0, 3);
-      setRecentSearches(updatedSearches);
-      localStorage.setItem("recentSearches", JSON.stringify(updatedSearches));
+		return () => clearTimeout(timer);
+	}, [orderIdState]);
 
-      onSearch(orderIdState);
-    }
-    setIsSearchOpen(false);
-  };
+	// Fetch recommendations from the backend
+	useEffect(() => {
+		if (debouncedOrderId) {
+			fetchRecommendations(debouncedOrderId, setIsLoading, setError, setSuggestions);
+		} else {
+			setSuggestions([]);
+		}
+	}, [debouncedOrderId]);
 
-  const handleSelectRecent = (search) => {
-    setOrderIdState(search);
-    onSearch(search);
-    setIsSearchOpen(false);
-  };
+	// Save recent searches to localStorage
+	const saveRecentSearches = newSearch => {
+		let searches = JSON.parse(localStorage.getItem('recentSearches')) || [];
 
-  const handleRemoveRecent = (search) => {
-    const updatedSearches = recentSearches.filter((item) => item !== search);
-    setRecentSearches(updatedSearches);
-    localStorage.setItem("recentSearches", JSON.stringify(updatedSearches));
-  };
+		// Add the new search and ensure no duplicates
+		if (!searches.includes(newSearch)) {
+			searches.unshift(newSearch);
+		}
 
-  const handleClearAllRecent = () => {
-    setRecentSearches([]); // Kosongkan state recentSearches
-    localStorage.removeItem("recentSearches"); // Hapus dari localStorage
-  };
+		// Keep only the last 5 searches
+		searches = searches.slice(0, 5);
 
-  // Tambahkan event listener untuk menangkap tombol Enter
-  const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
-      handleSearch();
-    }
-  };
+		// Save back to localStorage and update the state
+		localStorage.setItem('recentSearches', JSON.stringify(searches));
+		setRecentSearches(searches);
+	};
 
-  // Tambahkan useEffect untuk memberikan saran berdasarkan orderId
-  useEffect(() => {
-    if (orderIdState) {
-      const newSuggestions = recentSearches.filter(
-        (search) => search.toLowerCase().includes(orderIdState.toLowerCase()) // Cek apakah input ada dalam pencarian terkini
-      );
-      setSuggestions(newSuggestions);
-    } else {
-      setSuggestions([]); // Kosongkan saran jika input kosong
-    }
-  }, [orderIdState]);
+	// Load recent searches from localStorage when the component mounts
+	useEffect(() => {
+		const storedSearches = JSON.parse(localStorage.getItem('recentSearches')) || [];
+		setRecentSearches(storedSearches);
+	}, []);
 
-  return (
-    <>
-      {/* Overlay */}
-      <Box
-        position="fixed"
-        top="0"
-        left="0"
-        right="0"
-        bottom="0"
-        bg="rgba(0, 0, 0, 0.5)" // Semi-transparent black background
-        zIndex="9"
-      />
+	// Handle recent search click
+	const handleRecentSearch = search => {
+		setOrderIdState(search);
+		onSearch(search);
+		saveRecentSearches(search);
+		setIsSearchOpen(false);
+	};
 
-      {/* Search Box */}
-      <Box
-        position="fixed"
-        top="50%"
-        left="50%"
-        transform="translate(-50%, -50%)"
-        width="35vw"
-        p="6"
-        px={2}
-        bg="white"
-        shadow="lg"
-        borderRadius="xl"
-        zIndex="10"
-      >
-        <VStack spacing={4} align={"start"}>
-          <HStack px={5}>
-            <Flex
-              align="center"
-              border="1px solid"
-              borderColor="gray.300"
-              borderRadius="md"
-              px={2}
-              bg="white"
-            >
-              <FontAwesomeIcon
-                icon={faMagnifyingGlass}
-                style={{
-                  marginLeft: "10px",
-                  fontSize: "20px",
-                  color: "gray.200",
-                }}
-              />
-              <Input
-                value={orderIdState}
-                onChange={(e) => setOrderIdState(e.target.value)}
-                onKeyPress={handleKeyPress}
-                variant="unstyled"
-                placeholder="Masukkan Nomor Penerbangan"
-                width="25vw"
-                py={0}
-                focusBorderColor="transparent"
-              />
-            </Flex>
-            <Box display="flex" justifyContent="flex-end">
-              <CloseButton onClick={() => setIsSearchOpen(false)} />
-            </Box>
-          </HStack>
+	// Handle delete of recent search
+	const handleDeleteSearch = search => {
+		let searches = JSON.parse(localStorage.getItem('recentSearches')) || [];
+		searches = searches.filter(item => item !== search);
 
-          {/* Menampilkan saran jika ada */}
-          {suggestions.length > 0 && (
-            <VStack spacing={1} px={5} width="100%">
-              {suggestions.map((suggestion) => (
-                <HStack
-                  key={suggestion}
-                  justifyContent="space-between"
-                  width="100%"
-                  borderBottom="1px solid #E2E8F0"
-                  pb={1}
-                >
-                  <Text
-                    cursor="pointer"
-                    onClick={() => handleSelectRecent(suggestion)}
-                    color="blue.500"
-                  >
-                    {suggestion}
-                  </Text>
-                </HStack>
-              ))}
-            </VStack>
-          )}
+		localStorage.setItem('recentSearches', JSON.stringify(searches));
+		setRecentSearches(searches);
+	};
 
-          {recentSearches.length > 0 ? (
-            <>
-              <HStack justify="space-between" px={5} pt={4} width="100%">
-                <Text fontWeight="bold" fontSize="sm" color="gray.600">
-                  Pencarian Terkini
-                </Text>
-                <Text
-                  fontWeight="bold"
-                  fontSize="sm"
-                  color="red.600"
-                  cursor="pointer"
-                  mr={3}
-                  onClick={handleClearAllRecent}
-                >
-                  Hapus
-                </Text>
-              </HStack>
+	// Handle search action
+	const handleSearch = () => {
+		if (orderIdState) {
+			onSearch(orderIdState);
+			saveRecentSearches(orderIdState);
+		}
+		setIsSearchOpen(false);
+	};
 
-              <VStack px={5} align="start" width="100%" gap={1}>
-                {recentSearches.map((search) => (
-                  <HStack
-                    key={search}
-                    justifyContent="space-between"
-                    width="100%"
-                    borderBottom="1px solid #E2E8F0"
-                    pb={1}
-                  >
-                    <Text
-                      cursor="pointer"
-                      onClick={() => handleSelectRecent(search)}
-                      color="blue.500"
-                    >
-                      {search}
-                    </Text>
-                    <CloseButton onClick={() => handleRemoveRecent(search)} />
-                  </HStack>
-                ))}
-              </VStack>
-            </>
-          ) : null}
-        </VStack>
-      </Box>
-    </>
-  );
+	// Handle selection from suggestion list
+	const handleSelectSuggestion = suggestion => {
+		setOrderIdState(suggestion.id);
+		onSearch(suggestion.id);
+		saveRecentSearches(suggestion.id);
+		setIsSearchOpen(false);
+	};
+
+	// Handle Enter key press
+	const handleKeyPress = event => {
+		if (event.key === 'Enter') {
+			handleSearch();
+		}
+	};
+
+	return (
+		<>
+			{/* Overlay */}
+			<Box position="fixed" top="0" left="0" right="0" bottom="0" bg="rgba(0, 0, 0, 0.5)" zIndex="9" />
+
+			{/* Search Box */}
+			<Box position="fixed" top="50%" left="50%" transform="translate(-50%, -50%)" width={{ base: '80vw', sm: '70vw', md: '50vw', lg: '40vw' }} p="6" px={2} bg="white" shadow="lg" borderRadius="md" zIndex="10">
+				<HStack px={5} mt={2} mb={1}>
+					<Flex align="center" border="1px solid" borderColor="gray.300" borderRadius="md" px={2} bg="white" width="100%">
+						<FontAwesomeIcon
+							icon={faMagnifyingGlass}
+							style={{
+								marginLeft: '10px',
+								fontSize: '20px',
+								color: 'gray.200',
+							}}
+						/>
+						<Input value={orderIdState} onChange={e => setOrderIdState(e.target.value)} onKeyPress={handleKeyPress} variant="unstyled" placeholder="Masukkan Nomor Penerbangan" py={0} focusBorderColor="transparent" />
+					</Flex>
+					<CloseButton onClick={() => setIsSearchOpen(false)} />
+				</HStack>
+				<VStack align={'start'}>
+					{/* Menampilkan error jika ada */}
+					{error && <Text color="red.500">{error}</Text>}
+					{/* Menampilkan saran dari backend */}
+					{suggestions.length > 0 && (
+						<VStack pt={2} px={5} width="100%">
+							{suggestions.map(suggestion => (
+								<HStack key={suggestion.id} justifyContent="space-between" width="100%" borderBottom="1px solid #E2E8F0">
+									<Text py={2} cursor="pointer" color="blue.500" onClick={() => handleSelectSuggestion(suggestion)}>
+										{suggestion.id}
+									</Text>
+								</HStack>
+							))}
+						</VStack>
+					)}
+
+					{/* Display recent searches */}
+					{recentSearches.length > 0 && (
+						<VStack align="start" pt={{ base: 2 }} px={{ base: 4, md: 5 }} width="100%">
+							<HStack justifyContent="space-between" width="100%">
+								<Text fontWeight="semibold" color="gray.800" fontSize={{ base: 'sm', md: 'lg' }} mt={2}>
+									Pencarian Terkini
+								</Text>
+								<Text
+									cursor="pointer"
+									color="red.500"
+									fontSize={{ base: 'sm', md: 'md' }}
+									fontWeight="bold"
+									onClick={() => {
+										// Clear recent searches
+										localStorage.removeItem('recentSearches');
+										setRecentSearches([]);
+									}}
+								>
+									Hapus
+								</Text>
+							</HStack>
+							{recentSearches.map(search => (
+								<HStack key={search} justifyContent="space-between" width="100%" borderBottom="1px solid #E2E8F0" pb={1}>
+									<Text cursor="pointer" onClick={() => handleRecentSearch(search)} color="blue.500" fontSize={{ base: 'sm', md: 'md' }}>
+										{search}
+									</Text>
+									<CloseButton size="sm" onClick={() => handleDeleteSearch(search)} aria-label="Hapus pencarian ini" />
+								</HStack>
+							))}
+						</VStack>
+					)}
+				</VStack>
+			</Box>
+		</>
+	);
 };
 
 export default Search;
