@@ -41,6 +41,7 @@ const DetailCard = ({ order }) => {
     mutationFn: (orderId) => cancelBooking(orderId), // Ini adalah fungsi server
     onSuccess: () => {
       queryClient.invalidateQueries(["history"]);
+      toast.success("Pemesanan berhasil dibatalkan.");
     },
     onError: (error) => {
       toast.error(
@@ -448,34 +449,35 @@ const DetailCard = ({ order }) => {
 
       {/* Conditional Buttons */}
       {order.orderStatus === "Unpaid" && (
-        <Button
-          colorScheme="purple"
-          mt={8}
-          width="100%"
-          bg="#44B3F8"
-          _hover={{ bg: "#2078B8", color: "white" }}
-          borderRadius={"lg"}
-          py={6}
-          onClick={handlePayment}
-        >
-          Lanjut Bayar
-        </Button>
+        <>
+          <Button
+            colorScheme="purple"
+            mt={8}
+            width="100%"
+            bg="#44B3F8"
+            _hover={{ bg: "#2078B8", color: "white" }}
+            borderRadius={"lg"}
+            py={6}
+            onClick={handlePayment}
+          >
+            Lanjut Bayar
+          </Button>
+
+          <Button
+            colorScheme="red"
+            mt={4}
+            width="100%"
+            borderRadius={"lg"}
+            py={6}
+            bg="gray.400"
+            _hover={{ bg: "red.500" }}
+            onClick={() => handleCancelBooking(order)}
+          >
+            Batalkan Pemesanan
+          </Button>
+        </>
       )}
-      {order.orderStatus === "Unpaid" && (
-        <Button
-          colorScheme="red"
-          mt={4}
-          width="100%"
-          borderRadius={"lg"}
-          py={6}
-          bg="gray.400"
-          _hover={{ bg: "red.500" }}
-          onClick={() => handleCancelBooking(order)}
-        >
-          Batalkan Pemesanan
-        </Button>
-      )}
-      {order.orderStatus === "Issued" && (
+      {order.orderStatus === "Issued" ? (
         <Button
           colorScheme="green"
           mt={8}
@@ -488,19 +490,8 @@ const DetailCard = ({ order }) => {
         >
           Cetak Tiket
         </Button>
-      )}
-      {order.orderStatus === "Cancelled" && (
-        <Button
-          colorScheme="green"
-          mt={8}
-          width="100%"
-          bg="#44B3F8"
-          _hover={{ bg: "#0000", color: "white" }}
-          borderRadius={"lg"}
-          py={6}
-        >
-          Cetak Tiket
-        </Button>
+      ) : (
+        <></>
       )}
     </Box>
   );
