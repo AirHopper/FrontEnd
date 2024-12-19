@@ -45,9 +45,11 @@ const SearchTicket = ({
   selectedFrom,
   selectedTo,
   dateRange,
+  selectedClass,
   setSelectedFrom,
   setSelectedTo,
   setDateRange,
+  setSelectedClass,
 }) => {
   const navigate = useNavigate();
 
@@ -64,7 +66,6 @@ const SearchTicket = ({
   const [adultCount, setAdultCount] = useState(0);
   const [childCount, setChildCount] = useState(0);
   const [infantCount, setInfantCount] = useState(0);
-  const [selectedClass, setSelectedClass] = useState("");
 
   // location input type and total passengers
   const [locationType, setLocationType] = useState("");
