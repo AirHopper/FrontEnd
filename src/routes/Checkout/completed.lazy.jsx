@@ -1,10 +1,10 @@
-import * as React from "react";
+import * as React from 'react'
 import {
   createLazyFileRoute,
   useNavigate,
   useLocation,
-} from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+} from '@tanstack/react-router'
+import { useState, useEffect } from 'react'
 import {
   Box,
   Flex,
@@ -15,289 +15,281 @@ import {
   Grid,
   Card,
   Spinner,
-} from "@chakra-ui/react";
-import "../../components/Buyer/Calendar/Calendarcss.css";
+} from '@chakra-ui/react'
+import '../../components/Buyer/Calendar/Calendarcss.css'
 import {
   BreadcrumbCurrentLink,
   BreadcrumbLink,
   BreadcrumbRoot,
-} from "@/components/ui/breadcrumb";
-import { Field } from "@/components/ui/field";
-import { faSun, faCircleCheck } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import SeatPickerEkonomi from "../../components/Buyer/Seat/seatEkonomi.lazy.jsx";
-import SeatPickerPremiunEkonomi from "../../components/Buyer/Seat/seatPremiumEkonomi.lazy.jsx";
-import SeatPickerBisnis from "../../components/Buyer/Seat/seatBisnis.lazy.jsx";
-import SeatPickerEksekutif from "../../components/Buyer/Seat/seatEksekutif.lazy.jsx";
-import { getDetailOrder } from "../../services/order/index.js";
-import { useQuery } from "@tanstack/react-query";
-import { useSelector } from "react-redux";
-import Overlay from "../../components/Overlay/index.jsx";
+} from '@/components/ui/breadcrumb'
+import { Field } from '@/components/ui/field'
+import { faSun, faCircleCheck } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import SeatPickerEkonomi from '../../components/Buyer/Seat/seatEkonomi.lazy.jsx'
+import SeatPickerPremiunEkonomi from '../../components/Buyer/Seat/seatPremiumEkonomi.lazy.jsx'
+import SeatPickerBisnis from '../../components/Buyer/Seat/seatBisnis.lazy.jsx'
+import SeatPickerEksekutif from '../../components/Buyer/Seat/seatEksekutif.lazy.jsx'
+import { getDetailOrder } from '../../services/order/index.js'
+import { useQuery } from '@tanstack/react-query'
+import { useSelector } from 'react-redux'
+import Overlay from '../../components/Overlay/index.jsx'
 
-export const Route = createLazyFileRoute("/Checkout/completed")({
+export const Route = createLazyFileRoute('/checkout/completed')({
   component: CheckoutCompleted,
-});
+})
 
 function CheckoutCompleted() {
-  const navigate = useNavigate();
-  const { state } = useLocation();
-  const orderId = state.orderId;
-  const { user, token } = useSelector((state) => state.auth);
-  const [isOverlayVisible, setOverlayVisible] = useState(false);
-  const [message, setMessage] = useState("");
-  const [tujuan, setTujuan] = useState("");
-  const [selected, setSelected] = React.useState(null);
-  const [orderData, setOrderData] = useState([]);
-  const [flightDetails, setFlightDetails] = useState([]);
-  const [flightDetails2, setFlightDetails2] = useState([]);
-  const [kelas, setKelas] = useState("");
-  const [selectedBerangkat, setSelectedBerangkat] = useState([]);
-  const [selectedTransit1Berangkat, setSelectedTransit1Berangkat] = useState(
-    []
-  );
-  const [selectedTransit2Berangkat, setSelectedTransit2Berangkat] = useState(
-    []
-  );
-  const [selectedPulang, setSelectedPulang] = useState([]);
-  const [selectedTransit1Pulang, setSelectedTransit1Pulang] = useState([]);
-  const [selectedTransit2Pulang, setSelectedTransit2Pulang] = useState([]);
-  const [seatBerangkat, setSeatBerangkat] = useState([]);
-  const [seatTransit1Berangkat, setSeatTransit1Berangkat] = useState([]);
-  const [seatTransit2Berangkat, setSeatTransit2Berangkat] = useState([]);
-  const [seatPulang, setSeatPulang] = useState([]);
-  const [seatTransit1Pulang, setSeatTransit1Pulang] = useState([]);
-  const [seatTransit2Pulang, setSeatTransit2Pulang] = useState([]);
-  const [fullName, setFullName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [email, setEmail] = useState("");
-  const [passengersData, setPassengersData] = useState([]);
+  const navigate = useNavigate()
+  const { state } = useLocation()
+  const orderId = state.orderId
+  const { user, token } = useSelector((state) => state.auth)
+  const [isOverlayVisible, setOverlayVisible] = useState(false)
+  const [message, setMessage] = useState('')
+  const [tujuan, setTujuan] = useState('')
+  const [selected, setSelected] = React.useState(null)
+  const [orderData, setOrderData] = useState([])
+  const [flightDetails, setFlightDetails] = useState([])
+  const [flightDetails2, setFlightDetails2] = useState([])
+  const [kelas, setKelas] = useState('')
+  const [selectedBerangkat, setSelectedBerangkat] = useState([])
+  const [selectedTransit1Berangkat, setSelectedTransit1Berangkat] = useState([])
+  const [selectedTransit2Berangkat, setSelectedTransit2Berangkat] = useState([])
+  const [selectedPulang, setSelectedPulang] = useState([])
+  const [selectedTransit1Pulang, setSelectedTransit1Pulang] = useState([])
+  const [selectedTransit2Pulang, setSelectedTransit2Pulang] = useState([])
+  const [seatBerangkat, setSeatBerangkat] = useState([])
+  const [seatTransit1Berangkat, setSeatTransit1Berangkat] = useState([])
+  const [seatTransit2Berangkat, setSeatTransit2Berangkat] = useState([])
+  const [seatPulang, setSeatPulang] = useState([])
+  const [seatTransit1Pulang, setSeatTransit1Pulang] = useState([])
+  const [seatTransit2Pulang, setSeatTransit2Pulang] = useState([])
+  const [fullName, setFullName] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [email, setEmail] = useState('')
+  const [passengersData, setPassengersData] = useState([])
   const { data, isSuccess } = useQuery({
-    queryKey: ["order", orderId],
+    queryKey: ['order', orderId],
     queryFn: async () => {
-      const data = await getDetailOrder(orderId);
-      return data;
+      const data = await getDetailOrder(orderId)
+      return data
     },
     enabled: !!orderId,
-  });
+  })
 
   useEffect(() => {
     if (!token && !user) {
-      setOverlayVisible(true);
-      setMessage("Anda harus login terlebih dahulu!");
-      setTujuan("/login");
+      setOverlayVisible(true)
+      setMessage('Anda harus login terlebih dahulu!')
+      setTujuan('/login')
     }
-  }, [navigate, token, user]);
+  }, [navigate, token, user])
 
   useEffect(() => {
     if (!orderId) {
-      setOverlayVisible(true);
-      setMessage("Order Id Tidak Ditemukan !");
-      setTujuan("/");
+      setOverlayVisible(true)
+      setMessage('Order Id Tidak Ditemukan !')
+      setTujuan('/')
     }
-  }, [navigate, token, user]);
+  }, [navigate, token, user])
 
   useEffect(() => {
     if (isOverlayVisible) {
       const timer = setTimeout(() => {
-        navigate({ to: tujuan });
-      }, 4000);
+        navigate({ to: tujuan })
+      }, 4000)
 
-      return () => clearTimeout(timer);
+      return () => clearTimeout(timer)
     }
-  }, [isOverlayVisible, navigate, tujuan]);
+  }, [isOverlayVisible, navigate, tujuan])
 
   useEffect(() => {
     if (user) {
-      setFullName(user.user?.fullName);
-      setPhoneNumber(user.user?.phoneNumber);
-      setEmail(user?.email);
+      setFullName(user.user?.fullName)
+      setPhoneNumber(user.user?.phoneNumber)
+      setEmail(user?.email)
     }
-  }, [user]);
+  }, [user])
   useEffect(() => {
     if (isSuccess) {
-      const dataBaru = data.data;
-      setOrderData(dataBaru);
+      const dataBaru = data.data
+      setOrderData(dataBaru)
     }
-  }, [data, isSuccess]);
-  const passenger = orderData?.passengers;
+  }, [data, isSuccess])
+  const passenger = orderData?.passengers
   useEffect(() => {
     if (passenger) {
-      setPassengersData(passenger);
+      setPassengersData(passenger)
     }
-  }, [passenger]);
+  }, [passenger])
   useEffect(() => {
     if (orderData) {
-      setKelas(orderData?.outboundTicket?.class);
+      setKelas(orderData?.outboundTicket?.class)
     }
-  }, [orderData]);
-  const flights = orderData?.outboundTicket?.flights;
+  }, [orderData])
+  const flights = orderData?.outboundTicket?.flights
   useEffect(() => {
     if (flights) {
-      setFlightDetails(flights);
+      setFlightDetails(flights)
     }
-  }, [flights]);
+  }, [flights])
   useEffect(() => {
     if (flightDetails?.length > 0) {
-      setSeatBerangkat(flightDetails[0]?.seat);
+      setSeatBerangkat(flightDetails[0]?.seat)
       if (flightDetails.length > 1) {
-        setSeatTransit1Berangkat(flightDetails[1]?.seat);
+        setSeatTransit1Berangkat(flightDetails[1]?.seat)
       }
       if (flightDetails.length > 2) {
-        setSeatTransit2Berangkat(flightDetails[2]?.seat);
+        setSeatTransit2Berangkat(flightDetails[2]?.seat)
       }
     }
-  }, [flightDetails, seatBerangkat]);
+  }, [flightDetails, seatBerangkat])
 
   const flights2 = orderData?.isRoundTrip
     ? orderData?.returnTicket.flights
-    : null;
+    : null
   useEffect(() => {
     if (flights2) {
-      setFlightDetails2(flights2);
+      setFlightDetails2(flights2)
     }
-  }, [flights2]);
+  }, [flights2])
   useEffect(() => {
     if (flightDetails2?.length > 0) {
-      setSeatPulang(flightDetails2[0]?.seats);
+      setSeatPulang(flightDetails2[0]?.seats)
       if (flightDetails2.length > 1) {
-        setSeatTransit1Pulang(flightDetails2[1]?.seats);
+        setSeatTransit1Pulang(flightDetails2[1]?.seats)
       }
       if (flightDetails2.length > 2) {
-        setSeatTransit2Pulang(flightDetails2[2]?.seats);
+        setSeatTransit2Pulang(flightDetails2[2]?.seats)
       }
     }
-  }, [flightDetails2]);
+  }, [flightDetails2])
 
   const handleClick = () => {
     navigate({
-      to: "/payment",
+      to: '/payment',
       state: {
         orderId: orderId,
       },
-    });
-  };
-  const firstFlight = flightDetails[0];
-  const secondFlight = flightDetails[1];
-  let thirdFlight = null;
-  if (flightDetails.length > 2) {
-    thirdFlight = flightDetails[2];
+    })
   }
-  let firtsReturnFlight = null;
-  let secondReturnFlight = null;
-  let thirdReturnFlight = null;
+  const firstFlight = flightDetails[0]
+  const secondFlight = flightDetails[1]
+  let thirdFlight = null
+  if (flightDetails.length > 2) {
+    thirdFlight = flightDetails[2]
+  }
+  let firtsReturnFlight = null
+  let secondReturnFlight = null
+  let thirdReturnFlight = null
   if (flightDetails2.length > 0) {
-    firtsReturnFlight = flightDetails2[0];
-    secondReturnFlight = flightDetails2[1];
+    firtsReturnFlight = flightDetails2[0]
+    secondReturnFlight = flightDetails2[1]
     if (flightDetails2.length > 2) {
-      thirdReturnFlight = flightDetails2[2];
+      thirdReturnFlight = flightDetails2[2]
     }
   }
-  let dewasa = 0;
-  let anak = 0;
-  let bayi = 0;
-  let totalTicketDewasa = 0;
-  let totalTicketAnak = 0;
+  let dewasa = 0
+  let anak = 0
+  let bayi = 0
+  let totalTicketDewasa = 0
+  let totalTicketAnak = 0
   if (!!orderData) {
-    const detailPrice = orderData?.detailPrice;
+    const detailPrice = orderData?.detailPrice
     for (let i = 0; i < detailPrice?.length; i++) {
-      const item = detailPrice[i];
-      if (item.type === "adult") {
-        dewasa += item.amount;
-        totalTicketDewasa += item.totalPrice;
-      } else if (item.type === "children") {
-        anak += item.amount;
-        totalTicketAnak += item.totalPrice;
-      } else if (item.type === "infant") {
-        bayi += item.amount;
+      const item = detailPrice[i]
+      if (item.type === 'adult') {
+        dewasa += item.amount
+        totalTicketDewasa += item.totalPrice
+      } else if (item.type === 'children') {
+        anak += item.amount
+        totalTicketAnak += item.totalPrice
+      } else if (item.type === 'infant') {
+        bayi += item.amount
       }
     }
   }
-  const bookedSeatBerangkat = [];
+  const bookedSeatBerangkat = []
   seatBerangkat.forEach((seat) => {
     if (seat.isOccupied) {
-      bookedSeatBerangkat.push(seat.id);
+      bookedSeatBerangkat.push(seat.id)
     }
-  });
-  const bookedSeatTransit1Berangkat = [];
+  })
+  const bookedSeatTransit1Berangkat = []
   seatTransit1Berangkat.forEach((seat) => {
     if (seat.isOccupied) {
-      bookedSeatTransit1Berangkat.push(seat.id);
+      bookedSeatTransit1Berangkat.push(seat.id)
     }
-  });
-  const bookedSeatTransit2Berangkat = [];
+  })
+  const bookedSeatTransit2Berangkat = []
   seatTransit2Berangkat.forEach((seat) => {
     if (seat.isOccupied) {
-      bookedSeatTransit2Berangkat.push(seat.id);
+      bookedSeatTransit2Berangkat.push(seat.id)
     }
-  });
-  const bookedSeatPulang = [];
+  })
+  const bookedSeatPulang = []
   seatPulang.forEach((seat) => {
     if (seat.isOccupied) {
-      bookedSeatPulang.push(seat.id);
+      bookedSeatPulang.push(seat.id)
     }
-  });
-  const bookedSeatTransit1Pulang = [];
+  })
+  const bookedSeatTransit1Pulang = []
   seatTransit1Pulang.forEach((seat) => {
     if (seat.isOccupied) {
-      bookedSeatTransit1Pulang.push(seat.id);
+      bookedSeatTransit1Pulang.push(seat.id)
     }
-  });
-  const bookedSeatTransit2Pulang = [];
+  })
+  const bookedSeatTransit2Pulang = []
   seatTransit2Pulang.forEach((seat) => {
     if (seat.isOccupied) {
-      bookedSeatTransit2Pulang.push(seat.id);
+      bookedSeatTransit2Pulang.push(seat.id)
     }
-  });
-  const selectedSeatsBerangkat = [];
-  const selectedSeatsTransit1Berangkat = [];
-  const selectedSeatsTransit2Berangkat = [];
-  const selectedSeatsPulang = [];
-  const selectedSeatsTransit1Pulang = [];
-  const selectedSeatsTransit2Pulang = [];
-  let index = 0;
+  })
+  const selectedSeatsBerangkat = []
+  const selectedSeatsTransit1Berangkat = []
+  const selectedSeatsTransit2Berangkat = []
+  const selectedSeatsPulang = []
+  const selectedSeatsTransit1Pulang = []
+  const selectedSeatsTransit2Pulang = []
+  let index = 0
   if (orderData?.outboundTicket?.flights[0]) {
     for (let i = 0; i < orderData?.passengers?.length; i++) {
-      selectedSeatsBerangkat.push(orderData?.passengers[i]?.seat[index].id);
+      selectedSeatsBerangkat.push(orderData?.passengers[i]?.seat[index].id)
     }
-    index += 1;
+    index += 1
   }
   if (orderData?.outboundTicket?.flights[1]) {
     for (let i = 0; i < orderData?.passengers?.length; i++) {
       selectedSeatsTransit1Berangkat.push(
-        orderData?.passengers[i]?.seat[index].id
-      );
+        orderData?.passengers[i]?.seat[index].id,
+      )
     }
-    index += 1;
+    index += 1
   }
   if (orderData?.outboundTicket?.flights[2]) {
     for (let i = 0; i < orderData?.passengers?.length; i++) {
       selectedSeatsTransit2Berangkat.push(
-        orderData?.passengers[i]?.seat[index].id
-      );
+        orderData?.passengers[i]?.seat[index].id,
+      )
     }
-    index += 1;
+    index += 1
   }
   if (orderData?.returnTicket?.flights[0]) {
     for (let i = 0; i < orderData?.passengers?.length; i++) {
-      selectedSeatsPulang.push(orderData?.passengers[i]?.seat[index].id);
+      selectedSeatsPulang.push(orderData?.passengers[i]?.seat[index].id)
     }
-    index += 1;
+    index += 1
   }
   if (orderData?.returnTicket?.flights[1]) {
     for (let i = 0; i < orderData?.passengers?.length; i++) {
-      selectedSeatsTransit1Pulang.push(
-        orderData?.passengers[i]?.seat[index].id
-      );
+      selectedSeatsTransit1Pulang.push(orderData?.passengers[i]?.seat[index].id)
     }
-    index += 1;
+    index += 1
   }
   if (orderData?.returnTicket?.flights[2]) {
     for (let i = 0; i < orderData?.passengers?.length; i++) {
-      selectedSeatsTransit2Pulang.push(
-        orderData?.passengers[i]?.seat[index].id
-      );
+      selectedSeatsTransit2Pulang.push(orderData?.passengers[i]?.seat[index].id)
     }
-    index += 1;
+    index += 1
   }
 
   return (
@@ -349,7 +341,7 @@ function CheckoutCompleted() {
         <Flex w="100%" alignItems="center" justifyContent="center">
           <Flex w="70%">
             <Grid
-              templateColumns={{ base: "1fr", md: "1fr 1fr" }}
+              templateColumns={{ base: '1fr', md: '1fr 1fr' }}
               gap={6}
               p={5}
             >
@@ -390,7 +382,7 @@ function CheckoutCompleted() {
                       <Field
                         color="#006ec1"
                         label="Nama Lengkap"
-                        labelProps={{ fontWeight: "bold" }}
+                        labelProps={{ fontWeight: 'bold' }}
                       >
                         <Input
                           value={fullName}
@@ -401,7 +393,7 @@ function CheckoutCompleted() {
                       <Field
                         color="#006ec1"
                         label="Nomor Telepon"
-                        labelProps={{ fontWeight: "bold" }}
+                        labelProps={{ fontWeight: 'bold' }}
                       >
                         <Input
                           value={phoneNumber}
@@ -412,7 +404,7 @@ function CheckoutCompleted() {
                       <Field
                         color="#006ec1"
                         label="Email"
-                        labelProps={{ fontWeight: "bold" }}
+                        labelProps={{ fontWeight: 'bold' }}
                       >
                         <Input value={email} disabled borderColor="gray.300" />
                       </Field>
@@ -464,7 +456,7 @@ function CheckoutCompleted() {
                               justifyContent="space-between"
                             >
                               <Text ml={4} pt={2}>
-                                Data Diri Penumpang {index + 1} -{" "}
+                                Data Diri Penumpang {index + 1} -{' '}
                                 {passengersData[index]?.type}
                               </Text>
                               <Box marginTop={2} marginRight={5}>
@@ -479,7 +471,7 @@ function CheckoutCompleted() {
                               <Field
                                 color="#006ec1"
                                 label="Title"
-                                labelProps={{ fontWeight: "bold" }}
+                                labelProps={{ fontWeight: 'bold' }}
                               >
                                 <Input
                                   value={passengersData[index]?.title}
@@ -490,7 +482,7 @@ function CheckoutCompleted() {
                               <Field
                                 color="#006ec1"
                                 label="Nama Lengkap"
-                                labelProps={{ fontWeight: "bold" }}
+                                labelProps={{ fontWeight: 'bold' }}
                               >
                                 <Input
                                   value={passengersData[index]?.name}
@@ -502,7 +494,7 @@ function CheckoutCompleted() {
                                 <Field
                                   color="#006ec1"
                                   label="Nama Keluarga"
-                                  labelProps={{ fontWeight: "bold" }}
+                                  labelProps={{ fontWeight: 'bold' }}
                                 >
                                   <Input
                                     value={passengersData[index]?.familyName}
@@ -514,19 +506,19 @@ function CheckoutCompleted() {
                               <Field
                                 color="#006ec1"
                                 label="Tanggal Lahir"
-                                labelProps={{ fontWeight: "bold" }}
+                                labelProps={{ fontWeight: 'bold' }}
                               >
                                 <Input
                                   value={
                                     passengersData[index]?.dateOfBirth
                                       ? new Date(
-                                          passengersData[index]?.dateOfBirth
-                                        ).toLocaleDateString("id-ID", {
-                                          day: "2-digit",
-                                          month: "long",
-                                          year: "numeric",
+                                          passengersData[index]?.dateOfBirth,
+                                        ).toLocaleDateString('id-ID', {
+                                          day: '2-digit',
+                                          month: 'long',
+                                          year: 'numeric',
                                         })
-                                      : ""
+                                      : ''
                                   }
                                   disabled
                                   borderColor="gray.300"
@@ -535,7 +527,7 @@ function CheckoutCompleted() {
                               <Field
                                 color="#006ec1"
                                 label="Kewarganegaraan"
-                                labelProps={{ fontWeight: "bold" }}
+                                labelProps={{ fontWeight: 'bold' }}
                               >
                                 <Input
                                   value={passengersData[index]?.nationality}
@@ -546,7 +538,7 @@ function CheckoutCompleted() {
                               <Field
                                 color="#006ec1"
                                 label="KTP/Paspor"
-                                labelProps={{ fontWeight: "bold" }}
+                                labelProps={{ fontWeight: 'bold' }}
                               >
                                 <Input
                                   value={
@@ -559,7 +551,7 @@ function CheckoutCompleted() {
                               <Field
                                 color="#006ec1"
                                 label="Negara Penerbit"
-                                labelProps={{ fontWeight: "bold" }}
+                                labelProps={{ fontWeight: 'bold' }}
                               >
                                 <Input
                                   value={passengersData[index]?.issuedCountry}
@@ -570,19 +562,19 @@ function CheckoutCompleted() {
                               <Field
                                 color="#006ec1"
                                 label="Berlaku Sampai"
-                                labelProps={{ fontWeight: "bold" }}
+                                labelProps={{ fontWeight: 'bold' }}
                               >
                                 <Input
                                   value={
                                     passengersData[index]?.idValidUntil
                                       ? new Date(
-                                          passengersData[index]?.idValidUntil
-                                        ).toLocaleDateString("id-ID", {
-                                          day: "2-digit",
-                                          month: "long",
-                                          year: "numeric",
+                                          passengersData[index]?.idValidUntil,
+                                        ).toLocaleDateString('id-ID', {
+                                          day: '2-digit',
+                                          month: 'long',
+                                          year: 'numeric',
                                         })
-                                      : ""
+                                      : ''
                                   }
                                   disabled
                                   borderColor="gray.300"
@@ -612,7 +604,7 @@ function CheckoutCompleted() {
                   >
                     Pilih Kursi Berangkat
                   </Text>
-                  {kelas === "Economy" && (
+                  {kelas === 'Economy' && (
                     <SeatPickerEkonomi
                       setSelected={setSelectedBerangkat}
                       seat={seatBerangkat}
@@ -620,7 +612,7 @@ function CheckoutCompleted() {
                       selectedSeats={selectedSeatsBerangkat}
                     />
                   )}
-                  {kelas === "Premium+Economy" && (
+                  {kelas === 'Premium+Economy' && (
                     <SeatPickerPremiunEkonomi
                       setSelected={setSelectedBerangkat}
                       seat={seatBerangkat}
@@ -628,7 +620,7 @@ function CheckoutCompleted() {
                       selectedSeats={selectedSeatsBerangkat}
                     />
                   )}
-                  {kelas === "Business" && (
+                  {kelas === 'Business' && (
                     <SeatPickerBisnis
                       setSelected={setSelectedBerangkat}
                       seat={seatBerangkat}
@@ -636,7 +628,7 @@ function CheckoutCompleted() {
                       selectedSeats={selectedSeatsBerangkat}
                     />
                   )}
-                  {kelas == "First+Class" && (
+                  {kelas == 'First+Class' && (
                     <SeatPickerEksekutif
                       setSelected={setSelectedBerangkat}
                       seat={seatBerangkat}
@@ -655,7 +647,7 @@ function CheckoutCompleted() {
                       >
                         Pilih Kursi Transit 1 Berangkat
                       </Text>
-                      {kelas === "Economy" && (
+                      {kelas === 'Economy' && (
                         <SeatPickerEkonomi
                           setSelected={setSelectedTransit1Berangkat}
                           seat={seatTransit1Berangkat}
@@ -663,7 +655,7 @@ function CheckoutCompleted() {
                           selectedSeats={selectedSeatsTransit1Berangkat}
                         />
                       )}
-                      {kelas === "Premium+Economy" && (
+                      {kelas === 'Premium+Economy' && (
                         <SeatPickerPremiunEkonomi
                           setSelected={setSelectedTransit1Berangkat}
                           seat={seatTransit1Berangkat}
@@ -671,7 +663,7 @@ function CheckoutCompleted() {
                           selectedSeats={selectedSeatsTransit1Berangkat}
                         />
                       )}
-                      {kelas === "Business" && (
+                      {kelas === 'Business' && (
                         <SeatPickerBisnis
                           setSelected={setSelectedTransit1Berangkat}
                           seat={seatTransit1Berangkat}
@@ -679,7 +671,7 @@ function CheckoutCompleted() {
                           selectedSeats={selectedSeatsTransit1Berangkat}
                         />
                       )}
-                      {kelas == "First+Class" && (
+                      {kelas == 'First+Class' && (
                         <SeatPickerEksekutif
                           setSelected={setSelectedTransit1Berangkat}
                           seat={seatTransit1Berangkat}
@@ -700,7 +692,7 @@ function CheckoutCompleted() {
                       >
                         Pilih Kursi Transit 2 Berangkat
                       </Text>
-                      {kelas === "Economy" && (
+                      {kelas === 'Economy' && (
                         <SeatPickerEkonomi
                           setSelected={setSelectedTransit2Berangkat}
                           seat={seatTransit2Berangkat}
@@ -708,7 +700,7 @@ function CheckoutCompleted() {
                           selectedSeats={selectedSeatsTransit2Berangkat}
                         />
                       )}
-                      {kelas === "Premium+Economy" && (
+                      {kelas === 'Premium+Economy' && (
                         <SeatPickerPremiunEkonomi
                           setSelected={setSelectedTransit2Berangkat}
                           seat={seatTransit2Berangkat}
@@ -716,7 +708,7 @@ function CheckoutCompleted() {
                           selectedSeats={selectedSeatsTransit2Berangkat}
                         />
                       )}
-                      {kelas === "Business" && (
+                      {kelas === 'Business' && (
                         <SeatPickerBisnis
                           setSelected={setSelectedTransit2Berangkat}
                           seat={seatTransit2Berangkat}
@@ -724,7 +716,7 @@ function CheckoutCompleted() {
                           selectedSeats={selectedSeatsTransit2Berangkat}
                         />
                       )}
-                      {kelas == "First+Class" && (
+                      {kelas == 'First+Class' && (
                         <SeatPickerEksekutif
                           setSelected={setSelectedTransit2Berangkat}
                           seat={seatTransit2Berangkat}
@@ -745,7 +737,7 @@ function CheckoutCompleted() {
                       >
                         Pilih Kursi Pulang
                       </Text>
-                      {kelas === "Economy" && (
+                      {kelas === 'Economy' && (
                         <SeatPickerEkonomi
                           setSelected={setSelectedPulang}
                           seat={seatPulang}
@@ -753,7 +745,7 @@ function CheckoutCompleted() {
                           selectedSeats={selectedSeatsPulang}
                         />
                       )}
-                      {kelas === "Premium+Economy" && (
+                      {kelas === 'Premium+Economy' && (
                         <SeatPickerPremiunEkonomi
                           setSelected={setSelectedPulang}
                           seat={seatPulang}
@@ -761,7 +753,7 @@ function CheckoutCompleted() {
                           selectedSeats={selectedSeatsPulang}
                         />
                       )}
-                      {kelas === "Business" && (
+                      {kelas === 'Business' && (
                         <SeatPickerBisnis
                           setSelected={setSelectedPulang}
                           seat={seatPulang}
@@ -769,7 +761,7 @@ function CheckoutCompleted() {
                           selectedSeats={selectedSeatsPulang}
                         />
                       )}
-                      {kelas == "First+Class" && (
+                      {kelas == 'First+Class' && (
                         <SeatPickerEksekutif
                           setSelected={setSelectedPulang}
                           seat={seatPulang}
@@ -790,7 +782,7 @@ function CheckoutCompleted() {
                       >
                         Pilih Kursi Transit 1 Pulang
                       </Text>
-                      {kelas === "Economy" && (
+                      {kelas === 'Economy' && (
                         <SeatPickerEkonomi
                           setSelected={setSelectedTransit1Pulang}
                           seat={seatTransit1Pulang}
@@ -798,7 +790,7 @@ function CheckoutCompleted() {
                           selectedSeats={selectedSeatsTransit1Pulang}
                         />
                       )}
-                      {kelas === "Premium+Economy" && (
+                      {kelas === 'Premium+Economy' && (
                         <SeatPickerPremiunEkonomi
                           setSelected={setSelectedTransit1Pulang}
                           seat={seatTransit1Pulang}
@@ -806,7 +798,7 @@ function CheckoutCompleted() {
                           selectedSeats={selectedSeatsTransit1Pulang}
                         />
                       )}
-                      {kelas === "Business" && (
+                      {kelas === 'Business' && (
                         <SeatPickerBisnis
                           setSelected={setSelectedTransit1Pulang}
                           seat={seatTransit1Pulang}
@@ -814,7 +806,7 @@ function CheckoutCompleted() {
                           selectedSeats={selectedSeatsTransit1Pulang}
                         />
                       )}
-                      {kelas == "First+Class" && (
+                      {kelas == 'First+Class' && (
                         <SeatPickerEksekutif
                           setSelected={setSelectedTransit1Pulang}
                           seat={seatTransit1Pulang}
@@ -835,7 +827,7 @@ function CheckoutCompleted() {
                       >
                         Pilih Kursi Transit 2 Pulang
                       </Text>
-                      {kelas === "Economy" && (
+                      {kelas === 'Economy' && (
                         <SeatPickerEkonomi
                           setSelected={setSelectedTransit2Pulang}
                           seat={seatTransit2Pulang}
@@ -843,7 +835,7 @@ function CheckoutCompleted() {
                           selectedSeats={selectedSeatsTransit2Pulang}
                         />
                       )}
-                      {kelas === "Premium+Economy" && (
+                      {kelas === 'Premium+Economy' && (
                         <SeatPickerPremiunEkonomi
                           setSelected={setSelectedTransit2Pulang}
                           seat={seatTransit2Pulang}
@@ -851,7 +843,7 @@ function CheckoutCompleted() {
                           selectedSeats={selectedSeatsTransit2Pulang}
                         />
                       )}
-                      {kelas === "Business" && (
+                      {kelas === 'Business' && (
                         <SeatPickerBisnis
                           setSelected={setSelectedTransit2Pulang}
                           seat={seatTransit2Pulang}
@@ -859,7 +851,7 @@ function CheckoutCompleted() {
                           selectedSeats={selectedSeatsTransit2Pulang}
                         />
                       )}
-                      {kelas == "First+Class" && (
+                      {kelas == 'First+Class' && (
                         <SeatPickerEksekutif
                           setSelected={setSelectedTransit2Pulang}
                           seat={seatTransit2Pulang}
@@ -900,11 +892,11 @@ function CheckoutCompleted() {
                     <Flex justifyContent="space-between">
                       <Text fontWeight="bold">
                         {new Date(
-                          firstFlight?.departure.time
-                        ).toLocaleTimeString("id-ID", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          timeZone: "UTC",
+                          firstFlight?.departure.time,
+                        ).toLocaleTimeString('id-ID', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          timeZone: 'UTC',
                         })}
                       </Text>
                       <Text color="blue.400" fontWeight="bold">
@@ -913,13 +905,13 @@ function CheckoutCompleted() {
                     </Flex>
                     <Text>
                       {new Date(firstFlight?.departure.time).toLocaleDateString(
-                        "id-ID",
-                        { day: "numeric", month: "long", year: "numeric" }
+                        'id-ID',
+                        { day: 'numeric', month: 'long', year: 'numeric' },
                       )}
                     </Text>
                     <Text fontWeight="bolder">
-                      {firstFlight?.departure.airport.name} -{" "}
-                      {firstFlight?.departure.terminal.name}{" "}
+                      {firstFlight?.departure.airport.name} -{' '}
+                      {firstFlight?.departure.terminal.name}{' '}
                       {firstFlight?.departure.terminal.type}
                     </Text>
                     <Box
@@ -929,7 +921,7 @@ function CheckoutCompleted() {
                     />
                     <Flex direction="column" marginLeft={7} marginTop={3}>
                       <Text fontWeight="bold">
-                        {firstFlight?.airplane} -{" "}
+                        {firstFlight?.airplane} -{' '}
                         {orderData?.outboundTicket?.class}
                       </Text>
                     </Flex>
@@ -959,12 +951,12 @@ function CheckoutCompleted() {
                     <Flex justifyContent="space-between">
                       <Text fontWeight="bold">
                         {new Date(firstFlight?.arrival.time).toLocaleTimeString(
-                          "id-ID",
+                          'id-ID',
                           {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            timeZone: "UTC",
-                          }
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            timeZone: 'UTC',
+                          },
                         )}
                       </Text>
                       <Text color="blue.400" fontWeight="bold">
@@ -973,13 +965,13 @@ function CheckoutCompleted() {
                     </Flex>
                     <Text>
                       {new Date(firstFlight?.arrival.time).toLocaleDateString(
-                        "id-ID",
-                        { day: "numeric", month: "long", year: "numeric" }
+                        'id-ID',
+                        { day: 'numeric', month: 'long', year: 'numeric' },
                       )}
                     </Text>
                     <Text fontWeight="bolder">
-                      {firstFlight?.arrival.airport.name} -{" "}
-                      {firstFlight?.arrival.terminal.name}{" "}
+                      {firstFlight?.arrival.airport.name} -{' '}
+                      {firstFlight?.arrival.terminal.name}{' '}
                       {firstFlight?.arrival.terminal.type}
                     </Text>
                     {!!secondFlight && (
@@ -1001,11 +993,11 @@ function CheckoutCompleted() {
                         <Flex justifyContent="space-between">
                           <Text fontWeight="bold">
                             {new Date(
-                              secondFlight?.departure.time
-                            ).toLocaleTimeString("id-ID", {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              timeZone: "UTC",
+                              secondFlight?.departure.time,
+                            ).toLocaleTimeString('id-ID', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              timeZone: 'UTC',
                             })}
                           </Text>
                           <Text color="blue.400" fontWeight="bold">
@@ -1014,16 +1006,16 @@ function CheckoutCompleted() {
                         </Flex>
                         <Text>
                           {new Date(
-                            secondFlight?.departure.time
-                          ).toLocaleDateString("id-ID", {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric",
+                            secondFlight?.departure.time,
+                          ).toLocaleDateString('id-ID', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
                           })}
                         </Text>
                         <Text fontWeight="bolder">
-                          {secondFlight?.departure.airport.name} -{" "}
-                          {secondFlight?.departure.terminal.name}{" "}
+                          {secondFlight?.departure.airport.name} -{' '}
+                          {secondFlight?.departure.terminal.name}{' '}
                           {secondFlight?.departure.terminal.type}
                         </Text>
                         <Box
@@ -1033,7 +1025,7 @@ function CheckoutCompleted() {
                         />
                         <Flex direction="column" marginLeft={7} marginTop={3}>
                           <Text fontWeight="bold">
-                            {secondFlight?.airplane} -{" "}
+                            {secondFlight?.airplane} -{' '}
                             {orderData?.outboundTicket?.class}
                           </Text>
                         </Flex>
@@ -1065,11 +1057,11 @@ function CheckoutCompleted() {
                         <Flex justifyContent="space-between">
                           <Text fontWeight="bold">
                             {new Date(
-                              secondFlight?.arrival.time
-                            ).toLocaleTimeString("id-ID", {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              timeZone: "UTC",
+                              secondFlight?.arrival.time,
+                            ).toLocaleTimeString('id-ID', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              timeZone: 'UTC',
                             })}
                           </Text>
                           <Text color="blue.400" fontWeight="bold">
@@ -1078,16 +1070,16 @@ function CheckoutCompleted() {
                         </Flex>
                         <Text>
                           {new Date(
-                            secondFlight?.arrival.time
-                          ).toLocaleDateString("id-ID", {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric",
+                            secondFlight?.arrival.time,
+                          ).toLocaleDateString('id-ID', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
                           })}
                         </Text>
                         <Text fontWeight="bolder">
-                          {secondFlight?.arrival.airport.name} -{" "}
-                          {secondFlight?.arrival.terminal.name}{" "}
+                          {secondFlight?.arrival.airport.name} -{' '}
+                          {secondFlight?.arrival.terminal.name}{' '}
                           {secondFlight?.arrival.terminal.type}
                         </Text>
                       </>
@@ -1111,11 +1103,11 @@ function CheckoutCompleted() {
                         <Flex justifyContent="space-between">
                           <Text fontWeight="bold">
                             {new Date(
-                              thirdFlight?.departure.time
-                            ).toLocaleTimeString("id-ID", {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              timeZone: "UTC",
+                              thirdFlight?.departure.time,
+                            ).toLocaleTimeString('id-ID', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              timeZone: 'UTC',
                             })}
                           </Text>
                           <Text color="blue.400" fontWeight="bold">
@@ -1124,16 +1116,16 @@ function CheckoutCompleted() {
                         </Flex>
                         <Text>
                           {new Date(
-                            thirdFlight?.departure.time
-                          ).toLocaleDateString("id-ID", {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric",
+                            thirdFlight?.departure.time,
+                          ).toLocaleDateString('id-ID', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
                           })}
                         </Text>
                         <Text fontWeight="bolder">
-                          {thirdFlight?.departure.airport.name} -{" "}
-                          {thirdFlight?.departure.terminal.name}{" "}
+                          {thirdFlight?.departure.airport.name} -{' '}
+                          {thirdFlight?.departure.terminal.name}{' '}
                           {thirdFlight?.departure.terminal.type}
                         </Text>
                         <Box
@@ -1143,7 +1135,7 @@ function CheckoutCompleted() {
                         />
                         <Flex direction="column" marginLeft={7} marginTop={3}>
                           <Text fontWeight="bold">
-                            {thirdFlight?.airplane} -{" "}
+                            {thirdFlight?.airplane} -{' '}
                             {orderData?.outboundTicket?.class}
                           </Text>
                         </Flex>
@@ -1175,11 +1167,11 @@ function CheckoutCompleted() {
                         <Flex justifyContent="space-between">
                           <Text fontWeight="bold">
                             {new Date(
-                              thirdFlight?.arrival.time
-                            ).toLocaleTimeString("id-ID", {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              timeZone: "UTC",
+                              thirdFlight?.arrival.time,
+                            ).toLocaleTimeString('id-ID', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              timeZone: 'UTC',
                             })}
                           </Text>
                           <Text color="blue.400" fontWeight="bold">
@@ -1188,16 +1180,16 @@ function CheckoutCompleted() {
                         </Flex>
                         <Text>
                           {new Date(
-                            thirdFlight?.arrival.time
-                          ).toLocaleDateString("id-ID", {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric",
+                            thirdFlight?.arrival.time,
+                          ).toLocaleDateString('id-ID', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
                           })}
                         </Text>
                         <Text fontWeight="bolder">
-                          {thirdFlight?.arrival.airport.name} -{" "}
-                          {thirdFlight?.arrival.terminal.name}{" "}
+                          {thirdFlight?.arrival.airport.name} -{' '}
+                          {thirdFlight?.arrival.terminal.name}{' '}
                           {thirdFlight?.arrival.terminal.type}
                         </Text>
                       </>
@@ -1221,11 +1213,11 @@ function CheckoutCompleted() {
                         <Flex justifyContent="space-between">
                           <Text fontWeight="bold">
                             {new Date(
-                              firtsReturnFlight?.departure.time
-                            ).toLocaleTimeString("id-ID", {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              timeZone: "UTC",
+                              firtsReturnFlight?.departure.time,
+                            ).toLocaleTimeString('id-ID', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              timeZone: 'UTC',
                             })}
                           </Text>
                           <Text color="blue.400" fontWeight="bold">
@@ -1234,16 +1226,16 @@ function CheckoutCompleted() {
                         </Flex>
                         <Text>
                           {new Date(
-                            firtsReturnFlight?.departure.time
-                          ).toLocaleDateString("id-ID", {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric",
+                            firtsReturnFlight?.departure.time,
+                          ).toLocaleDateString('id-ID', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
                           })}
                         </Text>
                         <Text fontWeight="bolder">
-                          {firtsReturnFlight?.departure.airport.name} -{" "}
-                          {firtsReturnFlight?.departure.terminal.name}{" "}
+                          {firtsReturnFlight?.departure.airport.name} -{' '}
+                          {firtsReturnFlight?.departure.terminal.name}{' '}
                           {firtsReturnFlight?.departure.terminal.type}
                         </Text>
                         <Box
@@ -1253,7 +1245,7 @@ function CheckoutCompleted() {
                         />
                         <Flex direction="column" marginLeft={7} marginTop={3}>
                           <Text fontWeight="bold">
-                            {firtsReturnFlight?.airplane} -{" "}
+                            {firtsReturnFlight?.airplane} -{' '}
                             {orderData?.returnTicket?.class}
                           </Text>
                         </Flex>
@@ -1285,11 +1277,11 @@ function CheckoutCompleted() {
                         <Flex justifyContent="space-between">
                           <Text fontWeight="bold">
                             {new Date(
-                              firtsReturnFlight?.arrival.time
-                            ).toLocaleTimeString("id-ID", {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              timeZone: "UTC",
+                              firtsReturnFlight?.arrival.time,
+                            ).toLocaleTimeString('id-ID', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              timeZone: 'UTC',
                             })}
                           </Text>
                           <Text color="blue.400" fontWeight="bold">
@@ -1298,16 +1290,16 @@ function CheckoutCompleted() {
                         </Flex>
                         <Text>
                           {new Date(
-                            firtsReturnFlight?.arrival.time
-                          ).toLocaleDateString("id-ID", {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric",
+                            firtsReturnFlight?.arrival.time,
+                          ).toLocaleDateString('id-ID', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
                           })}
                         </Text>
                         <Text fontWeight="bolder">
-                          {firtsReturnFlight?.arrival.airport.name} -{" "}
-                          {firtsReturnFlight?.arrival.terminal.name}{" "}
+                          {firtsReturnFlight?.arrival.airport.name} -{' '}
+                          {firtsReturnFlight?.arrival.terminal.name}{' '}
                           {firtsReturnFlight?.arrival.terminal.type}
                         </Text>
                       </>
@@ -1331,11 +1323,11 @@ function CheckoutCompleted() {
                         <Flex justifyContent="space-between">
                           <Text fontWeight="bold">
                             {new Date(
-                              secondReturnFlight?.departure.time
-                            ).toLocaleTimeString("id-ID", {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              timeZone: "UTC",
+                              secondReturnFlight?.departure.time,
+                            ).toLocaleTimeString('id-ID', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              timeZone: 'UTC',
                             })}
                           </Text>
                           <Text color="blue.400" fontWeight="bold">
@@ -1344,16 +1336,16 @@ function CheckoutCompleted() {
                         </Flex>
                         <Text>
                           {new Date(
-                            secondReturnFlight?.departure.time
-                          ).toLocaleDateString("id-ID", {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric",
+                            secondReturnFlight?.departure.time,
+                          ).toLocaleDateString('id-ID', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
                           })}
                         </Text>
                         <Text fontWeight="bolder">
-                          {secondReturnFlight?.departure.airport.name} -{" "}
-                          {secondReturnFlight?.departure.terminal.name}{" "}
+                          {secondReturnFlight?.departure.airport.name} -{' '}
+                          {secondReturnFlight?.departure.terminal.name}{' '}
                           {secondReturnFlight?.departure.terminal.type}
                         </Text>
                         <Box
@@ -1363,7 +1355,7 @@ function CheckoutCompleted() {
                         />
                         <Flex direction="column" marginLeft={7} marginTop={3}>
                           <Text fontWeight="bold">
-                            {secondReturnFlight?.airplane} -{" "}
+                            {secondReturnFlight?.airplane} -{' '}
                             {orderData?.returnTicket?.class}
                           </Text>
                         </Flex>
@@ -1395,11 +1387,11 @@ function CheckoutCompleted() {
                         <Flex justifyContent="space-between">
                           <Text fontWeight="bold">
                             {new Date(
-                              secondReturnFlight?.arrival.time
-                            ).toLocaleTimeString("id-ID", {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              timeZone: "UTC",
+                              secondReturnFlight?.arrival.time,
+                            ).toLocaleTimeString('id-ID', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              timeZone: 'UTC',
                             })}
                           </Text>
                           <Text color="blue.400" fontWeight="bold">
@@ -1408,16 +1400,16 @@ function CheckoutCompleted() {
                         </Flex>
                         <Text>
                           {new Date(
-                            secondReturnFlight?.arrival.time
-                          ).toLocaleDateString("id-ID", {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric",
+                            secondReturnFlight?.arrival.time,
+                          ).toLocaleDateString('id-ID', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
                           })}
                         </Text>
                         <Text fontWeight="bolder">
-                          {secondReturnFlight?.arrival.airport.name} -{" "}
-                          {secondReturnFlight?.arrival.terminal.name}{" "}
+                          {secondReturnFlight?.arrival.airport.name} -{' '}
+                          {secondReturnFlight?.arrival.terminal.name}{' '}
                           {secondReturnFlight?.arrival.terminal.type}
                         </Text>
                       </>
@@ -1441,11 +1433,11 @@ function CheckoutCompleted() {
                         <Flex justifyContent="space-between">
                           <Text fontWeight="bold">
                             {new Date(
-                              thirdReturnFlight?.departure.time
-                            ).toLocaleTimeString("id-ID", {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              timeZone: "UTC",
+                              thirdReturnFlight?.departure.time,
+                            ).toLocaleTimeString('id-ID', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              timeZone: 'UTC',
                             })}
                           </Text>
                           <Text color="blue.400" fontWeight="bold">
@@ -1454,16 +1446,16 @@ function CheckoutCompleted() {
                         </Flex>
                         <Text>
                           {new Date(
-                            thirdReturnFlight?.departure.time
-                          ).toLocaleDateString("id-ID", {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric",
+                            thirdReturnFlight?.departure.time,
+                          ).toLocaleDateString('id-ID', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
                           })}
                         </Text>
                         <Text fontWeight="bolder">
-                          {thirdReturnFlight?.departure.airport.name} -{" "}
-                          {thirdReturnFlight?.departure.terminal.name}{" "}
+                          {thirdReturnFlight?.departure.airport.name} -{' '}
+                          {thirdReturnFlight?.departure.terminal.name}{' '}
                           {thirdReturnFlight?.departure.terminal.type}
                         </Text>
                         <Box
@@ -1473,7 +1465,7 @@ function CheckoutCompleted() {
                         />
                         <Flex direction="column" marginLeft={7} marginTop={3}>
                           <Text fontWeight="bold">
-                            {thirdReturnFlight?.airplane} -{" "}
+                            {thirdReturnFlight?.airplane} -{' '}
                             {orderData?.returnTicket?.class}
                           </Text>
                         </Flex>
@@ -1505,11 +1497,11 @@ function CheckoutCompleted() {
                         <Flex justifyContent="space-between">
                           <Text fontWeight="bold">
                             {new Date(
-                              thirdReturnFlight?.arrival.time
-                            ).toLocaleTimeString("id-ID", {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              timeZone: "UTC",
+                              thirdReturnFlight?.arrival.time,
+                            ).toLocaleTimeString('id-ID', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              timeZone: 'UTC',
                             })}
                           </Text>
                           <Text color="blue.400" fontWeight="bold">
@@ -1518,16 +1510,16 @@ function CheckoutCompleted() {
                         </Flex>
                         <Text>
                           {new Date(
-                            thirdReturnFlight?.arrival.time
-                          ).toLocaleDateString("id-ID", {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric",
+                            thirdReturnFlight?.arrival.time,
+                          ).toLocaleDateString('id-ID', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
                           })}
                         </Text>
                         <Text fontWeight="bolder">
-                          {thirdReturnFlight?.arrival.airport.name} -{" "}
-                          {thirdReturnFlight?.arrival.terminal.name}{" "}
+                          {thirdReturnFlight?.arrival.airport.name} -{' '}
+                          {thirdReturnFlight?.arrival.terminal.name}{' '}
                           {thirdReturnFlight?.arrival.terminal.type}
                         </Text>
                       </>
@@ -1542,27 +1534,27 @@ function CheckoutCompleted() {
                     <Flex justifyContent="space-between" marginTop={1}>
                       <Text>{dewasa} Dewasa</Text>
                       <Text>
-                        {new Intl.NumberFormat("id-ID", {
-                          style: "currency",
-                          currency: "IDR",
+                        {new Intl.NumberFormat('id-ID', {
+                          style: 'currency',
+                          currency: 'IDR',
                           minimumFractionDigits: 0,
                           maximumFractionDigits: 0,
                         })
                           .format(totalTicketDewasa)
-                          .replace("Rp", "IDR")}
+                          .replace('Rp', 'IDR')}
                       </Text>
                     </Flex>
                     <Flex justifyContent="space-between" marginTop={1}>
                       <Text>{anak} Anak</Text>
                       <Text>
-                        {new Intl.NumberFormat("id-ID", {
-                          style: "currency",
-                          currency: "IDR",
+                        {new Intl.NumberFormat('id-ID', {
+                          style: 'currency',
+                          currency: 'IDR',
                           minimumFractionDigits: 0,
                           maximumFractionDigits: 0,
                         })
                           .format(totalTicketAnak)
-                          .replace("Rp", "IDR")}
+                          .replace('Rp', 'IDR')}
                       </Text>
                     </Flex>
                     <Flex justifyContent="space-between" marginTop={1}>
@@ -1584,14 +1576,14 @@ function CheckoutCompleted() {
                         Total
                       </Text>
                       <Text fontWeight="bold" fontSize="larger" color="blue">
-                        {new Intl.NumberFormat("id-ID", {
-                          style: "currency",
-                          currency: "IDR",
+                        {new Intl.NumberFormat('id-ID', {
+                          style: 'currency',
+                          currency: 'IDR',
                           minimumFractionDigits: 0,
                           maximumFractionDigits: 0,
                         })
                           .format(totalTicketDewasa + totalTicketAnak)
-                          .replace("Rp", "IDR")}
+                          .replace('Rp', 'IDR')}
                       </Text>
                     </Flex>
                   </Card.Body>
@@ -1612,5 +1604,5 @@ function CheckoutCompleted() {
         </Flex>
       </Box>
     </>
-  );
+  )
 }

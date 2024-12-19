@@ -93,6 +93,7 @@ const SearchTicket = ({
       day: "numeric",
       month: "long",
       year: "numeric",
+      timeZone: "UTC",
     }
   );
 
@@ -101,6 +102,7 @@ const SearchTicket = ({
         day: "numeric",
         month: "long",
         year: "numeric",
+        timeZone: "UTC",
       })
     : "";
 
