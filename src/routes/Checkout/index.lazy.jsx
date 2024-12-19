@@ -46,7 +46,7 @@ import { getDetailTickets } from '../../services/tickets/index.js'
 import Overlay from '../../components/Overlay/index.jsx'
 import { createOrder } from '../../services/order/index.js'
 
-export const Route = createLazyFileRoute('/checkout/')({
+export const Route = createLazyFileRoute('/Checkout/')({
   component: CheckoutIndex,
 })
 
