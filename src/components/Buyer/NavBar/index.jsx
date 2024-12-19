@@ -23,7 +23,7 @@ import { setToken, setUser } from "../../../redux/slices/auth";
 import { profile } from "../../../services/user";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify"; 
-import { enableNotification } from "../../../script";
+import { enableNotification } from "../../../registerSW";
 
 const Navbar = () => {
   const dispatch = useDispatch();
