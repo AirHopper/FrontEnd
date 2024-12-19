@@ -12,6 +12,10 @@ import Binar from "./logo_binar.png";
 import ridhwan from "./ridhwan.jpeg";
 import joe from "./Joe.jpg";
 import juan from "./juan.jpg";
+import subhan from "./ahmad_subhan.webp";
+import bima from "./bima.jpg";
+import ryan from "./ryan_profile.jpeg";
+import kak_reza from "./kak_reza.jpg";
 export {
   CarAuth,
   AirHopper,
@@ -27,4 +31,8 @@ export {
   ridhwan,
   joe,
   juan,
+  subhan,
+  bima,
+  ryan,
+  kak_reza
 };

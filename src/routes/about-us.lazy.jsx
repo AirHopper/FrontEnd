@@ -21,7 +21,11 @@ import {
   Msib, 
   ridhwan,
   joe,
-  juan
+  juan,
+  subhan,
+  bima,
+  ryan,
+  kak_reza
 } from '../assets/img';
 
 export const Route = createLazyFileRoute('/about-us')({
@@ -40,7 +44,7 @@ function AboutUsPage() {
     {
       name: 'Fahmi Alfareza',
       role: 'Fasilitator FSW',
-      avatar: ridhwan,
+      avatar: kak_reza,
     },
   ];
 
@@ -69,7 +73,7 @@ function AboutUsPage() {
     {
       name: 'Bima Rizqy Ramadhan',
       role: 'Back End Developer',
-      avatar: ridhwan,
+      avatar: bima,
       links: {
         github: 'https://github.com/BIMASKUY',
         linkedin: 'https://www.linkedin.com/in/bima-rizqy-ramadhan/',
@@ -79,7 +83,7 @@ function AboutUsPage() {
     {
       name: 'Ahmad Subhan Daryhadi',
       role: 'Back End Developer',
-      avatar: ridhwan,
+      avatar: subhan,
       links: {
         github: 'https://github.com/ahmadsubhand',
         linkedin: 'https://www.linkedin.com/in/ahmadsubhand/',
@@ -99,7 +103,7 @@ function AboutUsPage() {
     {
       name: 'Ryan Nicholas Purba',
       role: 'Front End Developer',
-      avatar: ridhwan,
+      avatar: ryan,
       links: {
         github: 'https://github.com/ryanlikestocode44',
         linkedin: 'https://www.linkedin.com/in/ryan-nicholas-purba-717036326',

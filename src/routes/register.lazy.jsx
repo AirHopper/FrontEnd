@@ -106,7 +106,7 @@ const onSubmit = async (event) => {
       isValid = false;
   }
   if (password !== confirmPassword) {
-      alert("Password and password confirmation must be same!");
+      toast.error("Password and password confirmation must be same!");
       isValid = false;
   }
   if (!/^[0-9]+$/.test(phoneNumber) || phoneNumber.length < 10 || phoneNumber.length > 15) {
