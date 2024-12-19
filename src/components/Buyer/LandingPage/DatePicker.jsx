@@ -24,17 +24,24 @@ const DatePicker = ({
         return [
           {
             startDate,
-            endDate: isRangeMode && endDate >= startDate ? endDate : null,
+            endDate:
+              isRangeMode && prevDateRange[0].endDate > startDate
+                ? prevDateRange[0].endDate
+                : null,
           },
         ];
       } else if (focusedRange[1] === 1) {
         // Fokus pada endDate
-        return [
-          {
-            startDate: currentStartDate,
-            endDate: endDate >= currentStartDate ? endDate : null,
-          },
-        ];
+        if (endDate > currentStartDate) {
+          return [
+            {
+              startDate: currentStartDate,
+              endDate,
+            },
+          ];
+        } else {
+          return prevDateRange;
+        }
       }
 
       return prevDateRange;
@@ -99,6 +106,7 @@ const DatePicker = ({
           date={dateRange[0].startDate}
           color="#44b3f8"
           minDate={new Date()}
+          scroll={{ calendarWidth: "10px" }}
           onChange={handleSingleDateChange}
         />
       )}

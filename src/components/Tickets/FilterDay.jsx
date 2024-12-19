@@ -1,10 +1,16 @@
 import React, { useEffect } from 'react';
 import { Button, Flex, Grid, Text, Box } from '@chakra-ui/react';
 
-const FilterDay = ({ selectedDay, setSelectedDay, paramsDate, onUpdateTickets }) => {
+import { toast } from 'react-toastify'; // Make sure to install react-toastify
+
+const FilterDay = ({ selectedDay, setSelectedDay, paramsDate, onUpdateTickets, flightDate, setIsButtonDisabled }) => {
 	const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
 
-	const reqDate = paramsDate && !isNaN(new Date(paramsDate)) ? new Date(paramsDate) : new Date();
+	// Format paramsDate to 'YYYY-MM-DD'
+	const formattedParamsDate = paramsDate ? new Date(paramsDate).toISOString().split('T')[0] : null;
+	const formattedFlightDate = flightDate ? new Date(flightDate).toISOString().split('T')[0] : null;
+
+	const reqDate = formattedParamsDate && !isNaN(new Date(formattedParamsDate)) ? new Date(formattedParamsDate) : new Date();
 
 	const generateDates = (startDate, count = 7, offset = 2) => {
 		const start = new Date(startDate);
@@ -25,6 +31,15 @@ const FilterDay = ({ selectedDay, setSelectedDay, paramsDate, onUpdateTickets })
 			setSelectedDay(initialSelectedDay);
 		}
 	}, [reqDate, dates, setSelectedDay]);
+
+	useEffect(() => {
+		if (formattedParamsDate && formattedFlightDate && formattedParamsDate < formattedFlightDate) {
+			toast.warn('Tanggal pulang harus setelah tanggal pergi!');
+			setIsButtonDisabled(true); // Mengubah isButtonDisabled menjadi true
+		} else {
+			setIsButtonDisabled(false); // Mengubah isButtonDisabled menjadi false
+		}
+	}, [formattedParamsDate, formattedFlightDate, setIsButtonDisabled]);
 
 	const handleDayClick = index => {
 		const selectedDate = new Date(dates[index]).toISOString().split('T')[0];
