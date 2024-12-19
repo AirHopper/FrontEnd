@@ -23,6 +23,7 @@ function Beranda() {
       key: "selection",
     },
   ]);
+  const [selectedClass, setSelectedClass] = useState("");
 
   // isFocused and tickets data states
   const [isFocused, setIsFocused] = useState(false);
@@ -50,6 +51,7 @@ function Beranda() {
         key: "selection",
       },
     ]);
+    setSelectedClass(ticket?.class);
 
     window.scrollTo({
       top: 0,
@@ -83,9 +85,11 @@ function Beranda() {
           selectedFrom={selectedFrom}
           selectedTo={selectedTo}
           dateRange={dateRange}
+          selectedClass={selectedClass}
           setSelectedFrom={setSelectedFrom}
           setSelectedTo={setSelectedTo}
           setDateRange={setDateRange}
+          setSelectedClass={setSelectedClass}
         />
 
         <TicketFav handleSelectCard={handleSelectCard} />

@@ -22,6 +22,21 @@ const InputLocation = ({ isFocused, onCloseClick, onCitySelect }) => {
   const [query, setQuery] = useState("");
   const [history, setHistory] = useState([]);
 
+  // getData
+  const [cities, setCities] = useState([]);
+  const { data, isSuccess, isError } = useQuery({
+    queryKey: ["cities", { query }],
+    queryFn: () => getCities({ departureCity: query }),
+    enabled: query.length > 0,
+  });
+
+  useEffect(() => {
+    if (isSuccess) {
+      // Update state data
+      setCities(data || []);
+    }
+  }, [data, isSuccess]);
+
   // Fungsi untuk mendapatkan history dari localStorage
   const loadHistory = () => {
     const savedHistory = localStorage.getItem("searchHistory");
@@ -32,25 +47,28 @@ const InputLocation = ({ isFocused, onCloseClick, onCitySelect }) => {
     setHistory(loadHistory());
   }, []);
 
+  /* ------- Handle untuk history ------- */
   // Fungsi untuk menyimpan history ke localStorage
   const saveHistory = (newHistory) => {
     localStorage.setItem("searchHistory", JSON.stringify(newHistory));
     setHistory(newHistory);
   };
 
+  // handle history
+  const handleRemoveHistory = (code) => {
+    const updatedHistory = history.filter((item) => item.code !== code);
+    saveHistory(updatedHistory);
+  };
+
+  const handleClearHistory = () => {
+    saveHistory([]);
+  };
+
+  /* ------- Handle untuk cari city ------- */
   // Handle pencarian baru
   const handleSearch = (newQuery) => {
     setQuery(newQuery);
   };
-
-  // getData
-  const [cities, setCities] = useState([]);
-  const { data, isSuccess, isError } = useQuery({
-    queryKey: ["cities", { query }],
-    queryFn: () => getCities({ departureCity: query }),
-    enabled: query.length > 0,
-    retry: 1,
-  });
 
   // Filter cities based on search query
   const filteredCityNames = cities
@@ -70,20 +88,13 @@ const InputLocation = ({ isFocused, onCloseClick, onCitySelect }) => {
       );
     });
 
-  useEffect(() => {
-    if (isSuccess) {
-      // Update state data
-      setCities(data || []);
-    }
-  }, [data, isSuccess]);
-
   // Handle city selection
   const handleCitySelect = (city) => {
     // Check if the city is already in history
     const isCityInHistory = history.some((item) => item.code === city.code);
 
     if (!isCityInHistory) {
-      // Add city to history if not already present
+      // Add city to the start of history if not already present
       const updatedHistory = [city, ...history];
       saveHistory(updatedHistory);
     }
@@ -91,15 +102,6 @@ const InputLocation = ({ isFocused, onCloseClick, onCitySelect }) => {
     onCitySelect(city);
     // Clear query after selection
     setQuery("");
-  };
-
-  const handleRemoveHistory = (code) => {
-    const updatedHistory = history.filter((item) => item.code !== code);
-    saveHistory(updatedHistory);
-  };
-
-  const handleClearHistory = () => {
-    saveHistory([]);
   };
 
   return (
@@ -177,7 +179,7 @@ const InputLocation = ({ isFocused, onCloseClick, onCitySelect }) => {
             >
               <HStack justifyContent="space-between" alignItems="center">
                 <Text py={2} cursor="default">
-                  {city.name}
+                  {city?.name}
                 </Text>
               </HStack>
               <Separator />
@@ -206,7 +208,7 @@ const InputLocation = ({ isFocused, onCloseClick, onCitySelect }) => {
 
           <List.Root as={Stack} gap="3" listStyle="none">
             {history.length > 0 &&
-              history.map((city, index) => (
+              history.slice(0, 4).map((city, index) => (
                 <List.Item _hover={{ bgColor: "gray.300" }} px={5} key={index}>
                   <HStack justifyContent="space-between" alignItems="center">
                     <Text
@@ -215,7 +217,7 @@ const InputLocation = ({ isFocused, onCloseClick, onCitySelect }) => {
                       cursor="default"
                       onClick={() => handleCitySelect(city)}
                     >
-                      {city.name}
+                      {city?.name}
                     </Text>
                     <CloseButton
                       variant="ghost"
