@@ -56,13 +56,14 @@ function PaymentIndex() {
     }
     }, [navigate, token, user])
 
-    useEffect(() => {
-        if (!orderId) {
-            setOverlayVisible(true)
-            setMessage('Order Id Tidak Ditemukan!')
-            setTujuan('/')
-        }
-    }, [navigate, token, user])
+    // useEffect(() => {
+    //     if (!orderId) {
+    //         setOverlayVisible(true)
+    //         setMessage('Order Id Tidak Ditemukan!')
+    //         setTujuan('/')
+    //     }
+    // }, [navigate, orderId])
+
     useEffect(() => {
     if (isOverlayVisible) {
         const timer = setTimeout(() => {

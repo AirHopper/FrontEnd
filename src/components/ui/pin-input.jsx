@@ -6,7 +6,6 @@ export const PinInput = React.forwardRef(function PinInput(props, ref) {
         // Get the value from the input
         const value = event.target.value;
         onChange(value); // Call the onChange prop with the value
-        console.log(value)
     };
     return (
         <ChakraPinInput.Root {...rest}>

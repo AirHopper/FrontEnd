@@ -1,35 +1,31 @@
-export const getHistory = async (startDate, endDate, orderId) => {
-  let params = {};
-  if (startDate) {
-    params["search[startBookingDate]"] = startDate;
-  }
-  if (endDate) {
-    params["search[endBookingDate]"] = endDate;
-  }
-  if (orderId) {
-    params["search[orderId]"] = orderId;
-  }
+export const getHistory = async params => {
+	const queryParams = new URLSearchParams();
 
-  let url =
-    `${import.meta.env.VITE_API_URL}${import.meta.env.VITE_API_VERSION}/orders?` +
-    new URLSearchParams(params);
+	if (params.startDate) queryParams.append('search[startBookingDate]', params.startDate);
+	if (params.endDate) queryParams.append('search[endBookingDate]', params.endDate);
+	if (params.orderId) queryParams.append('search[orderId]', params.orderId);
 
-  const token = localStorage.getItem("token");
+	const token = localStorage.getItem('token');
+	const url = `${import.meta.env.VITE_API_URL}${import.meta.env.VITE_API_VERSION}/orders?${queryParams.toString()}`;
 
-  const response = await fetch(url, {
-    headers: {
-      authorization: `Bearer ${token}`,
-    },
-    method: "GET",
-  });
+	try {
+		const response = await fetch(url, {
+			headers: {
+				authorization: `Bearer ${token}`,
+			},
+			method: 'GET',
+		});
+		const result = await response.json();
 
-  // get the data if fetching succeed!
-  const result = await response.json();
-  if (!result?.success) {
-    throw new Error(result?.message);
-  }
+		if (!result?.success) {
+			throw new Error(result?.message);
+		}
 
-  return result?.data;
+		return result?.data;
+	} catch (error) {
+		console.error('Error fetching tickets:', error.message);
+		throw error;
+	}
 };
 
 // service.js
