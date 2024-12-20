@@ -88,8 +88,12 @@ function CheckoutIndex() {
   const ticketId1 = parseInt(params.get('ticketId1'), 10) || 0
   const ticketId2 = parseInt(params.get('ticketId2'), 10) || 0
   const passengerCount = dewasa + anak
-  const totalTicketDewasa = parseInt(ticketData?.totalPrice || 0) * dewasa
-  const totalTicketAnak = (Math.ceil(((parseInt(ticketData?.totalPrice || 0) * 80) / 100)))*anak
+  const totalTicketDewasaPergi = parseInt(ticketData?.totalPrice || 0) * dewasa
+  const totalTicketDewasaPulang = parseInt(ticketData2?.totalPrice || 0) * dewasa
+  const totalTicketDewasa = totalTicketDewasaPergi + totalTicketDewasaPulang
+  const totalTicketAnakPergi = (Math.ceil(((parseInt(ticketData?.totalPrice || 0) * 80) / 100)))*anak
+  const totalTicketAnakPulang = (Math.ceil(((parseInt(ticketData2?.totalPrice || 0) * 80) / 100)))*anak
+  const totalTicketAnak = totalTicketAnakPergi + totalTicketAnakPulang
   const bookedSeatBerangkat = []
   seatBerangkat.forEach((seat) => {
     if (seat.isOccupied) {
@@ -240,7 +244,7 @@ function CheckoutIndex() {
       isSwitchOn: false,
       namaKeluarga: '',
       tanggalLahir: '',
-      kewarganegaraan: 'Indonesia',
+      kewarganegaraan: '',
       ktpPas: '',
       negaraPenerbit: '',
       berlakuSampai: '',
@@ -255,7 +259,7 @@ function CheckoutIndex() {
       isSwitchOn: false,
       namaKeluarga: '',
       tanggalLahir: '',
-      kewarganegaraan: 'Indonesia',
+      kewarganegaraan: '',
       ktpPas: '',
       negaraPenerbit: '',
       berlakuSampai: '',
@@ -374,13 +378,42 @@ function CheckoutIndex() {
       { label: 'Singapore', value: 'Singapore' },
       { label: 'USA', value: 'USA' },
       { label: 'Malaysia', value: 'Malaysia' },
-      { label: 'Rusia', value: 'Rusia' },
+      { label: 'Russia', value: 'Russia' },
       { label: 'Brazil', value: 'Brazil' },
-      { label: 'Jepang', value: 'Jepang' },
+      { label: 'Japan', value: 'Japan' },
       { label: 'China', value: 'China' },
-      { label: 'Kamboja', value: 'Kamboja' },
+      { label: 'Cambodia', value: 'Cambodia' },
+      { label: 'Australia', value: 'Australia' },
+      { label: 'India', value: 'India' },
+      { label: 'United Kingdom', value: 'United Kingdom' },
+      { label: 'France', value: 'France' },
+      { label: 'Italy', value: 'Italy' },
+      { label: 'Spain', value: 'Spain' },
+      { label: 'South Korea', value: 'South Korea' },
+      { label: 'Canada', value: 'Canada' },
+      { label: 'Mexico', value: 'Mexico' },
+      { label: 'Netherlands', value: 'Netherlands' },
+      { label: 'Thailand', value: 'Thailand' },
+      { label: 'Vietnam', value: 'Vietnam' },
+      { label: 'Switzerland', value: 'Switzerland' },
+      { label: 'Sweden', value: 'Sweden' },
+      { label: 'Norway', value: 'Norway' },
+      { label: 'Finland', value: 'Finland' },
+      { label: 'Philippines', value: 'Philippines' },
+      { label: 'New Zealand', value: 'New Zealand' },
+      { label: 'South Africa', value: 'South Africa' },
+      { label: 'Egypt', value: 'Egypt' },
+      { label: 'Turkey', value: 'Turkey' },
+      { label: 'Argentina', value: 'Argentina' },
+      { label: 'Chile', value: 'Chile' },
+      { label: 'Colombia', value: 'Colombia' },
+      { label: 'Saudi Arabia', value: 'Saudi Arabia' },
+      { label: 'United Arab Emirates', value: 'United Arab Emirates' },
+      { label: 'Israel', value: 'Israel' },
+      { label: 'Greece', value: 'Greece' },
+      { label: 'Portugal', value: 'Portugal' },
     ],
-  })
+  });  
 
   useEffect(() => {
     if (timeLeft <= 0) {
@@ -672,23 +705,34 @@ function CheckoutIndex() {
                                 }
                               />
                             </Field>
-                            <Field
-                              color="#006ec1"
-                              label="Kewarganegaraan"
-                              labelProps={{ fontWeight: 'bold' }}
+                            <SelectRoot
+                              collection={listCountry}
+                              value={passengerData[index].kewarganegaraan}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  index,
+                                  'kewarganegaraan',
+                                  e.target.value,
+                                )
+                              }
                             >
-                              <Input
-                                value={passengerData[index].kewarganegaraan}
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    index,
-                                    'kewarganegaraan',
-                                    e.target.value,
-                                  )
-                                }
-                                borderColor="gray.300"
-                              />
-                            </Field>
+                              <SelectLabel color="#006ec1">
+                                Kewarganegaraan
+                              </SelectLabel>
+                              <SelectTrigger>
+                                <SelectValueText placeholder="Pilih Negara" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {listCountry.items.map((country) => (
+                                  <SelectItem
+                                    item={country}
+                                    key={country.value}
+                                  >
+                                    {country.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </SelectRoot>
                             <Field
                               color="#006ec1"
                               label="KTP/Paspor"
@@ -705,7 +749,16 @@ function CheckoutIndex() {
                                   )
                                 }
                                 borderColor="gray.300"
+                                isInvalid={
+                                  passengerData[index].ktpPas &&
+                                  (!/^\d{16}$/.test(passengerData[index].ktpPas))
+                                }
                               />
+                              {!/^\d{16}$/.test(passengerData[index].ktpPas || '') && (
+                                <Text color="red.500" fontSize="sm" mt={1}>
+                                  Nomor KTP/Paspor harus berupa angka dan terdiri dari 16 digit.
+                                </Text>
+                              )}
                             </Field>
                             <SelectRoot
                               collection={listCountry}
