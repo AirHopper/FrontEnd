@@ -24,6 +24,7 @@ function Beranda() {
     },
   ]);
   const [selectedClass, setSelectedClass] = useState("");
+  const formattedClass = selectedClass.replace(/_/g, " ");
 
   // isFocused and tickets data states
   const [isFocused, setIsFocused] = useState(false);
@@ -85,7 +86,7 @@ function Beranda() {
           selectedFrom={selectedFrom}
           selectedTo={selectedTo}
           dateRange={dateRange}
-          selectedClass={selectedClass}
+          selectedClass={formattedClass}
           setSelectedFrom={setSelectedFrom}
           setSelectedTo={setSelectedTo}
           setDateRange={setDateRange}
