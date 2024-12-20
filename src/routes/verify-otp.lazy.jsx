@@ -69,7 +69,6 @@ function VerifyOtpPage() {
       toast.error("Silakan masukkan kode OTP 6 digit yang valid.");
       return;
     }
-    console.log(otpCode)
     setIsSubmitting(true);
   
     try {  

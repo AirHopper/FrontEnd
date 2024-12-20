@@ -19,6 +19,7 @@ import kak_reza from "./kak_reza.jpg";
 import royhan from "./royhan.jpg";
 import zaky from "./zaky.jpg";
 import kak_mughie from "./Kak_Mughie.png";
+import notFound from "./notfound.png";
 export {
   CarAuth,
   AirHopper,
@@ -40,5 +41,6 @@ export {
   kak_reza,
   royhan,
   zaky,
-  kak_mughie
+  kak_mughie,
+  notFound
 };
