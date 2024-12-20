@@ -25,6 +25,7 @@ import { notifications } from "../services/notification";
 import { useSelector } from "react-redux";
 import { clearNotifications } from "../services/notification";
 import Swal from "sweetalert2";
+import { profile } from "../services/user";
 import Protected from "../components/Auth/Protected";
 
 export const Route = createLazyFileRoute("/notification")({
@@ -43,6 +44,14 @@ function NotificationPage() {
   const [filterType, setFilterType] = useState("all"); 
   const [searchQuery, setSearchQuery] = useState(""); 
   const [debouncedQuery, setDebouncedQuery] = useState("");
+
+  const { token } = useSelector((state) => state.auth);
+    // React Query untuk mendapatkan profil user jika token ada
+    const { data: profileData, isSuccessProfile, isErrorProfile } = useQuery({
+      queryKey: ["profile"],
+      queryFn: profile,
+      enabled: !!token,
+    });
 
   // Debounce search input
   useEffect(() => {

@@ -45,7 +45,7 @@ const TicketFav = ({ handleSelectCard }) => {
       { label: "Asia", value: "Asia" },
       { label: "Amerika", value: "Amerika" },
       { label: "Australia", value: "Australia" },
-      { label: "Eropa", value: "Eropa" },
+      { label: "Eropa", value: "Europa" },
     ],
   });
 
@@ -175,7 +175,7 @@ const TicketFav = ({ handleSelectCard }) => {
 
       {/* Ticket Cards */}
       <HStack justifyContent="center" marginTop={5} flexWrap="wrap">
-        {isError ? (
+        {tickets.length === 0 || isError ? (
           <Stack alignItems="center" mt={2}>
             <Image
               src={NoData}
