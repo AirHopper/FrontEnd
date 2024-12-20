@@ -16,17 +16,17 @@ import {
 import { Field } from "@/components/ui/field";
 import { PasswordInput } from "@/components/ui/password-input";
 import { LogoAirHopper } from "../assets/img";
-import AirHopper from "@/assets/img/airhopper.jpg"; 
+import AirHopper from "@/assets/img/airhopper.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { useMutation } from "@tanstack/react-query";
-import { useGoogleLogin } from '@react-oauth/google';
+import { useGoogleLogin } from "@react-oauth/google";
 import { login, googleLogin } from "../services/auth"; // Ensure this is the correct path to your auth services
 import { useDispatch, useSelector } from "react-redux";
 import { setToken } from "../redux/slices/auth";
-import { toast } from 'react-toastify'; // Ensure toast is imported
-import { Typewriter } from 'react-simple-typewriter';
+import { toast } from "react-toastify"; // Ensure toast is imported
+import { Typewriter } from "react-simple-typewriter";
 
 export const Route = createLazyFileRoute("/login")({
   component: LoginPage,
@@ -50,7 +50,7 @@ function LoginPage() {
   }, [token, navigate]);
 
   // Mutation for login
-  const { mutate: loginUser  } = useMutation({
+  const { mutate: loginUser } = useMutation({
     mutationFn: async (body) => {
       return await login(body); // Assuming login is your API call
     },
@@ -60,22 +60,24 @@ function LoginPage() {
       navigate({ to: "/" });
     },
     onError: (err) => {
-      toast.error(err?.message || "Login gagal. Mohon untuk cek email dan password.");
+      toast.error(
+        err?.message || "Login gagal. Mohon untuk cek email dan password."
+      );
     },
   });
 
   // Mutation for Google login
-    const { mutate: googleLoginUser } = useMutation({
-      mutationFn: (accessToken) => googleLogin({ accessToken }),
-      onSuccess: (data) => {
-          dispatch(setToken(data?.token));
-          toast.success("Login Sukses");
-          navigate({ to: "/" });
-      },
-      onError: (err) => {
-          toast.error("Google login gagal. silahkan coba lagi.");
-      },
-    }); 
+  const { mutate: googleLoginUser } = useMutation({
+    mutationFn: (accessToken) => googleLogin({ accessToken }),
+    onSuccess: (data) => {
+      dispatch(setToken(data?.token));
+      toast.success("Login Sukses");
+      navigate({ to: "/" });
+    },
+    onError: (err) => {
+      toast.error("Google login gagal. silahkan coba lagi.");
+    },
+  });
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -94,24 +96,23 @@ function LoginPage() {
     // Submit logic
     if (!identifierError && !passwordError) {
       const body = {
-        identifier, // Use identifier for email or phone number
+        identifier, 
         password,
       };
 
-      loginUser (body); // Call the login mutation
+      loginUser(body);
     }
   };
 
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: (tokenResponse) => {
-        googleLoginUser(tokenResponse.access_token);
-        console.log(tokenResponse)
+      googleLoginUser(tokenResponse.access_token);
     },
     onError: (err) => {
-        console.error(err);
-        toast.error("Google login initialization failed.");
+      console.error(err);
+      toast.error("Google login initialization failed.");
     },
-});
+  });
 
   // Responsively adjust the width of the left and right boxes
   const leftBoxWidth = useBreakpointValue({ base: "100%", md: "55%" });
@@ -123,40 +124,42 @@ function LoginPage() {
   return (
     <Flex
       w="100%"
-      h="100vh"
+      h="100%"
       alignItems="center"
-      direction={{ base: "column ", md: "row" }} // Stack the boxes on small screens
+      direction={{ base: "column ", md: "row" }} 
     >
       <Box
         w={leftBoxWidth}
-        bgGradient="to-tr" gradientFrom="rgba(38,31,163,1) 45%" gradientTo="rgba(0,212,255,1) 90%"
+        bgGradient="to-tr"
+        gradientFrom="rgba(38,31,163,1) 45%"
+        gradientTo="rgba(0,212,255,1) 90%"
         h="120vh"
         position="relative"
-        display={imageDisplay} // Hide image on tablet breakpoints
+        display={imageDisplay} 
         justifyContent="center"
         alignItems="center"
-        overflow="hidden" // Prevents image overflow
+        overflow="hidden" 
       >
         {/* Gambar AirHopper */}
         <Image
           src={LogoAirHopper}
           alt="AirHopper"
-          objectFit="cover" // Ensures image covers the entire area
-          w="40%" // Make image larger
-          position="absolute" // Keeps the image in the background
-          top="40%" // Adjust the vertical position of the image
+          objectFit="cover" 
+          w="40%" 
+          position="absolute" 
+          top="40%" 
           left="50%"
-          transform="translate(-50%, -50%)" // Center the image
+          transform="translate(-50%, -50%)" 
         />
-        
+
         {/* Teks di bawah gambar dengan teks statis dan animasi */}
         <Box
-          position="absolute" // Ensures the text is positioned relative to the parent Box
-          top="70%" // Position the text below the image
+          position="absolute" 
+          top="70%" 
           left="50%"
-          transform="translate(-50%, -50%)" // Center the text horizontally
-          textAlign="center" // Center align the text content
-          color="white" // Text color
+          transform="translate(-50%, -50%)" 
+          textAlign="center" 
+          color="white" 
         >
           {/* Teks Statis */}
           <Text fontSize="5xl" fontWeight="bold" mb="2">
@@ -165,13 +168,16 @@ function LoginPage() {
           {/* Teks dengan Animasi */}
           <Text fontSize="4xl" fontWeight="medium">
             <Typewriter
-              words={['Partner perjalanan anda!', 'Solusi untuk pengalaman terbaik']}
-              loop={true} // Loops through the text
-              cursor // Show a blinking cursor
-              cursorStyle="|" // Customize cursor style
-              typeSpeed={70} // Speed of typing
-              deleteSpeed={50} // Speed of deleting
-              delaySpeed={1000} // Delay before typing the next word
+              words={[
+                "Partner perjalanan anda!",
+                "Solusi untuk pengalaman terbaik",
+              ]}
+              loop={true} 
+              cursor 
+              cursorStyle="|" 
+              typeSpeed={70} 
+              deleteSpeed={50}
+              delaySpeed={1000} 
             />
           </Text>
         </Box>
@@ -182,7 +188,7 @@ function LoginPage() {
         bg="white"
         w={rightBoxWidth}
         p="6%"
-        position="relative" // Ensure proper positioning
+        position="relative" 
       >
         {/* Heading and Description */}
         <Stack spacing={4} textAlign="center" mb="1">
@@ -190,40 +196,41 @@ function LoginPage() {
           <Flex w="100%" justify="" align="center" mb={2}>
             {/* Back Button (Aligned to the left) */}
             <Button
-              mt={{ base: 5, sm: 4, md: 2 }} // Responsive margin top values
+              mt={{ base: 5, sm: 4, md: 2 }} 
               variant="ghost"
-              as={Link} to="/" // Navigate to the homepage
+              as={Link}
+              to="/" 
               color="blue.500"
               borderRadius="10px"
               _hover={{
-                color: "blue.700", // Change text color on hover
-                bg: "yellow.300", // Add a background color on hover
-                transform: "scale(1.05)", // Slightly enlarge the button on hover
-                boxShadow: "xl", // Add shadow effect
+                color: "blue.700", 
+                bg: "yellow.300", 
+                transform: "scale(1.05)",
+                boxShadow: "xl",
               }}
             >
               <FontAwesomeIcon icon={faArrowLeft} size="xl" />
             </Button>
           </Flex>
-            <Box
-              bgColor="#2078b8"
-              fontWeight="bold"
+          <Box
+            bgColor="#2078b8"
+            fontWeight="bold"
+            mx="auto"
+            borderRadius="full"
+          >
+            <Image
+              src={LogoAirHopper}
+              alt="AirHopper"
+              boxSize="100px"
+              objectFit="contain" 
+              mb={0} 
+              display="block" 
               mx="auto"
-              borderRadius="full"
-            >
-              <Image
-                src={LogoAirHopper}
-                alt="AirHopper"
-                boxSize="100px" // Set the size of the logo (adjust as needed)
-                objectFit="contain" // Ensure the image fits within the specified box size
-                mb={0} // Add margin at the bottom to separate the image from the text
-                display="block" // Make the image a block element
-                mx="auto"
-              />
-            </Box>
-            <Heading as="h1" size="2xl" fontWeight="bold" color="#2078b8">
-              AirHopper
-            </Heading>
+            />
+          </Box>
+          <Heading as="h1" size="2xl" fontWeight="bold" color="#2078b8">
+            AirHopper
+          </Heading>
           <Text as="p" fontSize="lg">
             Partner perjalanan anda
           </Text>
@@ -258,7 +265,12 @@ function LoginPage() {
               <Text fontSize="sm" fontWeight="medium">
                 Password
               </Text>
-              <Text as={Link} to="/forgot-password" color="blue.500" fontSize="sm">
+              <Text
+                as={Link}
+                to="/forgot-password"
+                color="blue.500"
+                fontSize="sm"
+              >
                 Lupa Password?
               </Text>
             </HStack>
@@ -280,13 +292,13 @@ function LoginPage() {
             <Button
               borderRadius="10px"
               type="submit"
-              color="white" // Set text color to white
+              color="white"
               width="full"
               bg="#44b3f8"
               _hover={{
-                bg: "#359dd7", // Change background color on hover
-                transform: "scale(1.02)", // Slightly enlarge the button on hover
-                boxShadow: "md", // Add a shadow for depth
+                bg: "#359dd7", 
+                transform: "scale(1.02)", 
+                boxShadow: "md", 
               }}
             >
               Masuk
@@ -301,13 +313,13 @@ function LoginPage() {
             <Button
               onClick={handleGoogleLogin}
               borderRadius="10px"
-              type="button" // Change to type="button" to prevent form submission
+              type="button" 
               variant="outline"
               color="black"
               width="full"
               _hover={{
-                transform: "scale(1.02)", // Slightly enlarge the button on hover
-                boxShadow: "md", // Add a shadow for depth
+                transform: "scale(1.02)", 
+                boxShadow: "md", 
               }}
             >
               <FontAwesomeIcon icon={faGoogle} />
@@ -318,7 +330,7 @@ function LoginPage() {
 
         {/* Sign Up Link */}
         <Text textAlign="center" mt="4">
-          Tidak punya akun? {" "}
+          Tidak punya akun?{" "}
           <Text as={Link} to="/register" color="blue.500">
             Daftar
           </Text>

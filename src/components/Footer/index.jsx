@@ -6,13 +6,13 @@ import {
   Text,
   VStack,
   HStack,
-  Link,
   Image,
   Button,
 } from "@chakra-ui/react";
 import { faPlaneUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { LogoAirHopper } from "../../assets/img";
+import { Link } from "@tanstack/react-router";
 
 const Footer = () => {
   return (
@@ -46,27 +46,36 @@ const Footer = () => {
           {/* Links */}
           <Flex
             direction={{ base: "column", md: "row" }}
-            mt={{ base: 6, md: 0 }}
+            mt={{ base: 3, md: 0 }}
             align={{ base: "flex-start", md: "center" }}
           >
-            <VStack align="flex-start" spacing={2} mr={{ base: 0, md: 8 }}>
+            <VStack align="flex-start" spacing={2} mr={{ base: 0, md: 8 }} mt={{ base: 4}}>
               <Text fontWeight="semibold" textTransform="uppercase">
                 Ikuti Kami
               </Text>
-              <Link href="#" _hover={{ textDecoration: "underline" }}>
+              <Text  
+                as="a" 
+                href="https://github.com/AirHopper" 
+                target="_blank"
+                rel="noopener noreferrer" 
+                _hover={{ textDecoration: "underline" }}
+              >
                 GitHub
-              </Link>
-              <Link href="#" _hover={{ textDecoration: "underline" }}>
+              </Text>
+              <Text as={Link} to="/about-us" _hover={{ textDecoration: "underline" }}>
                 Tentang Kami
-              </Link>
+              </Text>
             </VStack>
-            <VStack align="flex-start" spacing={2}>
+            <VStack align="flex-start" spacing={2} mt={{ base: 4}}>
               <Text fontWeight="semibold" textTransform="uppercase">
                 Penerbangan
               </Text>
-              <Link href="#" _hover={{ textDecoration: "underline" }}>
+              <Text as={Link} to="/" _hover={{ textDecoration: "underline" }}>
                 Domestik
-              </Link>
+              </Text>
+              <Text as={Link} to="/" _hover={{ textDecoration: "underline" }}>
+                Internasional
+              </Text>
             </VStack>
           </Flex>
         </Flex>
