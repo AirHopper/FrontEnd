@@ -152,7 +152,7 @@ function CheckoutIndex() {
   useEffect(() => {
     if (isOverlayVisible) {
       const timer = setTimeout(() => {
-        navigate({ to: tujuan })
+      navigate({ to: tujuan })
       }, 4000)
 
       return () => clearTimeout(timer)
@@ -348,7 +348,7 @@ function CheckoutIndex() {
         ...(anak > 0
           ? [{ type: 'children', amount: anak, totalPrice: totalTicketAnak }]
           : []),
-        ...(bayi > 0 ? [{ type: 'bayi', amount: bayi, totalPrice: 0 }] : []),
+        ...(bayi > 0 ? [{ type: 'infant', amount: bayi, totalPrice: 0 }] : []),
       ],
       passengers: updatedOrder,
     }
@@ -367,6 +367,12 @@ function CheckoutIndex() {
       { label: 'Germany', value: 'Germany' },
       { label: 'Singapore', value: 'Singapore' },
       { label: 'USA', value: 'USA' },
+      { label: 'Malaysia', value: 'Malaysia' },
+      { label: 'Rusia', value: 'Rusia' },
+      { label: 'Brazil', value: 'Brazil' },
+      { label: 'Jepang', value: 'Jepang' },
+      { label: 'China', value: 'China' },
+      { label: 'Kamboja', value: 'Kamboja' },
     ],
   })
 
@@ -412,6 +418,31 @@ function CheckoutIndex() {
   const minutes = Math.floor((timeLeft % 3600) / 60)
   const seconds = timeLeft % 60
   const formattedTime = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isSaveDisabled, setIsSaveDisabled] = useState(true);
+  const checkDataCompleteness = () => {
+    const hasIncompleteData = passengerData.some(
+      (data) =>
+        !data.namaLengkap ||
+        !data.title ||
+        !data.tanggalLahir ||
+        !data.kewarganegaraan ||
+        !data.negaraPenerbit ||
+        !data.berlakuSampai
+    );
+  
+    if (hasIncompleteData) {
+      setErrorMessage("Data Belum Lengkap, Harap Lengkapi Data Anda !!");
+      setIsSaveDisabled(true);
+    } else {
+      setErrorMessage("");
+      setIsSaveDisabled(false);
+    }
+  };
+  
+  useEffect(() => {
+    checkDataCompleteness();
+  }, [passengerData]);
   return (
     <>
       <Overlay isVisible={isOverlayVisible} message={message} />
@@ -1019,14 +1050,17 @@ function CheckoutIndex() {
                   )}
                   <Box height={5} />
                 </Card.Root>
+                {}
                 <Button
                   colorPalette={'blue'}
                   width="100%"
                   borderRadius="lg"
                   onClick={handleClick}
+                  disabled={isSaveDisabled}
                 >
                   Simpan
                 </Button>
+                {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
               </Box>
               <Box>
                 <Card.Root

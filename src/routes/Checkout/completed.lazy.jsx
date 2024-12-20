@@ -148,12 +148,12 @@ function CheckoutCompleted() {
   }, [flights2]);
   useEffect(() => {
     if (flightDetails2?.length > 0) {
-      setSeatPulang(flightDetails2[0]?.seats);
+      setSeatPulang(flightDetails2[0]?.seat);
       if (flightDetails2.length > 1) {
-        setSeatTransit1Pulang(flightDetails2[1]?.seats);
+        setSeatTransit1Pulang(flightDetails2[1]?.seat);
       }
       if (flightDetails2.length > 2) {
-        setSeatTransit2Pulang(flightDetails2[2]?.seats);
+        setSeatTransit2Pulang(flightDetails2[2]?.seat);
       }
     }
   }, [flightDetails2]);
