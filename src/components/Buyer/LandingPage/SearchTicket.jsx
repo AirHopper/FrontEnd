@@ -260,7 +260,7 @@ const SearchTicket = ({
   return (
     <Stack alignItems="center">
       <Stack
-        width={{ base: "90vw", md: "85vw", lg: "75vw", xl: "65vw" }}
+        width={{ base: "90vw", md: "85vw", lg: "75vw", xl: "70vw" }}
         overflow="hidden"
         bgColor="white"
         shadow="md"

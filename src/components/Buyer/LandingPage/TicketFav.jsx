@@ -19,7 +19,7 @@ import TicketCard from "./TicketCard";
 import TicketSkeletonCard from "./Skeleton/TicketSkeletonCard";
 import { NoData } from "../../../assets/img";
 import { useQuery } from "@tanstack/react-query";
-import { getDiscounts, getTickets } from "../../../services/tickets";
+import { getTickets } from "../../../services/tickets";
 import {
   SelectContent,
   SelectItem,
@@ -64,8 +64,15 @@ const TicketFav = ({ handleSelectCard }) => {
 
   useEffect(() => {
     if (isSuccess) {
+      const today = new Date().toISOString().split("T")[0]; // Format tanggal sekarang (YYYY-MM-DD)
+
+      const filteredTickets = (data?.data || []).filter((ticket) => {
+        const departureDate = ticket?.departure?.time?.split("T")[0];
+        return departureDate >= today;
+      });
+
       // Update state data
-      setTickets(data?.data || []);
+      setTickets(filteredTickets);
 
       // Update page, limit, and total items
       setCurrentPage(currentPage);
@@ -84,7 +91,7 @@ const TicketFav = ({ handleSelectCard }) => {
         sm: "2rem",
         md: "4rem",
         lg: "9.5rem",
-        xl: "21rem",
+        xl: "18rem",
       }}
     >
       <Stack direction="column">
@@ -204,22 +211,22 @@ const TicketFav = ({ handleSelectCard }) => {
       </HStack>
 
       {/* Pagination */}
-      <HStack justifyContent="center" mt={6}>
-        <PaginationRoot
-          count={totalItems}
-          pageSize={pageLimit}
-          currentPage={currentPage}
-          onPageChange={(event) => {
-            setCurrentPage(event.page);
-          }}
-        >
-          <HStack>
-            <PaginationPrevTrigger />
-            <PaginationItems />
-            <PaginationNextTrigger />
-          </HStack>
-        </PaginationRoot>
-      </HStack>
+      {tickets.length > 0 && (
+        <HStack justifyContent="center" mt={6}>
+          <PaginationRoot
+            count={totalItems}
+            pageSize={pageLimit}
+            currentPage={currentPage}
+            onPageChange={(event) => setCurrentPage(event.page)}
+          >
+            <HStack>
+              <PaginationPrevTrigger />
+              <PaginationItems />
+              <PaginationNextTrigger />
+            </HStack>
+          </PaginationRoot>
+        </HStack>
+      )}
     </Stack>
   );
 };
