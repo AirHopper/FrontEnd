@@ -2,7 +2,12 @@ import { Stack, Text, Image, Card } from "@chakra-ui/react";
 
 const TicketCard = ({ ticket, onSelectCard }) => {
   const formatDate = (dateString) => {
-    const options = { day: "numeric", month: "long", year: "numeric" };
+    const options = {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      timeZone: "UTC",
+    };
     const formatter = new Intl.DateTimeFormat("id-ID", options); // 'id-ID' for Bahasa Indonesia
     return formatter.format(new Date(dateString));
   };
@@ -11,7 +16,7 @@ const TicketCard = ({ ticket, onSelectCard }) => {
     return new Intl.NumberFormat("id-ID").format(number || 0);
   };
 
-  const departureDate = formatDate(ticket?.departure.time);
+  const departureDate = formatDate(ticket?.departure?.time);
 
   return (
     <Card.Root

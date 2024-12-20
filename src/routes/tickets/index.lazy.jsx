@@ -15,6 +15,7 @@ import { HStack, VStack, Image, AccordionItem, AccordionRoot, AccordionItemTrigg
 import { faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import SelectFilter from '../../components/tickets/SelectFilter';
 import { Checkbox } from '@/components/ui/checkbox';
+import { toast } from 'react-toastify';
 
 export const Route = createLazyFileRoute('/tickets/')({
 	component: RouteComponent,
@@ -35,7 +36,7 @@ function RouteComponent() {
 	const [selectedAirline, setSelectedAirline] = useState(null);
 	// state navigate
 	const [isNavigating, setIsNavigating] = useState(false);
-
+	const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 	// Ambil parameter URL
 	const urlParams = new URLSearchParams(location.search);
 	const params = {
@@ -58,7 +59,20 @@ function RouteComponent() {
 
 		// Hanya arahkan ke halaman utama jika tidak ada parameter yang diperlukan, dan tidak sedang navigasi
 		if (!hasRequiredParams && !isNavigating) {
-			navigate({ to: '/' });
+			// Tunggu sampai durasi toast selesai sebelum navigasi
+			setTimeout(() => {
+				navigate({ to: '/' });
+			}, 500); // Sesuaikan dengan durasi autoClose
+			setIsNavigating(true);
+			toast.error('Pencarian Tidak Valid!', {
+				position: 'top-right',
+				autoClose: 3000, // Durasi toast
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: false,
+				draggable: false,
+				theme: 'colored',
+			});
 		}
 	}, [params, navigate, isNavigating]);
 
@@ -102,6 +116,19 @@ function RouteComponent() {
 	// handle accordion
 	const handleAccordionToggle = index => {
 		setActiveAccordion(prev => (prev === index ? null : index));
+	};
+
+	const [isTransitAccordionOpen, setIsTransitAccordionOpen] = useState(false);
+	const [isAirlinesAccordionOpen, setIsAirlinesAccordionOpen] = useState(false);
+
+	// Handler untuk Transit Accordion
+	const toggleTransitAccordion = () => {
+		setIsTransitAccordionOpen(prev => !prev);
+	};
+
+	// Handler untuk Airlines Accordion
+	const toggleAirlinesAccordion = () => {
+		setIsAirlinesAccordionOpen(prev => !prev);
 	};
 
 	// handle filter
@@ -189,17 +216,22 @@ function RouteComponent() {
 	// Inisialisasi state untuk ticketId1 dan ticketId2
 	const [ticketId1, setTicketId1] = useState(null);
 	const [ticketId2, setTicketId2] = useState(null);
+	const [departureDate, setDepartureDate] = useState(null);
 
-	// Logika untuk menentukan apakah pemilihan tiket pulang sedang berlangsung
-	const isReturnTicketSelection = ticketId1 !== null && params.returnDate === undefined;
+	// Handle send search function
+	const handleSendSearch = (ticketId, ticketDepartureDate) => {
+		// Periksa apakah tombol dinonaktifkan
+		if (isButtonDisabled) {
+			return; // Hentikan eksekusi jika tombol dinonaktifkan
+		}
 
-	const handleSendSearch = ticketId => {
 		setIsNavigating(true); // Set navigasi aktif
 		const searchParams = new URLSearchParams();
 
 		if (params.returnDate) {
 			if (!ticketId1) {
 				setTicketId1(ticketId);
+				setDepartureDate(ticketDepartureDate); // Set departureDate here
 				searchParams.append('departure', params.arrivalCity);
 				searchParams.append('arrival', params.departureCity);
 				searchParams.append('classType', params.classType);
@@ -213,6 +245,7 @@ function RouteComponent() {
 		} else {
 			if (!ticketId1) {
 				setTicketId1(ticketId);
+				setDepartureDate(ticketDepartureDate); // Set departureDate here
 				searchParams.append('ticketId1', ticketId);
 				if (params.classType) searchParams.append('classType', params.classType);
 				if (params.adult) searchParams.append('adult', params.adult);
@@ -221,6 +254,7 @@ function RouteComponent() {
 				navigate({ to: `/checkout?${searchParams.toString()}` });
 			} else {
 				setTicketId2(ticketId);
+				setDepartureDate(ticketDepartureDate); // Set departureDate here
 				searchParams.append('ticketId1', ticketId1);
 				searchParams.append('ticketId2', ticketId);
 				if (params.classType) searchParams.append('classType', params.classType);
@@ -230,8 +264,11 @@ function RouteComponent() {
 				navigate({ to: `/checkout?${searchParams.toString()}` });
 			}
 		}
+	};
 
-		setTimeout(() => setIsNavigating(false)); // Reset navigasi setelah selesai
+	const handleNavigation = () => {
+		setIsNavigating(true);
+		navigate({ to: '/' });
 	};
 
 	return (
@@ -241,7 +278,7 @@ function RouteComponent() {
 			</Heading>
 			<Grid templateColumns={['1fr', '5fr 2fr']} gap={4} alignItems="center">
 				<Stack
-					onClick={() => navigate({ to: '../' })}
+					onClick={handleNavigation}
 					py={3}
 					px={6}
 					bg="#44B3F8"
@@ -249,55 +286,52 @@ function RouteComponent() {
 					color="#FDFFFE"
 					gap={4}
 					display="flex"
-					flexDirection="row" // Menyusun elemen dalam satu baris
-					alignItems="center" // Vertikal center
-					justifyContent={{ base: 'center', md: 'start' }} // Menyusun teks di tengah untuk layar kecil, kiri untuk layar besar
+					flexDirection="row"
+					alignItems="center"
+					justifyContent={{ base: 'center', md: 'start' }}
 					fontSize={useBreakpointValue({ base: 'sm', md: 'md' })}
-					w="full" // Tombol mengisi lebar kontainer
-					maxW="100%" // Menghindari tombol terlalu lebar pada layar besar
+					w="full"
+					maxW="100%"
 					_hover={{ bg: '#2078B8', color: '#FDFFFE' }}
+					cursor={'pointer'}
 				>
 					<FontAwesomeIcon icon={faArrowLeft} size="sm" />
 					<Text display="inline" pl={2}>
 						{/* Menghindari teks untuk membungkus */}
-						<span>{params.departureCity ? params.departureCity.replace(/\+/g, ' ') : ''}</span>
-						<FontAwesomeIcon icon={faGreaterThan} size="sm" style={{ marginLeft: 12, marginRight: 12 }} />
-						<span>{params.arrivalCity ? params.arrivalCity.replace(/\+/g, ' ') : ''}</span>
-						<span>
-							{' '}
-							- {params.passenger} Penumpang - {params.classType}
+						<span style={{ marginRight: 6 }}>{params.departureCity ? params.departureCity.replace(/\+/g, ' ') : ''}</span>
+						<FontAwesomeIcon icon={faGreaterThan} size="sm" style={{ marginLeft: 6, marginRight: 6 }} />
+						<span style={{ marginLeft: 6, marginRight: 6 }}>{params.arrivalCity ? params.arrivalCity.replace(/\+/g, ' ') : ''}</span>
+						{' - '}
+						<span style={{ marginLeft: 6, marginRight: 6 }}>
+							{params.passenger}
+							<span style={{ marginLeft: 4 }}> Penumpang</span>
 						</span>
+						{' - '}
+						<span style={{ marginLeft: 6, marginRight: 6 }}>{params.classType ? params.classType.replace(/\+/g, ' ') : ''}</span>
 					</Text>
 				</Stack>
 
 				<Stack
-					onClick={() => navigate({ to: '../' })}
+					onClick={handleNavigation}
 					py={3}
 					px={8}
 					bg="#F8D24D"
 					_hover={{ bg: '#D4B340', color: '#FDFFFE' }}
 					borderRadius="md"
 					color="#FDFFFE"
-					display="flex" // Pastikan flex diterapkan pada semua ukuran layar
-					justifyContent="center" // Mengatur teks agar terpusat secara horizontal
-					alignItems="center" // Mengatur teks agar terpusat secara vertikal
+					display="flex"
+					justifyContent="center"
+					alignItems="center"
 					flexDirection="row"
 					fontSize={useBreakpointValue({ base: 'sm', md: 'md' })}
+					cursor={'pointer'}
 				>
 					<Text display="inline">Ubah Pencarian</Text>
 				</Stack>
 			</Grid>
 
 			{/* Filter Day */}
-			<FilterDay
-				selectedDay={selectedDay}
-				setSelectedDay={setSelectedDay}
-				paramsDate={params.flightDate}
-				params={params}
-				ticketId1={ticketId1} // Tambahkan properti ini
-				onUpdateTickets={updateTickets}
-				isReturnTicketSelection={isReturnTicketSelection}
-			/>
+			<FilterDay selectedDay={selectedDay} setSelectedDay={setSelectedDay} paramsDate={params.flightDate} onUpdateTickets={updateTickets} flightDate={departureDate} setIsButtonDisabled={setIsButtonDisabled} />
 
 			{/* Select Filter */}
 			<Box textAlign="right" mt={4}>
@@ -320,13 +354,17 @@ function RouteComponent() {
 											<Text fontSize={{ base: 'md', md: 'lg' }} fontWeight={'semibold'}>
 												Filter Transit
 											</Text>
-											<AccordionItemTrigger display={'inline-block'} width={'auto'} onClick={() => handleAccordionToggle()}>
+											<AccordionItemTrigger
+												display={'inline-block'}
+												width={'auto'}
+												onClick={toggleTransitAccordion} // Menggunakan handler transit
+											>
 												<Text cursor={'pointer'} display={'flex'} alignItems={'flex-start'}>
 													<FontAwesomeIcon
 														icon={faChevronUp}
 														style={{
 															transition: 'transform 0.3s',
-															transform: activeAccordion ? 'rotate(180deg)' : 'rotate(0deg)',
+															transform: isTransitAccordionOpen ? 'rotate(180deg)' : 'rotate(0deg)',
 														}}
 													/>
 												</Text>
@@ -334,23 +372,26 @@ function RouteComponent() {
 										</Flex>
 
 										{/* Accordion Content */}
-										<AccordionItemContent>
-											<Box display="flex" flexDirection="column" gap={4} py={4}>
-												{/* Checkbox Langsung */}
-												<Checkbox isChecked={isDirectFilter} onChange={handleDirectFilterChange} colorScheme="blue">
-													Tampilkan Tiket Langsung
-												</Checkbox>
+										{isTransitAccordionOpen && (
+											<AccordionItemContent>
+												<Box display="flex" flexDirection="column" gap={4} py={4}>
+													{/* Checkbox Langsung */}
+													<Checkbox isChecked={isDirectFilter} onChange={handleDirectFilterChange} colorScheme="blue">
+														Tampilkan Tiket Langsung
+													</Checkbox>
 
-												{/* Checkbox Transit */}
-												<Checkbox isChecked={isTransitFilter} onChange={handleTransitFilterChange} colorScheme="blue">
-													Tampilkan Tiket Transit
-												</Checkbox>
-											</Box>
-										</AccordionItemContent>
+													{/* Checkbox Transit */}
+													<Checkbox isChecked={isTransitFilter} onChange={handleTransitFilterChange} colorScheme="blue">
+														Tampilkan Tiket Transit
+													</Checkbox>
+												</Box>
+											</AccordionItemContent>
+										)}
 									</Box>
 								</AccordionItem>
 							</AccordionRoot>
 						</Box>
+
 						<Box display="flex" width="100%" borderWidth="1px" borderRadius="md" px={6} py={{ base: '4', md: '6' }} shadow="sm" height="auto">
 							<AccordionRoot collapsible>
 								<AccordionItem>
@@ -360,13 +401,17 @@ function RouteComponent() {
 											<Text fontSize={{ base: 'md', md: 'lg' }} fontWeight={'semibold'}>
 												Filter Maskapai
 											</Text>
-											<AccordionItemTrigger display={'inline-block'} width={'auto'} onClick={() => handleAccordionToggle()}>
+											<AccordionItemTrigger
+												display={'inline-block'}
+												width={'auto'}
+												onClick={toggleAirlinesAccordion} // Menggunakan handler airlines
+											>
 												<Text cursor={'pointer'} display={'flex'} alignItems={'flex-start'}>
 													<FontAwesomeIcon
 														icon={faChevronUp}
 														style={{
 															transition: 'transform 0.3s',
-															transform: activeAccordion ? 'rotate(180deg)' : 'rotate(0deg)',
+															transform: isAirlinesAccordionOpen ? 'rotate(180deg)' : 'rotate(0deg)',
 														}}
 													/>
 												</Text>
@@ -374,16 +419,18 @@ function RouteComponent() {
 										</Flex>
 
 										{/* Accordion Content */}
-										<AccordionItemContent>
-											<Box display="flex" flexDirection="column" gap={4} py={4}>
-												{/* TODO: mapping airlines dari tickets.flights.airline disetiap checkbox*/}
-												{getUniqueAirlines(tickets).map((airline, index) => (
-													<Checkbox key={index} isChecked={selectedAirline?.includes(airline)} onChange={e => handleAirlineFilterChange(airline, e.target.checked)} colorScheme="blue">
-														{airline}
-													</Checkbox>
-												))}
-											</Box>
-										</AccordionItemContent>
+										{isAirlinesAccordionOpen && (
+											<AccordionItemContent>
+												<Box display="flex" flexDirection="column" gap={4} py={4}>
+													{/* TODO: mapping airlines dari tickets.flights.airline disetiap checkbox */}
+													{getUniqueAirlines(tickets).map((airline, index) => (
+														<Checkbox key={index} isChecked={selectedAirline?.includes(airline)} onChange={e => handleAirlineFilterChange(airline, e.target.checked)} colorScheme="blue">
+															{airline}
+														</Checkbox>
+													))}
+												</Box>
+											</AccordionItemContent>
+										)}
 									</Box>
 								</AccordionItem>
 							</AccordionRoot>
@@ -394,15 +441,15 @@ function RouteComponent() {
 						<Box width="xs" textAlign="center" mx="auto" display="flex" flexDirection="column" alignItems="center">
 							<Text pb={2}>Mencari Penerbangan Terbaik</Text>
 							<Text p={2}>Loading...</Text>
-							<Image src={loadingImage} alt="Not Found" width="70%" />
+							<Image src={loadingImage} alt="Not Found" width={'70%'} />
 						</Box>
 					) : isError || tickets.length === 0 ? (
-						<Box width={'xs'} textAlign="center" mx="auto" display="flex" flexDirection="column">
-							<img src={notFoundTicket} alt="Not Found" />
-							<Text mt={6} fontSize="md" fontWeight="medium">
+						<Box width={{ base: '100%', sm: 'md', md: 'md', lg: 'md' }} textAlign="center" mx="auto" display="flex" flexDirection="column" p={{ base: 4, sm: 6, md: 8 }}>
+							<Image src={notFoundTicket} alt="Not Found" width={{ base: '80%', sm: '90%', md: '100%' }} mx="auto" />
+							<Text mt={6} fontSize={{ base: 'sm', sm: 'md', md: 'lg', lg: 'xl' }} fontWeight="medium">
 								Maaf, pencarian Anda tidak ditemukan
 							</Text>
-							<Text color="#2078B8" fontSize="md" fontWeight="medium">
+							<Text mt={2} color="#2078B8" fontSize={{ base: 'sm', sm: 'md', md: 'lg', lg: 'xl' }} fontWeight="medium">
 								Coba cari perjalanan lainnya!
 							</Text>
 						</Box>
@@ -496,7 +543,15 @@ function RouteComponent() {
 															IDR. {new Intl.NumberFormat('id-ID').format(ticket.totalPrice)}
 														</Text>
 
-														<Button onClick={() => handleSendSearch(ticket.id)} bg={'#44B3F8'} px={[8, 10]} py={1} borderRadius={'md'} _hover={{ bg: '#2078B8' }}>
+														<Button
+															onClick={() => handleSendSearch(ticket.id, ticket.departure.time)}
+															bg={isButtonDisabled ? '#D3D3D3' : '#44B3F8'}
+															px={[8, 10]}
+															py={1}
+															borderRadius={'md'}
+															_hover={{ bg: '#2078B8' }}
+															isDisabled={isButtonDisabled}
+														>
 															Pilih
 														</Button>
 													</Grid>

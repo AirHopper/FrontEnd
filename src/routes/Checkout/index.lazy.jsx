@@ -15,7 +15,7 @@ import {
   Grid,
   Card,
   createListCollection,
-  Spinner
+  Spinner,
 } from '@chakra-ui/react'
 import CalendarComponent from '../../components/Buyer/Calendar/CalendarComponent.jsx'
 import '../../components/Buyer/Calendar/Calendarcss.css'

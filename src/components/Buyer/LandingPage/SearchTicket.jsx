@@ -18,7 +18,7 @@ import {
   PopoverTrigger,
   PopoverContent,
   PopoverArrow,
-  PopoverHeader,
+  PopoverCloseTrigger,
   PopoverBody,
 } from "@/components/ui/popover";
 import {
@@ -45,9 +45,11 @@ const SearchTicket = ({
   selectedFrom,
   selectedTo,
   dateRange,
+  selectedClass,
   setSelectedFrom,
   setSelectedTo,
   setDateRange,
+  setSelectedClass,
 }) => {
   const navigate = useNavigate();
 
@@ -64,7 +66,6 @@ const SearchTicket = ({
   const [adultCount, setAdultCount] = useState(0);
   const [childCount, setChildCount] = useState(0);
   const [infantCount, setInfantCount] = useState(0);
-  const [selectedClass, setSelectedClass] = useState("");
 
   // location input type and total passengers
   const [locationType, setLocationType] = useState("");
@@ -171,7 +172,7 @@ const SearchTicket = ({
   const handleSwitchChange = () => {
     setIsRangeMode((prevMode) => {
       if (prevMode) {
-        // Reset `endDate` dan simpan nilai `startDate`
+        // Reset endDate jika mode range dinonaktifkan
         setDateRange([
           {
             startDate: dateRange[0].startDate,
@@ -210,6 +211,14 @@ const SearchTicket = ({
     ) {
       navigate({ to: "/" });
       toast.error("Tanggal Departure dan Return tidak boleh sama!");
+      return;
+    }
+
+    if (
+      dateRange[0].endDate &&
+      dateRange[0].endDate <= dateRange[0].startDate
+    ) {
+      toast.error("Tanggal Return harus setelah Tanggal Departure!");
       return;
     }
 
@@ -281,6 +290,7 @@ const SearchTicket = ({
               value={selectedFrom}
               onFocus={() => handleLocationInput("from")}
               fontWeight="semibold"
+              readOnly
             />
           </GridItem>
           <GridItem
@@ -308,6 +318,7 @@ const SearchTicket = ({
               value={selectedTo}
               onFocus={() => handleLocationInput("to")}
               fontWeight="semibold"
+              readOnly
             />
           </GridItem>
           <GridItem
@@ -330,7 +341,7 @@ const SearchTicket = ({
                       base: "46vw",
                       sm: "28vw",
                       md: "32vw",
-                      lg: "10vw",
+                      lg: "10.5vw",
                     }}
                   >
                     <Input
@@ -410,12 +421,13 @@ const SearchTicket = ({
                   onChange={handleSwitchChange}
                 />
               </PopoverTrigger>
-              <PopoverContent>
+              <PopoverContent onBlur={() => setIsPopoverOpen(false)}>
                 <PopoverArrow />
-                <PopoverBody>
+                <PopoverBody marginTop={3}>
                   Aktif/Nonaktifkan switch ini untuk memilih tanggal penerbangan
                   pulang (Return Date) saat memesan tiket.
                 </PopoverBody>
+                <PopoverCloseTrigger onClick={() => setIsPopoverOpen(false)} />
               </PopoverContent>
             </PopoverRoot>
           </GridItem>
