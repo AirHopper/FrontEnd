@@ -90,19 +90,19 @@ const SearchTicket = ({
   const formattedStartDate = dateRange[0].startDate.toLocaleDateString(
     "id-ID",
     {
+      timeZone: "UTC",
       day: "numeric",
       month: "long",
       year: "numeric",
-      timeZone: "UTC",
     }
   );
 
   const formattedEndDate = dateRange[0]?.endDate
     ? dateRange[0].endDate.toLocaleDateString("id-ID", {
+        timeZone: "UTC",
         day: "numeric",
         month: "long",
         year: "numeric",
-        timeZone: "UTC",
       })
     : "";
 
@@ -286,7 +286,7 @@ const SearchTicket = ({
               From
             </Text>
             <Input
-              width={{ lg: "25vw" }}
+              width={{ lg: "25.5vw" }}
               placeholder="Pilih Lokasi"
               variant="flushed"
               value={selectedFrom}
@@ -429,7 +429,10 @@ const SearchTicket = ({
                   Aktif/Nonaktifkan switch ini untuk memilih tanggal penerbangan
                   pulang (Return Date) saat memesan tiket.
                 </PopoverBody>
-                <PopoverCloseTrigger onClick={() => setIsPopoverOpen(false)} />
+                <PopoverCloseTrigger
+                  _focus={{ outline: "none", border: "none" }}
+                  onClick={() => setIsPopoverOpen(false)}
+                />
               </PopoverContent>
             </PopoverRoot>
           </GridItem>
