@@ -45,6 +45,7 @@ import SeatPickerEksekutif from '../../components/Buyer/Seat/seatEksekutif.lazy.
 import { getDetailTickets } from '../../services/tickets/index.js'
 import Overlay from '../../components/Overlay/index.jsx'
 import { createOrder } from '../../services/order/index.js'
+import Loading from "../../components/Overlay/loading.jsx";
 
 export const Route = createLazyFileRoute('/checkout/')({
   component: CheckoutIndex,
@@ -77,6 +78,8 @@ function CheckoutIndex() {
   const [isOverlayVisible, setOverlayVisible] = useState(false)
   const [fullName, setFullName] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
+  const [isLoading, setIsLoading] = useState(true);
+  const [messageLoading, setMessageLoading]  = useState("Memuat Data Ticket...")
   const [email, setEmail] = useState('')
   const dewasa = parseInt(params.get('adult'), 10) || 0
   const anak = parseInt(params.get('child'), 10) || 0
@@ -171,7 +174,8 @@ function CheckoutIndex() {
   useEffect(() => {
     if (isSuccess) {
       const dataBaru = data.data
-      setTicketData(dataBaru)
+      setTicketData(dataBaru);
+      setIsLoading(false);
     }
   }, [data, isSuccess])
 
@@ -303,6 +307,8 @@ function CheckoutIndex() {
     },
   })
   const handleClick = () => {
+    setMessageLoading("Menyimpan Data Order....")
+    setIsLoading(true);
     const updatedOrder = order?.map((item, index) => ({
       ...item,
       type: passengerData[index]?.type,
@@ -445,6 +451,7 @@ function CheckoutIndex() {
   }, [passengerData]);
   return (
     <>
+      <Loading isVisible={isLoading} message={messageLoading}/>  
       <Overlay isVisible={isOverlayVisible} message={message} />
       <Box bg="white" px={4}>
         <Flex

@@ -22,6 +22,7 @@ import { getDetailOrder } from '../../services/order'
 import { useQuery } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import Overlay from '../../components/Overlay/index.jsx';
+import Loading from "../../components/Overlay/loading.jsx";
 
 export const Route = createLazyFileRoute('/payment/')({
   component: PaymentIndex,
@@ -40,6 +41,7 @@ function PaymentIndex() {
     const [flightDetails, setFlightDetails] = useState([]);
     const [flightDetails2, setFlightDetails2] = useState([]);
     const [snapLoaded, setSnapLoaded] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const { data, isSuccess} = useQuery({
         queryKey: ["order", orderId],
         queryFn: async()=>{
@@ -76,6 +78,7 @@ function PaymentIndex() {
         if (isSuccess) {
             const dataBaru = data.data
             setOrderData(dataBaru);
+            setIsLoading(false);
         }   
     }, [data, isSuccess]);
     useEffect(() => {
@@ -188,6 +191,7 @@ function PaymentIndex() {
     }
     return (
         <>
+        <Loading isVisible={isLoading} message="Memuat Data Pembayaran...."/>  
         <Overlay isVisible={isOverlayVisible} message={message} />
         <Box bg="white" px={4}>
             <Flex

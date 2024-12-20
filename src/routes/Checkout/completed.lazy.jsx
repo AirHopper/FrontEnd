@@ -29,6 +29,7 @@ import { getDetailOrder } from '../../services/order/index.js'
 import { useQuery } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import Overlay from '../../components/Overlay/index.jsx';
+import Loading from "../../components/Overlay/loading.jsx";
 
 export const Route = createLazyFileRoute('/checkout/completed')({
   component: CheckoutCompleted,
@@ -63,6 +64,7 @@ function CheckoutCompleted() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [passengersData, setPassengersData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { data, isSuccess} = useQuery({
     queryKey: ["order", orderId],
     queryFn: async()=>{
@@ -109,6 +111,7 @@ function CheckoutCompleted() {
     if (isSuccess) {
         const dataBaru = data.data
         setOrderData(dataBaru);
+        setIsLoading(false);
     }
   }, [data, isSuccess]);
   const passenger = orderData?.passengers
@@ -284,6 +287,7 @@ function CheckoutCompleted() {
   
   return (
     <>
+      <Loading isVisible={isLoading} message="Memuat Data Order..."/>      
       <Overlay isVisible={isOverlayVisible} message={message} />
       <Box bg="white" px={4}>
         <Flex
