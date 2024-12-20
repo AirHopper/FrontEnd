@@ -30,18 +30,15 @@ const DatePicker = ({
     setDateRange((prevDateRange) => {
       const currentStartDate = prevDateRange[0].startDate;
       if (focusedRange[1] === 0) {
-        // Focus on startDate
+        // Focus on startDate: Only allow selecting startDate without dragging
         return [
           {
             startDate: toUTCDate(startDate),
-            endDate:
-              isRangeMode && prevDateRange[0].endDate > startDate
-                ? prevDateRange[0].endDate
-                : null,
+            endDate: null, // Clear endDate when selecting startDate
           },
         ];
       } else if (focusedRange[1] === 1) {
-        // Focus on endDate
+        // Focus on endDate: Ensure endDate is after startDate
         if (endDate > currentStartDate) {
           return [
             {
@@ -99,17 +96,17 @@ const DatePicker = ({
         <DateRange
           onChange={handleRangeChange}
           color="#44b3f8"
-          rangeColors="#44b3f8"
+          rangeColors={["#44b3f8"]}
           ranges={[
             {
               startDate: dateRange[0].startDate,
-              endDate: isRangeMode ? dateRange[0].endDate : null,
+              endDate: dateRange[0].endDate,
               key: "selection",
             },
           ]}
           retainEndDateOnRangeChange={false}
-          moveRangeOnFirstSelection={false}
-          focusedRange={focusedRange} // Pastikan Anda melacak focusedRange
+          moveRangeOnFirstSelection={focusedRange[1] === 1} // Disable drag when selecting startDate
+          focusedRange={focusedRange} // Track focusedRange
           minDate={todayUTC} // Disable dates before today
         />
       ) : (
