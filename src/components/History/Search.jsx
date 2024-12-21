@@ -102,9 +102,9 @@ const Search = ({ setIsSearchOpen, onSearch, orderId }) => {
 			<Box position="fixed" top="0" left="0" right="0" bottom="0" bg="rgba(0, 0, 0, 0.5)" zIndex="9" />
 
 			{/* Search Box */}
-			<Box position="fixed" top="50%" left="50%" transform="translate(-50%, -50%)" width={{ base: '80vw', sm: '70vw', md: '50vw', lg: '40vw' }} p="6" px={2} bg="white" shadow="lg" borderRadius="md" zIndex="10">
+			<Box position="fixed" top={{ base: '60vh', sm: '50vh' }} left="50%" transform="translate(-50%, -50%)" width={{ base: '80vw', sm: '70vw', md: '50vw', lg: '40vw' }} p="6" px={2} bg="white" shadow="lg" borderRadius="md" zIndex="10">
 				<HStack px={5} mt={2} mb={1}>
-					<Flex align="center" border="1px solid" borderColor="gray.300" borderRadius="md" px={2} bg="white" width="100%">
+					<Flex align="center" border="1px solid" borderColor="gray.300" borderRadius="md" px={{ base: 0, md: 2 }} bg="white" width="100%">
 						<FontAwesomeIcon
 							icon={faMagnifyingGlass}
 							style={{
@@ -113,7 +113,7 @@ const Search = ({ setIsSearchOpen, onSearch, orderId }) => {
 								color: 'gray.200',
 							}}
 						/>
-						<Input value={orderIdState} onChange={e => setOrderIdState(e.target.value)} onKeyPress={handleKeyPress} variant="unstyled" placeholder="Masukkan Nomor Penerbangan" py={0} focusBorderColor="transparent" />
+						<Input value={orderIdState} onChange={e => setOrderIdState(e.target.value)} onKeyPress={handleKeyPress} variant="unstyled" placeholder="No. Booking" py={0} focusBorderColor="transparent" />
 					</Flex>
 					<CloseButton onClick={() => setIsSearchOpen(false)} />
 				</HStack>

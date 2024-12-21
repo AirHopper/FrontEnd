@@ -1,17 +1,18 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { createLazyFileRoute, Link, useLocation, useNavigate } from '@tanstack/react-router';
-import { Box, Button, Container, Grid, Heading, Image, Spinner, Stack, Text, VStack, useBreakpointValue } from '@chakra-ui/react';
+import { Box, Button, Container, Grid, HStack, Heading, Image, Spinner, Stack, Text, VStack, useBreakpointValue } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faFilter, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import HistoryCard from '../../components/History/HistoryCard';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import DetailCard from '../../components/History/DetailCard';
 import DatePicker from '../../components/History/DatePicker';
 import Search from '../../components/History/Search';
-import { getHistory } from '../../services/history';
+import { cancelBooking, getHistory } from '../../services/history';
 import NoList from '../../assets/img/no_list.png';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 
 export const Route = createLazyFileRoute('/history/')({
 	component: RouteComponent,
@@ -19,6 +20,7 @@ export const Route = createLazyFileRoute('/history/')({
 
 function RouteComponent() {
 	const navigate = useNavigate();
+	const queryClient = useQueryClient();
 
 	const location = useLocation();
 	const urlParams = new URLSearchParams(location.search);
@@ -65,7 +67,13 @@ function RouteComponent() {
 	const [isPickerOpen, setIsPickerOpen] = useState(false);
 	const [isSearchOpen, setIsSearchOpen] = useState(false);
 
+	const [selectedStatus, setSelectedStatus] = useState('All');
 	const [orders, setOrders] = useState([]);
+
+	const filteredOrders = orders.filter(order => {
+		if (selectedStatus === 'All') return true;
+		return order.orderStatus === selectedStatus;
+	});
 
 	const queryParams = useMemo(() => {
 		return { ...params, dateRange };
@@ -76,6 +84,12 @@ function RouteComponent() {
 		queryFn: () => getHistory(queryParams),
 		retry: 0,
 		enabled: !!token && !!user, // Only run the query if the user is logged in
+		onSuccess: newData => {
+			// Update orders dengan data terbaru setelah pemesanan dibatalkan
+			if (isSuccess) {
+				setOrders(newData);
+			}
+		},
 	});
 
 	useEffect(() => {
@@ -95,7 +109,18 @@ function RouteComponent() {
 		]);
 	}, [startBookingDate, endBookingDate]);
 
-	const filteredOrders = orders; // Tidak ada filter lagi, semua dilakukan di backend
+	const { mutate: executeCancelBooking } = useMutation({
+		mutationFn: orderId => cancelBooking(orderId),
+		onSuccess: () => {
+			// Invalidasi query untuk menyegarkan data setelah pembatalan
+			queryClient.invalidateQueries(['history']);
+
+			toast.success('Pemesanan berhasil dibatalkan.');
+		},
+		onError: error => {
+			toast.error(error.message || 'Terjadi kesalahan saat membatalkan pemesanan.');
+		},
+	});
 
 	// Handle Simpan dari DatePicker
 	const handleSaveDateRange = ({ startDate, endDate }) => {
@@ -115,7 +140,8 @@ function RouteComponent() {
 		setSelectedOrder(order);
 		setSelectedOrderId(order.id);
 
-		// Scroll ke elemen detail
+		console.log('Selected Order ID:', order.id); // Pastikan ID pesanan ada
+
 		if (detailRef.current) {
 			detailRef.current.scrollIntoView({ behavior: 'smooth' });
 		}
@@ -149,6 +175,52 @@ function RouteComponent() {
 
 	// Menggunakan useBreakpointValue untuk menentukan urutan
 	const orderDetail = useBreakpointValue({ base: 1, md: 2 }); // Detail di awal untuk layar kecil, di akhir untuk layar medium ke atas
+
+	const handlePayment = () => {
+		if (selectedOrder?.id) {
+			navigate({
+				to: '/payment',
+				state: { orderId: selectedOrder.id },
+			});
+		} else {
+			toast.error('Token pembayaran tidak tersedia.');
+		}
+	};
+
+	console.log('Selected Order:', selectedOrder);
+
+	useEffect(() => {
+		// Menyinkronkan selectedOrder dengan order yang diperbarui
+		if (orders && selectedOrder) {
+			const updatedOrder = orders.find(order => order.id === selectedOrder.id);
+			if (updatedOrder) {
+				setSelectedOrder(updatedOrder);
+			}
+		}
+	}, [orders, selectedOrder]);
+
+	const handleCancelBooking = order => {
+		if (!order?.id) {
+			toast.error('ID pesanan tidak valid.');
+			return;
+		}
+
+		Swal.fire({
+			title: 'Apakah Anda yakin?',
+			text: 'Pemesanan Akan Dibatalkan!',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#d33',
+			cancelButtonColor: '#3085d6',
+			confirmButtonText: 'Ya, hapus!',
+			cancelButtonText: 'Batal',
+		}).then(result => {
+			console.log('SweetAlert result:', result); // Cek apakah konfirmasi terjadi
+			if (result.isConfirmed) {
+				executeCancelBooking(order.id); // Pastikan ID pesanan dikirimkan dengan benar
+			}
+		});
+	};
 
 	return (
 		<Container maxW="10/12" py={6} minH="100vh">
@@ -199,6 +271,24 @@ function RouteComponent() {
 			{/* Menampilkan DatePicker ketika isPickerOpen true */}
 			{isPickerOpen && <DatePicker setIsPickerOpen={setIsPickerOpen} dateRange={dateRange} setDateRange={setDateRange} onSave={handleSaveDateRange} />}
 
+			{/* Filter Order by Status */}
+			<Box overflowX="auto" my={4}>
+				<HStack gap={4} justifyContent="start" minWidth="max-content">
+					<Button bg={'#44B3F8'} _hover={{ bg: '#2078BB' }} borderRadius="full" onClick={() => setSelectedStatus('All')}>
+						ALL
+					</Button>
+					<Button bg={'red.500'} _hover={{ bg: 'red.700' }} borderRadius="full" onClick={() => setSelectedStatus('Unpaid')}>
+						Unpaid
+					</Button>
+					<Button bg={'green.500'} _hover={{ bg: 'green.700' }} borderRadius="full" onClick={() => setSelectedStatus('Issued')}>
+						Issued
+					</Button>
+					<Button bg={'gray.500'} _hover={{ bg: 'gray.700' }} borderRadius="full" onClick={() => setSelectedStatus('Cancelled')}>
+						Cancelled
+					</Button>
+				</HStack>
+			</Box>
+
 			{isLoading ? (
 				<Box display="flex" justifyContent="center" alignItems="center" textAlign="center" py={10} height="50vh">
 					<VStack spacing={4} align="center" justify="center" height="100vh">
@@ -220,27 +310,28 @@ function RouteComponent() {
 					</Button>
 				</Stack>
 			) : (
-				<Grid
-					templateColumns={['1fr', '1fr', '6fr 5fr']} // Responsif: 1 kolom di layar kecil
-					gap={4}
-					justifyContent={'space-between'}
-					mt={8}
-				>
-					{/* DetailCard dipindahkan ke atas saat 1fr */}
-					{selectedOrder && (
-						<Box ref={detailRef} order={orderDetail}>
-							{/* Order = 1 saat layar kecil */}
-							<DetailCard order={selectedOrder} />
-						</Box>
-					)}
+				<>
+					<Grid
+						templateColumns={['1fr', '1fr', '6fr 5fr']} // Responsif: 1 kolom di layar kecil
+						gap={4}
+						justifyContent={'space-between'}
+						mt={8}
+					>
+						{/* DetailCard dipindahkan ke atas saat 1fr */}
+						{selectedOrder && (
+							<Box ref={detailRef} order={orderDetail}>
+								<DetailCard order={selectedOrder} onCancelBooking={handleCancelBooking} onPayment={handlePayment} />
+							</Box>
+						)}
 
-					{/* HistoryCard di bawah saat 1fr */}
-					<Box order={orderDetail === 1 ? 2 : 1}>
-						<Grid gap={4} pt={2}>
-							<HistoryCard orders={filteredOrders} onSelectOrder={handleSelectOrder} selectedOrderId={selectedOrderId} />
-						</Grid>
-					</Box>
-				</Grid>
+						{/* HistoryCard di bawah saat 1fr */}
+						<Box order={orderDetail === 1 ? 2 : 1}>
+							<Grid gap={4} pt={2}>
+								<HistoryCard orders={filteredOrders} onSelectOrder={handleSelectOrder} selectedOrderId={selectedOrderId} />
+							</Grid>
+						</Box>
+					</Grid>
+				</>
 			)}
 		</Container>
 	);

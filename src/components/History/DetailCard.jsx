@@ -1,69 +1,15 @@
 import React from 'react';
 import { Box, Text, Button, HStack, VStack, Flex, Image } from '@chakra-ui/react';
-import { useNavigate } from '@tanstack/react-router';
-import { toast } from 'react-toastify';
-import { cancelBooking } from '../../services/history';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 
-const DetailCard = ({ order }) => {
-	console.log('Selected Order:', order);
-
-	const navigate = useNavigate();
-	const queryClient = useQueryClient();
-
+const DetailCard = ({ order, onCancelBooking, onPayment }) => {
 	if (!order) {
 		return <Text>No order selected.</Text>;
 	}
 
-	const handlePayment = () => {
-		if (order?.id) {
-			navigate({
-				to: '/payment',
-				state: { orderId: order.id },
-			});
-		} else {
-			toast.error('Token pembayaran tidak tersedia.');
-		}
-	};
-
-	const { mutate: executeCancelBooking } = useMutation({
-		mutationFn: orderId => cancelBooking(orderId), // Ini adalah fungsi server
-		onSuccess: () => {
-			queryClient.invalidateQueries(['history']);
-		},
-		onError: error => {
-			toast.error(error.message || 'Terjadi kesalahan saat membatalkan pemesanan.');
-		},
-	});
-
-	const handleCancelBooking = order => {
-		if (!order?.id) {
-			toast.error('ID pesanan tidak valid.');
-			return;
-		}
-
-		Swal.fire({
-			title: 'Apakah Anda yakin?',
-			text: 'Pemesanan Akan Dibatalkan!',
-			icon: 'warning',
-			showCancelButton: true,
-			confirmButtonColor: '#d33',
-			cancelButtonColor: '#3085d6',
-			confirmButtonText: 'Ya, hapus!',
-			cancelButtonText: 'Batal',
-		}).then(result => {
-			if (result.isConfirmed) {
-				executeCancelBooking(order.id); // Pastikan ID pesanan dikirimkan dengan benar
-				Swal.fire('Pemesanan Berhasil Dibatalkan!', 'success');
-			}
-		});
-	};
-
 	return (
-		<Box p={4} my={6}>
+		<Box p={{ base: 2, sm: 4 }} my={6}>
 			{/* Header */}
 			<HStack display="flex" justifyContent="space-between" mb={2}>
 				<VStack gap={0} align={'start'}>
@@ -75,6 +21,7 @@ const DetailCard = ({ order }) => {
 							day: '2-digit',
 							month: 'long',
 							year: 'numeric',
+							timeZone: 'UTC',
 						})}
 					</Text>
 				</VStack>
@@ -339,24 +286,22 @@ const DetailCard = ({ order }) => {
 
 			{/* Conditional Buttons */}
 			{order.orderStatus === 'Unpaid' && (
-				<Button colorScheme="purple" mt={8} width="100%" bg="#44B3F8" _hover={{ bg: '#2078B8', color: 'white' }} borderRadius={'lg'} py={6} onClick={handlePayment}>
-					Lanjut Bayar
-				</Button>
+				<>
+					<Button colorScheme="purple" mt={8} width="100%" bg="#44B3F8" _hover={{ bg: '#2078B8', color: 'white' }} borderRadius={'lg'} py={6} onClick={onPayment}>
+						Lanjut Bayar
+					</Button>
+
+					<Button colorScheme="red" mt={4} width="100%" borderRadius={'lg'} py={6} bg="gray.400" _hover={{ bg: 'red.500' }} onClick={() => onCancelBooking(order)}>
+						Batalkan Pemesanan
+					</Button>
+				</>
 			)}
-			{order.orderStatus === 'Unpaid' && (
-				<Button colorScheme="red" mt={4} width="100%" borderRadius={'lg'} py={6} bg="gray.400" _hover={{ bg: 'red.500' }} onClick={() => handleCancelBooking(order)}>
-					Batalkan Pemesanan
-				</Button>
-			)}
-			{order.orderStatus === 'Issued' && (
-				<Button colorScheme="green" mt={8} width="100%" bg="#44B3F8" _hover={{ bg: '#2078B8', color: 'white' }} borderRadius={'lg'} py={6}>
+			{order.orderStatus === 'Issued' ? (
+				<Button colorScheme="green" mt={8} width="100%" bg="#44B3F8" _hover={{ bg: '#2078B8', color: 'white' }} borderRadius={'lg'} py={6} onClick={() => handlePrintPDF(order.pdfUrl)}>
 					Cetak Tiket
 				</Button>
-			)}
-			{order.orderStatus === 'Cancelled' && (
-				<Button colorScheme="green" mt={8} width="100%" bg="#44B3F8" _hover={{ bg: '#0000', color: 'white' }} borderRadius={'lg'} py={6}>
-					Cetak Tiket
-				</Button>
+			) : (
+				<></>
 			)}
 		</Box>
 	);
