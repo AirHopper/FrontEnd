@@ -55,7 +55,7 @@ AirHopper adalah merupakan website pemesanan tiket pesawat online yang dirancang
         MIDTRANS_CLIENT_KEY="your-midtrans-client-key"
    ```
 
-3. Jalankan server:
+3. Jalankan Aplikasi:
    ```bash
    npm run dev
    ```
