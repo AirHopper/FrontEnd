@@ -69,7 +69,7 @@ const SearchTicket = ({
 
   // location input type and total passengers
   const [locationType, setLocationType] = useState("");
-  const [totalPassengers, setTotalPassengers] = useState(0);
+  const [totalPassengers, setTotalPassengers] = useState(1);
 
   const handleMouseEnter = () => {
     // Set delay untuk membuka popover
