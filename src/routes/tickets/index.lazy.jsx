@@ -283,7 +283,6 @@ function RouteComponent() {
 
 			{/* Filter Day */}
 			<FilterDay selectedDay={selectedDay} setSelectedDay={setSelectedDay} paramsDate={params.flightDate} onUpdateTickets={updateTickets} flightDate={departureDate} setIsButtonDisabled={setIsButtonDisabled} />
-			<FilterDay selectedDay={selectedDay} setSelectedDay={setSelectedDay} paramsDate={params.flightDate} onUpdateTickets={updateTickets} flightDate={departureDate} setIsButtonDisabled={setIsButtonDisabled} />
 
 			{/* Select Filter */}
 			<Box textAlign="right" mt={4}>
