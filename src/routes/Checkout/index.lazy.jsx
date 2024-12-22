@@ -463,16 +463,47 @@ function CheckoutIndex() {
   const [errorMessage, setErrorMessage] = useState('')
   const [isSaveDisabled, setIsSaveDisabled] = useState(true)
   const checkDataCompleteness = () => {
-    const hasIncompleteData = passengerData.some(
+    let hasIncompleteData = passengerData.some(
       (data) =>
-        !data.namaLengkap ||
         !data.title ||
+        !data.namaLengkap ||
         !data.tanggalLahir ||
         !data.kewarganegaraan ||
+        !data.ktpPas ||
         !data.negaraPenerbit ||
-        !data.berlakuSampai,
+        !data.berlakuSampai ||
+        (data.selectedBerangkat != passengerCount)
     )
-
+    if (ticketData?.isTransits === true) {
+      hasIncompleteData = passengerData.some((data) =>
+        hasIncompleteData ||
+        data.selectedTransit1Berangkat != passengerCount
+      );
+    }
+    if (seatTransit2Berangkat.length > 0) {
+        hasIncompleteData = passengerData.some((data) =>
+          hasIncompleteData ||
+          data.selectedTransit2Berangkat != passengerCount
+        );
+    }
+    if (ticketData2) {
+      hasIncompleteData = passengerData.some((data) =>
+        hasIncompleteData ||
+        data.selectedPulang != passengerCount
+      );
+    }
+    if (ticketData2?.isTransits === true) {
+      hasIncompleteData = passengerData.some((data) =>
+        hasIncompleteData ||
+        data.selectedTransit1Pulang != passengerCount
+      );
+    }
+    if (seatTransit2Pulang.length > 0) {
+      hasIncompleteData = passengerData.some((data) =>
+        hasIncompleteData ||
+        data.selectedTransit2Pulang != passengerCount
+      );
+    }
     if (hasIncompleteData) {
       setErrorMessage('Data Belum Lengkap, Harap Lengkapi Data Anda !!')
       setIsSaveDisabled(true)
@@ -1116,7 +1147,6 @@ function CheckoutIndex() {
                   )}
                   <Box height={5} />
                 </Card.Root>
-                {}
                 <Button
                   colorPalette={'blue'}
                   width="100%"
