@@ -120,7 +120,7 @@ function PaymentIndex() {
     useEffect(() => {
         const script = document.createElement("script");
         script.src = "https://app.sandbox.midtrans.com/snap/snap.js";	
-        script.setAttribute("data-client-key", "SB-Mid-client-6xTm8UKill9p5ONm");
+        script.setAttribute("data-client-key", import.meta.env.MIDTRANS_CLIENT_KEY);
         script.async = true;
         script.onload = () => {
             setSnapLoaded(true);
@@ -203,7 +203,7 @@ function PaymentIndex() {
             borderColor="gray.100"
             >
             <Flex w="75%" direction="column" marginBottom={5}>
-                <Stack color="black" marginTop={10} marginLeft={30} marginBottom={5}>
+                <Stack color="black" marginTop={10} marginLeft={{ base: 4, md: 30 }} marginBottom={5}>
                 <BreadcrumbRoot size="lg">
                     <BreadcrumbLink
                     color="black"
@@ -222,7 +222,7 @@ function PaymentIndex() {
             </Flex>
             </Flex>
             <Flex w="100%" alignItems="center" justifyContent="center">
-            <Flex w="70%">
+            <Flex w="70%" maxW="1200px">
                 <Grid
                 templateColumns={{ base: "1fr", md: "1fr 1fr" }}
                 gap={6}
