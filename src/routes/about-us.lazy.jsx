@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect, React } from 'react';
 import { createLazyFileRoute } from '@tanstack/react-router';
 import {
   Box,
@@ -30,13 +30,14 @@ import {
   zaky,
   kak_mughie
 } from '../assets/img';
-
 export const Route = createLazyFileRoute('/about-us')({
   component: AboutUsPage,
 });
 
 function AboutUsPage() {
-
+  useEffect(()=> {
+    window.scrollTo(0,0)
+  })
   // Data fasilitator
   const FACILITATORS = [
     {

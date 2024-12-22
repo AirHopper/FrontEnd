@@ -13,6 +13,9 @@ export const Route = createLazyFileRoute("/")({
 });
 
 function Beranda() {
+  useEffect(()=> {
+    window.scrollTo(0,0)
+  })
   // Selected Values
   const [selectedFrom, setSelectedFrom] = useState("Jakarta");
   const [selectedTo, setSelectedTo] = useState("Bali");
