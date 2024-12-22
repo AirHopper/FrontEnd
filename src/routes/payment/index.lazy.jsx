@@ -42,6 +42,10 @@ function PaymentIndex() {
     const [flightDetails2, setFlightDetails2] = useState([]);
     const [snapLoaded, setSnapLoaded] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const query = new URLSearchParams(location.search);
+    const transactionStatus = query.get("transaction_status");
+    const statusCode = query.get("status_code");
+    const order_Id = query.get("order_id");
     const { data, isSuccess} = useQuery({
         queryKey: ["order", orderId],
         queryFn: async()=>{
@@ -59,12 +63,12 @@ function PaymentIndex() {
     }, [navigate, token, user])
 
     useEffect(() => {
-        if (!orderId) {
+        if (!orderId && !order_Id) {
             setOverlayVisible(true)
             setMessage('Order Id Tidak Ditemukan!')
             setTujuan('/')
         }
-    }, [navigate, token, user])
+    }, [navigate, orderId, order_Id])
     useEffect(() => {
     if (isOverlayVisible) {
         const timer = setTimeout(() => {
@@ -82,11 +86,6 @@ function PaymentIndex() {
         }   
     }, [data, isSuccess]);
     useEffect(() => {
-        const query = new URLSearchParams(location.search);
-        const transactionStatus = query.get("transaction_status");
-        const statusCode = query.get("status_code");
-        const order_Id = query.get("order_id");
-       
         if (transactionStatus) {
             if (transactionStatus === "pending" && statusCode === "201") {
                 toast.info("Pembayaran sedang menunggu.", {

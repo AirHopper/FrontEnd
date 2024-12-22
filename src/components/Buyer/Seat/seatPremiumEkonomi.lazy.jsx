@@ -103,22 +103,6 @@ export default class App extends Component {
     }));
     return (
       <div className="seat-container">
-        {!!data && (
-          <Flex justifyContent="center" bg="#73CA5C" color="white" p={2} borderRadius="md" w="92%" marginLeft={5}>
-            <Text fontFamily="Inter, sans-serif">Premium Ekonomi - {availableSeats} Kursi Tersedia</Text>
-          </Flex>
-        )}
-        <div className="seat-picker-container">
-        <SeatPicker
-            addSeatCallback={this.addSeatCallback.bind(this)}
-            removeSeatCallback={this.removeSeatCallback.bind(this)}
-            rows={modifiedRow}
-            maxReservableSeats={data?.totalPassengers}
-            alpha
-            visible
-            selectedByDefault
-          />
-        </div>
         {!!data &&(
           <>
             <Flex justifyContent="center" bg="#73CA5C" color="white" p={2} borderRadius="md" w="92%" marginLeft={5}>

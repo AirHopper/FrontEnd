@@ -39,7 +39,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { useSelector } from 'react-redux'
 import SeatPickerEkonomi from '../../components/Buyer/Seat/seatEkonomi.lazy.jsx'
-import SeatPickerPremiunEkonomi from '../../components/Buyer/Seat/seatPremiumEkonomi.lazy.jsx'
+import SeatPickerPremiumEkonomi from '../../components/Buyer/Seat/seatPremiumEkonomi.lazy.jsx'
 import SeatPickerBisnis from '../../components/Buyer/Seat/seatBisnis.lazy.jsx'
 import SeatPickerEksekutif from '../../components/Buyer/Seat/seatEksekutif.lazy.jsx'
 import { getDetailTickets } from '../../services/tickets/index.js'
@@ -47,7 +47,7 @@ import Overlay from '../../components/Overlay/index.jsx'
 import { createOrder } from '../../services/order/index.js'
 import Loading from '../../components/Overlay/loading.jsx'
 
-export const Route = createLazyFileRoute('/Checkout/')({
+export const Route = createLazyFileRoute('/checkout/')({
   component: CheckoutIndex,
 })
 
@@ -843,7 +843,7 @@ function CheckoutIndex() {
                     />
                   )}
                   {kelas === 'Premium+Economy' && (
-                    <SeatPickerPremiunEkonomi
+                    <SeatPickerPremiumEkonomi
                       setSelected={setSelectedBerangkat}
                       data={someData}
                       seat={seatBerangkat}
@@ -890,7 +890,7 @@ function CheckoutIndex() {
                         />
                       )}
                       {kelas === 'Premium+Economy' && (
-                        <SeatPickerPremiunEkonomi
+                        <SeatPickerPremiumEkonomi
                           setSelected={setSelectedTransit1Berangkat}
                           data={someData}
                           seat={seatTransit1Berangkat}
@@ -939,7 +939,7 @@ function CheckoutIndex() {
                         />
                       )}
                       {kelas === 'Premium+Economy' && (
-                        <SeatPickerPremiunEkonomi
+                        <SeatPickerPremiumEkonomi
                           setSelected={setSelectedTransit2Berangkat}
                           data={someData}
                           seat={seatTransit2Berangkat}
@@ -988,7 +988,7 @@ function CheckoutIndex() {
                         />
                       )}
                       {kelas === 'Premium+Economy' && (
-                        <SeatPickerPremiunEkonomi
+                        <SeatPickerPremiumEkonomi
                           setSelected={setSelectedPulang}
                           data={someData}
                           seat={seatPulang}
@@ -1037,7 +1037,7 @@ function CheckoutIndex() {
                         />
                       )}
                       {kelas === 'Premium+Economy' && (
-                        <SeatPickerPremiunEkonomi
+                        <SeatPickerPremiumEkonomi
                           setSelected={setSelectedTransit1Pulang}
                           data={someData}
                           seat={seatTransit1Pulang}
@@ -1086,7 +1086,7 @@ function CheckoutIndex() {
                         />
                       )}
                       {kelas === 'Premium+Economy' && (
-                        <SeatPickerPremiunEkonomi
+                        <SeatPickerPremiumEkonomi
                           setSelected={setSelectedTransit2Pulang}
                           data={someData}
                           seat={seatTransit2Pulang}
