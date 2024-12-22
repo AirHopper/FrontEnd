@@ -33,8 +33,9 @@ import { getDetailOrder } from '../../services/order/index.js'
 import { useQuery } from '@tanstack/react-query'
 import { useSelector } from 'react-redux'
 import Overlay from '../../components/Overlay/index.jsx'
+import Loading from '../../components/Overlay/loading.jsx'
 
-export const Route = createLazyFileRoute('/checkout/completed')({
+export const Route = createLazyFileRoute('/Checkout/completed')({
   component: CheckoutCompleted,
 })
 
@@ -67,6 +68,7 @@ function CheckoutCompleted() {
   const [phoneNumber, setPhoneNumber] = useState('')
   const [email, setEmail] = useState('')
   const [passengersData, setPassengersData] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
   const { data, isSuccess } = useQuery({
     queryKey: ['order', orderId],
     queryFn: async () => {
@@ -75,6 +77,34 @@ function CheckoutCompleted() {
     },
     enabled: !!orderId,
   })
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+  useEffect(() => {
+    if (!token && !user) {
+      setOverlayVisible(true)
+      setMessage('Anda harus login terlebih dahulu!')
+      setTujuan('/login')
+    }
+  }, [navigate, token, user])
+
+  useEffect(() => {
+    if (!orderId) {
+      setOverlayVisible(true)
+      setMessage('Order Id Tidak Ditemukan !')
+      setTujuan('/')
+    }
+  }, [navigate, token, user])
+
+  useEffect(() => {
+    if (isOverlayVisible) {
+      const timer = setTimeout(() => {
+        navigate({ to: tujuan })
+      }, 4000)
+
+      return () => clearTimeout(timer)
+    }
+  }, [isOverlayVisible, navigate, tujuan])
 
   useEffect(() => {
     if (!token && !user) {
@@ -113,6 +143,7 @@ function CheckoutCompleted() {
     if (isSuccess) {
       const dataBaru = data.data
       setOrderData(dataBaru)
+      setIsLoading(false)
     }
   }, [data, isSuccess])
   const passenger = orderData?.passengers
@@ -154,12 +185,12 @@ function CheckoutCompleted() {
   }, [flights2])
   useEffect(() => {
     if (flightDetails2?.length > 0) {
-      setSeatPulang(flightDetails2[0]?.seats)
+      setSeatPulang(flightDetails2[0]?.seat)
       if (flightDetails2.length > 1) {
-        setSeatTransit1Pulang(flightDetails2[1]?.seats)
+        setSeatTransit1Pulang(flightDetails2[1]?.seat)
       }
       if (flightDetails2.length > 2) {
-        setSeatTransit2Pulang(flightDetails2[2]?.seats)
+        setSeatTransit2Pulang(flightDetails2[2]?.seat)
       }
     }
   }, [flightDetails2])
@@ -294,6 +325,7 @@ function CheckoutCompleted() {
 
   return (
     <>
+      <Loading isVisible={isLoading} message="Memuat Data Order..." />
       <Overlay isVisible={isOverlayVisible} message={message} />
       <Box bg="white" px={4}>
         <Flex
@@ -304,11 +336,15 @@ function CheckoutCompleted() {
           borderBottom="2px solid"
           borderColor="gray.100"
         >
-          <Flex w="75%" direction="column" marginBottom={5}>
+          <Flex
+            w={{ base: '95%', md: '75%' }}
+            direction="column"
+            marginBottom={5}
+          >
             <Stack
               color="black"
               marginTop={10}
-              marginLeft={30}
+              marginLeft={{ base: 0, md: 30 }}
               marginBottom={5}
             >
               <BreadcrumbRoot size="lg">

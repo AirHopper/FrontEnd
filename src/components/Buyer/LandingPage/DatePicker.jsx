@@ -14,30 +14,36 @@ const DatePicker = ({
 }) => {
   const pickerRef = useRef(); // Ref for detecting outside clicks
 
+  // Convert date to UTC with time set to 00:00:00
+  const toUTCDate = (date) => {
+    const utcDate = new Date(
+      Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+    );
+    return utcDate;
+  };
+
+  const todayUTC = toUTCDate(new Date()); // Get today's date in UTC
+
   const handleRangeChange = (ranges) => {
     const { startDate, endDate } = ranges.selection;
 
     setDateRange((prevDateRange) => {
       const currentStartDate = prevDateRange[0].startDate;
-
       if (focusedRange[1] === 0) {
-        // Fokus pada startDate
+        // Focus on startDate: Only allow selecting startDate without dragging
         return [
           {
-            startDate,
-            endDate:
-              isRangeMode && prevDateRange[0].endDate > startDate
-                ? prevDateRange[0].endDate
-                : null,
+            startDate: toUTCDate(startDate),
+            endDate: null, // Clear endDate when selecting startDate
           },
         ];
       } else if (focusedRange[1] === 1) {
-        // Fokus pada endDate
+        // Focus on endDate: Ensure endDate is after startDate
         if (endDate > currentStartDate) {
           return [
             {
               startDate: currentStartDate,
-              endDate,
+              endDate: toUTCDate(endDate),
             },
           ];
         } else {
@@ -50,9 +56,10 @@ const DatePicker = ({
   };
 
   const handleSingleDateChange = (date) => {
-    if (date >= new Date()) {
+    const selectedDate = toUTCDate(date);
+    if (selectedDate >= todayUTC) {
       // Allow setting only if the date is today or in the future
-      setDateRange([{ startDate: date, endDate: null }]);
+      setDateRange([{ startDate: selectedDate, endDate: null }]);
       setIsPickerOpen(false);
       handleClose();
     }
@@ -89,24 +96,24 @@ const DatePicker = ({
         <DateRange
           onChange={handleRangeChange}
           color="#44b3f8"
-          rangeColors="#44b3f8"
+          rangeColors={["#44b3f8"]}
           ranges={[
             {
               startDate: dateRange[0].startDate,
-              endDate: isRangeMode ? dateRange[0].endDate : null,
+              endDate: dateRange[0].endDate,
               key: "selection",
             },
           ]}
           retainEndDateOnRangeChange={false}
-          moveRangeOnFirstSelection={false}
-          focusedRange={focusedRange} // Pastikan Anda melacak focusedRange
-          minDate={new Date()} // Disable dates before today
+          moveRangeOnFirstSelection={focusedRange[1] === 1} // Disable drag when selecting startDate
+          focusedRange={focusedRange} // Track focusedRange
+          minDate={todayUTC} // Disable dates before today
         />
       ) : (
         <Calendar
           date={dateRange[0].startDate}
           color="#44b3f8"
-          minDate={new Date()}
+          minDate={todayUTC}
           scroll={{ calendarWidth: "10px" }}
           onChange={handleSingleDateChange}
         />

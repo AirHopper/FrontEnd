@@ -45,8 +45,9 @@ import SeatPickerEksekutif from '../../components/Buyer/Seat/seatEksekutif.lazy.
 import { getDetailTickets } from '../../services/tickets/index.js'
 import Overlay from '../../components/Overlay/index.jsx'
 import { createOrder } from '../../services/order/index.js'
+import Loading from '../../components/Overlay/loading.jsx'
 
-export const Route = createLazyFileRoute('/checkout/')({
+export const Route = createLazyFileRoute('/Checkout/')({
   component: CheckoutIndex,
 })
 
@@ -77,6 +78,8 @@ function CheckoutIndex() {
   const [isOverlayVisible, setOverlayVisible] = useState(false)
   const [fullName, setFullName] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
+  const [messageLoading, setMessageLoading] = useState('Memuat Data Ticket...')
   const [email, setEmail] = useState('')
   const dewasa = parseInt(params.get('adult'), 10) || 0
   const anak = parseInt(params.get('child'), 10) || 0
@@ -85,9 +88,15 @@ function CheckoutIndex() {
   const ticketId1 = parseInt(params.get('ticketId1'), 10) || 0
   const ticketId2 = parseInt(params.get('ticketId2'), 10) || 0
   const passengerCount = dewasa + anak
-  const totalTicketDewasa = parseInt(ticketData?.totalPrice || 0) * dewasa
-  const totalTicketAnak =
+  const totalTicketDewasaPergi = parseInt(ticketData?.totalPrice || 0) * dewasa
+  const totalTicketDewasaPulang =
+    parseInt(ticketData2?.totalPrice || 0) * dewasa
+  const totalTicketDewasa = totalTicketDewasaPergi + totalTicketDewasaPulang
+  const totalTicketAnakPergi =
     Math.ceil((parseInt(ticketData?.totalPrice || 0) * 80) / 100) * anak
+  const totalTicketAnakPulang =
+    Math.ceil((parseInt(ticketData2?.totalPrice || 0) * 80) / 100) * anak
+  const totalTicketAnak = totalTicketAnakPergi + totalTicketAnakPulang
   const bookedSeatBerangkat = []
   seatBerangkat.forEach((seat) => {
     if (seat.isOccupied) {
@@ -173,6 +182,7 @@ function CheckoutIndex() {
     if (isSuccess) {
       const dataBaru = data.data
       setTicketData(dataBaru)
+      setIsLoading(false)
     }
   }, [data, isSuccess])
 
@@ -237,7 +247,7 @@ function CheckoutIndex() {
       isSwitchOn: false,
       namaKeluarga: '',
       tanggalLahir: '',
-      kewarganegaraan: 'Indonesia',
+      kewarganegaraan: '',
       ktpPas: '',
       negaraPenerbit: '',
       berlakuSampai: '',
@@ -252,7 +262,7 @@ function CheckoutIndex() {
       isSwitchOn: false,
       namaKeluarga: '',
       tanggalLahir: '',
-      kewarganegaraan: 'Indonesia',
+      kewarganegaraan: '',
       ktpPas: '',
       negaraPenerbit: '',
       berlakuSampai: '',
@@ -304,6 +314,8 @@ function CheckoutIndex() {
     },
   })
   const handleClick = () => {
+    setMessageLoading('Menyimpan Data Order....')
+    setIsLoading(true)
     const updatedOrder = order?.map((item, index) => ({
       ...item,
       type: passengerData[index]?.type,
@@ -349,7 +361,7 @@ function CheckoutIndex() {
         ...(anak > 0
           ? [{ type: 'children', amount: anak, totalPrice: totalTicketAnak }]
           : []),
-        ...(bayi > 0 ? [{ type: 'bayi', amount: bayi, totalPrice: 0 }] : []),
+        ...(bayi > 0 ? [{ type: 'infant', amount: bayi, totalPrice: 0 }] : []),
       ],
       passengers: updatedOrder,
     }
@@ -368,6 +380,41 @@ function CheckoutIndex() {
       { label: 'Germany', value: 'Germany' },
       { label: 'Singapore', value: 'Singapore' },
       { label: 'USA', value: 'USA' },
+      { label: 'Malaysia', value: 'Malaysia' },
+      { label: 'Russia', value: 'Russia' },
+      { label: 'Brazil', value: 'Brazil' },
+      { label: 'Japan', value: 'Japan' },
+      { label: 'China', value: 'China' },
+      { label: 'Cambodia', value: 'Cambodia' },
+      { label: 'Australia', value: 'Australia' },
+      { label: 'India', value: 'India' },
+      { label: 'United Kingdom', value: 'United Kingdom' },
+      { label: 'France', value: 'France' },
+      { label: 'Italy', value: 'Italy' },
+      { label: 'Spain', value: 'Spain' },
+      { label: 'South Korea', value: 'South Korea' },
+      { label: 'Canada', value: 'Canada' },
+      { label: 'Mexico', value: 'Mexico' },
+      { label: 'Netherlands', value: 'Netherlands' },
+      { label: 'Thailand', value: 'Thailand' },
+      { label: 'Vietnam', value: 'Vietnam' },
+      { label: 'Switzerland', value: 'Switzerland' },
+      { label: 'Sweden', value: 'Sweden' },
+      { label: 'Norway', value: 'Norway' },
+      { label: 'Finland', value: 'Finland' },
+      { label: 'Philippines', value: 'Philippines' },
+      { label: 'New Zealand', value: 'New Zealand' },
+      { label: 'South Africa', value: 'South Africa' },
+      { label: 'Egypt', value: 'Egypt' },
+      { label: 'Turkey', value: 'Turkey' },
+      { label: 'Argentina', value: 'Argentina' },
+      { label: 'Chile', value: 'Chile' },
+      { label: 'Colombia', value: 'Colombia' },
+      { label: 'Saudi Arabia', value: 'Saudi Arabia' },
+      { label: 'United Arab Emirates', value: 'United Arab Emirates' },
+      { label: 'Israel', value: 'Israel' },
+      { label: 'Greece', value: 'Greece' },
+      { label: 'Portugal', value: 'Portugal' },
     ],
   })
 
@@ -413,8 +460,34 @@ function CheckoutIndex() {
   const minutes = Math.floor((timeLeft % 3600) / 60)
   const seconds = timeLeft % 60
   const formattedTime = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+  const [errorMessage, setErrorMessage] = useState('')
+  const [isSaveDisabled, setIsSaveDisabled] = useState(true)
+  const checkDataCompleteness = () => {
+    const hasIncompleteData = passengerData.some(
+      (data) =>
+        !data.namaLengkap ||
+        !data.title ||
+        !data.tanggalLahir ||
+        !data.kewarganegaraan ||
+        !data.negaraPenerbit ||
+        !data.berlakuSampai,
+    )
+
+    if (hasIncompleteData) {
+      setErrorMessage('Data Belum Lengkap, Harap Lengkapi Data Anda !!')
+      setIsSaveDisabled(true)
+    } else {
+      setErrorMessage('')
+      setIsSaveDisabled(false)
+    }
+  }
+
+  useEffect(() => {
+    checkDataCompleteness()
+  }, [passengerData])
   return (
     <>
+      <Loading isVisible={isLoading} message={messageLoading} />
       <Overlay isVisible={isOverlayVisible} message={message} />
       <Box bg="white" px={4}>
         <Flex
@@ -450,8 +523,8 @@ function CheckoutIndex() {
               color="white"
               p={3}
               borderRadius="lg"
-              w="92%"
-              marginLeft={10}
+              w={{ base: '100%', md: '92%' }}
+              marginLeft={{ base: 0, md: 10 }}
             >
               <Text fontFamily="Inter, sans-serif">Selesaikan dalam </Text>
               <Text marginLeft={2}>{formattedTime}</Text>
@@ -471,7 +544,7 @@ function CheckoutIndex() {
                   bg="white"
                   color="black"
                   w="100%"
-                  minWidth="33vw"
+                  minWidth={{ base: '100%', md: '33vw' }}
                   marginBottom={10}
                 >
                   <Card.Header>
@@ -547,7 +620,7 @@ function CheckoutIndex() {
                               {passengerData[index].type}
                             </Text>
                           </Box>
-                          <Stack gap="4" px={4}>
+                          <Stack gap="4" px={4} spacing={{ base: 2, md: 4 }}>
                             <SelectRoot
                               collection={listTitle}
                               value={passengerData[index].title}
@@ -588,7 +661,7 @@ function CheckoutIndex() {
                             <Stack
                               align="center"
                               justifyContent="space-between"
-                              direction="row"
+                              direction={{ base: 'column', sm: 'row' }}
                             >
                               <Text>Punya Nama Keluarga?</Text>
                               <Switch
@@ -635,23 +708,34 @@ function CheckoutIndex() {
                                 }
                               />
                             </Field>
-                            <Field
-                              color="#006ec1"
-                              label="Kewarganegaraan"
-                              labelProps={{ fontWeight: 'bold' }}
+                            <SelectRoot
+                              collection={listCountry}
+                              value={passengerData[index].kewarganegaraan}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  index,
+                                  'kewarganegaraan',
+                                  e.target.value,
+                                )
+                              }
                             >
-                              <Input
-                                value={passengerData[index].kewarganegaraan}
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    index,
-                                    'kewarganegaraan',
-                                    e.target.value,
-                                  )
-                                }
-                                borderColor="gray.300"
-                              />
-                            </Field>
+                              <SelectLabel color="#006ec1">
+                                Kewarganegaraan
+                              </SelectLabel>
+                              <SelectTrigger>
+                                <SelectValueText placeholder="Pilih Negara" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {listCountry.items.map((country) => (
+                                  <SelectItem
+                                    item={country}
+                                    key={country.value}
+                                  >
+                                    {country.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </SelectRoot>
                             <Field
                               color="#006ec1"
                               label="KTP/Paspor"
@@ -668,7 +752,19 @@ function CheckoutIndex() {
                                   )
                                 }
                                 borderColor="gray.300"
+                                isInvalid={
+                                  passengerData[index].ktpPas &&
+                                  !/^\d{16}$/.test(passengerData[index].ktpPas)
+                                }
                               />
+                              {!/^\d{16}$/.test(
+                                passengerData[index].ktpPas || '',
+                              ) && (
+                                <Text color="red.500" fontSize="sm" mt={1}>
+                                  Nomor KTP/Paspor harus berupa angka dan
+                                  terdiri dari 16 digit.
+                                </Text>
+                              )}
                             </Field>
                             <SelectRoot
                               collection={listCountry}
@@ -1020,14 +1116,17 @@ function CheckoutIndex() {
                   )}
                   <Box height={5} />
                 </Card.Root>
+                {}
                 <Button
                   colorPalette={'blue'}
                   width="100%"
                   borderRadius="lg"
                   onClick={handleClick}
+                  disabled={isSaveDisabled}
                 >
                   Simpan
                 </Button>
+                {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
               </Box>
               <Box>
                 <Card.Root

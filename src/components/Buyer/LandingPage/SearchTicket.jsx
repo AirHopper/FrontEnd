@@ -87,22 +87,25 @@ const SearchTicket = ({
   };
 
   // Format Date
-  const formattedStartDate = dateRange[0].startDate.toLocaleDateString(
-    "id-ID",
-    {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }
-  );
+  const formattedStartDate =
+    dateRange[0]?.startDate instanceof Date
+      ? dateRange[0].startDate.toLocaleDateString("id-ID", {
+          timeZone: "UTC",
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })
+      : "";
 
-  const formattedEndDate = dateRange[0]?.endDate
-    ? dateRange[0].endDate.toLocaleDateString("id-ID", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      })
-    : "";
+  const formattedEndDate =
+    dateRange[0]?.endDate instanceof Date
+      ? dateRange[0].endDate.toLocaleDateString("id-ID", {
+          timeZone: "UTC",
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })
+      : "";
 
   const handleLocationInput = (locationType) => {
     setLocationType(locationType);
@@ -184,9 +187,56 @@ const SearchTicket = ({
     });
   };
 
-  // Handling untuk mengirimkan query params dengan value dari landing page
+  useEffect(() => {
+    try {
+      const storedDepartureCity = localStorage.getItem("departureCity");
+      const storedArrivalCity = localStorage.getItem("arrivalCity");
+      const storedDateRange = JSON.parse(localStorage.getItem("dateRange"));
+      const storedAdultInput = parseInt(localStorage.getItem("adultInput"), 10);
+      const storedChildInput = parseInt(localStorage.getItem("childInput"), 10);
+      const storedInfantInput = parseInt(
+        localStorage.getItem("infantInput"),
+        10
+      );
+      const storedTotalPassengers = parseInt(
+        localStorage.getItem("totalPassengers"),
+        10
+      );
+      const storedClassType = localStorage.getItem("classType");
+
+      if (storedDepartureCity) setSelectedFrom(storedDepartureCity);
+      if (storedArrivalCity) setSelectedTo(storedArrivalCity);
+
+      // Pastikan dateRange dikonversi kembali menjadi objek Date
+      if (storedDateRange) {
+        const parsedDateRange = storedDateRange.map((range) => ({
+          startDate: range.startDate ? new Date(range.startDate) : null,
+          endDate: range.endDate ? new Date(range.endDate) : null,
+        }));
+
+        setDateRange(parsedDateRange);
+
+        // Jika salah satu range memiliki endDate, set isRangeMode menjadi true
+        const hasEndDate = parsedDateRange.some(
+          (range) => range.endDate !== null
+        );
+        if (hasEndDate) {
+          setIsRangeMode(true);
+        }
+      }
+
+      if (!isNaN(storedAdultInput)) setAdultCount(storedAdultInput);
+      if (!isNaN(storedChildInput)) setChildCount(storedChildInput);
+      if (!isNaN(storedInfantInput)) setInfantCount(storedInfantInput);
+      if (!isNaN(storedTotalPassengers))
+        setTotalPassengers(storedTotalPassengers);
+      if (storedClassType) setSelectedClass(storedClassType);
+    } catch (error) {
+      console.error("Error loading data from localStorage:", error);
+    }
+  }, []);
+
   const handleSendSearch = () => {
-    // Validasi sebelum mengirim query params
     if (!selectedFrom || !selectedTo) {
       navigate({ to: "/" });
       toast.error('Lokasi "From" dan "To" harus dipilih!');
@@ -234,7 +284,6 @@ const SearchTicket = ({
       return;
     }
 
-    // Jika semua validasi lolos, buat query params
     const searchParams = new URLSearchParams();
 
     searchParams.append("departure", selectedFrom);
@@ -251,14 +300,34 @@ const SearchTicket = ({
     searchParams.append("infant", infantCount > 0 ? infantCount : 0);
     searchParams.append("classType", selectedClass);
 
-    // Redirect ke halaman tickets dengan query params
     navigate({ to: `/tickets?${searchParams.toString()}` });
+
+    try {
+      localStorage.setItem("departureCity", selectedFrom);
+      localStorage.setItem("arrivalCity", selectedTo);
+      localStorage.setItem(
+        "dateRange",
+        JSON.stringify(
+          dateRange.map((range) => ({
+            startDate: range.startDate ? range.startDate.toISOString() : null,
+            endDate: range.endDate ? range.endDate.toISOString() : null,
+          }))
+        )
+      );
+      localStorage.setItem("adultInput", adultCount.toString());
+      localStorage.setItem("childInput", childCount.toString());
+      localStorage.setItem("infantInput", infantCount.toString());
+      localStorage.setItem("classType", selectedClass);
+    } catch (error) {
+      console.error("Error saving data to localStorage:", error);
+      toast.error("Terjadi kesalahan saat menyimpan pencarian!");
+    }
   };
 
   return (
     <Stack alignItems="center">
       <Stack
-        width={{ base: "90vw", md: "85vw", lg: "75vw", xl: "65vw" }}
+        width={{ base: "90vw", md: "85vw", lg: "75vw", xl: "70vw" }}
         overflow="hidden"
         bgColor="white"
         shadow="md"
@@ -284,7 +353,7 @@ const SearchTicket = ({
               From
             </Text>
             <Input
-              width={{ lg: "25vw" }}
+              width={{ lg: "25.5vw" }}
               placeholder="Pilih Lokasi"
               variant="flushed"
               value={selectedFrom}
@@ -427,7 +496,10 @@ const SearchTicket = ({
                   Aktif/Nonaktifkan switch ini untuk memilih tanggal penerbangan
                   pulang (Return Date) saat memesan tiket.
                 </PopoverBody>
-                <PopoverCloseTrigger onClick={() => setIsPopoverOpen(false)} />
+                <PopoverCloseTrigger
+                  _focus={{ outline: "none", border: "none" }}
+                  onClick={() => setIsPopoverOpen(false)}
+                />
               </PopoverContent>
             </PopoverRoot>
           </GridItem>
