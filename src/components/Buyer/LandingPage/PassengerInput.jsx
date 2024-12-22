@@ -34,6 +34,7 @@ const PassengerInput = ({
   const handleSave = () => {
     const totalPassengers = adultCount + childCount + infantCount;
     onSave(totalPassengers); // Kirim nilai total ke komponen utama
+    localStorage.setItem("totalPassengers", totalPassengers.toString());
     onCloseClick(); // Tutup modal
   };
 
