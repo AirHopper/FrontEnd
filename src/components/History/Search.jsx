@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { Box, Text, Flex, Input, HStack, VStack, IconButton } from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
+import { Box, Text, Flex, Input, HStack, VStack } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMagnifyingGlass, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { CloseButton } from '@/components/ui/close-button';
 import { fetchRecommendations } from '../../services/history';
 
@@ -9,10 +9,9 @@ const Search = ({ setIsSearchOpen, onSearch, orderId }) => {
 	const [orderIdState, setOrderIdState] = useState(orderId || '');
 	const [suggestions, setSuggestions] = useState([]);
 	const [error, setError] = useState(null);
-	const [isLoading, setIsLoading] = useState(false); // Track loading state
+	const [isLoading, setIsLoading] = useState(false);
 	const [recentSearches, setRecentSearches] = useState([]);
 
-	// Debouncing: Menunggu 500ms setelah pengguna berhenti mengetik
 	const [debouncedOrderId, setDebouncedOrderId] = useState(orderIdState);
 
 	useEffect(() => {
@@ -32,38 +31,32 @@ const Search = ({ setIsSearchOpen, onSearch, orderId }) => {
 		}
 	}, [debouncedOrderId]);
 
-	// Save recent searches to localStorage
+	// SImpan recent searches to localStorage
 	const saveRecentSearches = newSearch => {
 		let searches = JSON.parse(localStorage.getItem('recentSearches')) || [];
 
-		// Add the new search and ensure no duplicates
 		if (!searches.includes(newSearch)) {
 			searches.unshift(newSearch);
 		}
 
-		// Keep only the last 5 searches
 		searches = searches.slice(0, 5);
 
-		// Save back to localStorage and update the state
 		localStorage.setItem('recentSearches', JSON.stringify(searches));
 		setRecentSearches(searches);
 	};
 
-	// Load recent searches from localStorage when the component mounts
 	useEffect(() => {
 		const storedSearches = JSON.parse(localStorage.getItem('recentSearches')) || [];
 		setRecentSearches(storedSearches);
 	}, []);
 
-	// Handle recent search click
 	const handleRecentSearch = search => {
 		setOrderIdState(search);
 		onSearch(search);
 		saveRecentSearches(search);
-		setIsSearchOpen(false);
+		setIsSearchOpen(true);
 	};
 
-	// Handle delete of recent search
 	const handleDeleteSearch = search => {
 		let searches = JSON.parse(localStorage.getItem('recentSearches')) || [];
 		searches = searches.filter(item => item !== search);
@@ -72,28 +65,32 @@ const Search = ({ setIsSearchOpen, onSearch, orderId }) => {
 		setRecentSearches(searches);
 	};
 
-	// Handle search action
-	const handleSearch = () => {
-		if (orderIdState) {
-			onSearch(orderIdState);
-			saveRecentSearches(orderIdState);
-		}
-		setIsSearchOpen(false);
-	};
-
-	// Handle selection from suggestion list
 	const handleSelectSuggestion = suggestion => {
 		setOrderIdState(suggestion.id);
 		onSearch(suggestion.id);
 		saveRecentSearches(suggestion.id);
-		setIsSearchOpen(false);
+		setIsSearchOpen(true);
 	};
 
-	// Handle Enter key press
+	const saveInputValue = () => {
+		localStorage.setItem('savedOrderId', orderIdState);
+	};
+
+	useEffect(() => {
+		const savedValue = localStorage.getItem('savedOrderId');
+		if (savedValue) {
+			setOrderIdState(savedValue);
+		}
+	}, []);
+
 	const handleKeyPress = event => {
 		if (event.key === 'Enter') {
-			handleSearch();
+			onSearch(orderIdState);
 		}
+	};
+
+	const handleInputChange = e => {
+		setOrderIdState(e.target.value);
 	};
 
 	return (
@@ -105,17 +102,16 @@ const Search = ({ setIsSearchOpen, onSearch, orderId }) => {
 			<Box position="fixed" top={{ base: '60vh', sm: '50vh' }} left="50%" transform="translate(-50%, -50%)" width={{ base: '80vw', sm: '70vw', md: '50vw', lg: '40vw' }} p="6" px={2} bg="white" shadow="lg" borderRadius="md" zIndex="10">
 				<HStack px={5} mt={2} mb={1}>
 					<Flex align="center" border="1px solid" borderColor="gray.300" borderRadius="md" px={{ base: 0, md: 2 }} bg="white" width="100%">
-						<FontAwesomeIcon
-							icon={faMagnifyingGlass}
-							style={{
-								marginLeft: '10px',
-								fontSize: '20px',
-								color: 'gray.200',
-							}}
-						/>
-						<Input value={orderIdState} onChange={e => setOrderIdState(e.target.value)} onKeyPress={handleKeyPress} variant="unstyled" placeholder="No. Booking" py={0} focusBorderColor="transparent" />
+						<FontAwesomeIcon icon={faMagnifyingGlass} style={{ marginLeft: '10px', fontSize: '20px', color: 'gray.200' }} />
+						<Input value={orderIdState} onChange={handleInputChange} onKeyPress={handleKeyPress} variant="unstyled" placeholder="No. Booking" py={0} focusBorderColor="transparent" />
 					</Flex>
-					<CloseButton onClick={() => setIsSearchOpen(false)} />
+					{/* Close Button */}
+					<CloseButton
+						onClick={() => {
+							saveInputValue();
+							setIsSearchOpen(false);
+						}}
+					/>
 				</HStack>
 				<VStack align={'start'}>
 					{/* Menampilkan error jika ada */}
