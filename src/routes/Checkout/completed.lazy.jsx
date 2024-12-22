@@ -26,7 +26,7 @@ import { Field } from '@/components/ui/field'
 import { faSun, faCircleCheck } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import SeatPickerEkonomi from '../../components/Buyer/Seat/seatEkonomi.lazy.jsx'
-import SeatPickerPremiunEkonomi from '../../components/Buyer/Seat/seatPremiumEkonomi.lazy.jsx'
+import SeatPickerPremiumEkonomi from '../../components/Buyer/Seat/seatPremiumEkonomi.lazy.jsx'
 import SeatPickerBisnis from '../../components/Buyer/Seat/seatBisnis.lazy.jsx'
 import SeatPickerEksekutif from '../../components/Buyer/Seat/seatEksekutif.lazy.jsx'
 import { getDetailOrder } from '../../services/order/index.js'
@@ -621,8 +621,8 @@ function CheckoutCompleted() {
                       selectedSeats={selectedSeatsBerangkat}
                     />
                   )}
-                  {kelas === 'Premium+Economy' && (
-                    <SeatPickerPremiunEkonomi
+                  {kelas === 'Premium_Economy' && (
+                    <SeatPickerPremiumEkonomi
                       setSelected={setSelectedBerangkat}
                       seat={seatBerangkat}
                       bookedSeats={bookedSeatBerangkat}
@@ -637,7 +637,7 @@ function CheckoutCompleted() {
                       selectedSeats={selectedSeatsBerangkat}
                     />
                   )}
-                  {kelas == 'First+Class' && (
+                  {kelas == 'First_Class' && (
                     <SeatPickerEksekutif
                       setSelected={setSelectedBerangkat}
                       seat={seatBerangkat}
@@ -664,8 +664,8 @@ function CheckoutCompleted() {
                           selectedSeats={selectedSeatsTransit1Berangkat}
                         />
                       )}
-                      {kelas === 'Premium+Economy' && (
-                        <SeatPickerPremiunEkonomi
+                      {kelas === 'Premium_Economy' && (
+                        <SeatPickerPremiumEkonomi
                           setSelected={setSelectedTransit1Berangkat}
                           seat={seatTransit1Berangkat}
                           bookedSeats={bookedSeatTransit1Berangkat}
@@ -680,7 +680,7 @@ function CheckoutCompleted() {
                           selectedSeats={selectedSeatsTransit1Berangkat}
                         />
                       )}
-                      {kelas == 'First+Class' && (
+                      {kelas == 'First_Class' && (
                         <SeatPickerEksekutif
                           setSelected={setSelectedTransit1Berangkat}
                           seat={seatTransit1Berangkat}
@@ -709,8 +709,8 @@ function CheckoutCompleted() {
                           selectedSeats={selectedSeatsTransit2Berangkat}
                         />
                       )}
-                      {kelas === 'Premium+Economy' && (
-                        <SeatPickerPremiunEkonomi
+                      {kelas === 'Premium_Economy' && (
+                        <SeatPickerPremiumEkonomi
                           setSelected={setSelectedTransit2Berangkat}
                           seat={seatTransit2Berangkat}
                           bookedSeats={bookedSeatTransit2Berangkat}
@@ -725,7 +725,7 @@ function CheckoutCompleted() {
                           selectedSeats={selectedSeatsTransit2Berangkat}
                         />
                       )}
-                      {kelas == 'First+Class' && (
+                      {kelas == 'First_Class' && (
                         <SeatPickerEksekutif
                           setSelected={setSelectedTransit2Berangkat}
                           seat={seatTransit2Berangkat}
@@ -754,8 +754,8 @@ function CheckoutCompleted() {
                           selectedSeats={selectedSeatsPulang}
                         />
                       )}
-                      {kelas === 'Premium+Economy' && (
-                        <SeatPickerPremiunEkonomi
+                      {kelas === 'Premium_Economy' && (
+                        <SeatPickerPremiumEkonomi
                           setSelected={setSelectedPulang}
                           seat={seatPulang}
                           bookedSeats={bookedSeatPulang}
@@ -770,7 +770,7 @@ function CheckoutCompleted() {
                           selectedSeats={selectedSeatsPulang}
                         />
                       )}
-                      {kelas == 'First+Class' && (
+                      {kelas == 'First_Class' && (
                         <SeatPickerEksekutif
                           setSelected={setSelectedPulang}
                           seat={seatPulang}
@@ -799,8 +799,8 @@ function CheckoutCompleted() {
                           selectedSeats={selectedSeatsTransit1Pulang}
                         />
                       )}
-                      {kelas === 'Premium+Economy' && (
-                        <SeatPickerPremiunEkonomi
+                      {kelas === 'Premium_Economy' && (
+                        <SeatPickerPremiumEkonomi
                           setSelected={setSelectedTransit1Pulang}
                           seat={seatTransit1Pulang}
                           bookedSeats={bookedSeatTransit1Pulang}
@@ -815,7 +815,7 @@ function CheckoutCompleted() {
                           selectedSeats={selectedSeatsTransit1Pulang}
                         />
                       )}
-                      {kelas == 'First+Class' && (
+                      {kelas == 'First_Class' && (
                         <SeatPickerEksekutif
                           setSelected={setSelectedTransit1Pulang}
                           seat={seatTransit1Pulang}
@@ -844,8 +844,8 @@ function CheckoutCompleted() {
                           selectedSeats={selectedSeatsTransit2Pulang}
                         />
                       )}
-                      {kelas === 'Premium+Economy' && (
-                        <SeatPickerPremiunEkonomi
+                      {kelas === 'Premium_Economy' && (
+                        <SeatPickerPremiumEkonomi
                           setSelected={setSelectedTransit2Pulang}
                           seat={seatTransit2Pulang}
                           bookedSeats={bookedSeatTransit2Pulang}
@@ -860,7 +860,7 @@ function CheckoutCompleted() {
                           selectedSeats={selectedSeatsTransit2Pulang}
                         />
                       )}
-                      {kelas == 'First+Class' && (
+                      {kelas == 'First_Class' && (
                         <SeatPickerEksekutif
                           setSelected={setSelectedTransit2Pulang}
                           seat={seatTransit2Pulang}
