@@ -16,6 +16,7 @@ import { faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import SelectFilter from '../../components/Tickets/SelectFilter';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 export const Route = createLazyFileRoute('/tickets/')({
 	component: RouteComponent,
