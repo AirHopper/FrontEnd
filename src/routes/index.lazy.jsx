@@ -14,8 +14,8 @@ export const Route = createLazyFileRoute("/")({
 
 function Beranda() {
   // Selected Values
-  const [selectedFrom, setSelectedFrom] = useState("");
-  const [selectedTo, setSelectedTo] = useState("");
+  const [selectedFrom, setSelectedFrom] = useState("Jakarta");
+  const [selectedTo, setSelectedTo] = useState("Bali");
   const [dateRange, setDateRange] = useState([
     {
       startDate: new Date(),
@@ -23,7 +23,7 @@ function Beranda() {
       key: "selection",
     },
   ]);
-  const [selectedClass, setSelectedClass] = useState("");
+  const [selectedClass, setSelectedClass] = useState("Economy");
   const formattedClass = selectedClass.replace(/_/g, " ");
 
   // isFocused and tickets data states
