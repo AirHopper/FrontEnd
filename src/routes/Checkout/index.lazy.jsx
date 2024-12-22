@@ -476,25 +476,20 @@ function CheckoutIndex() {
     if (ticketData) {
       hasIncompleteData ||= selectedBerangkat.length !== passengerCount;
     }
-  
     if (ticketData?.isTransits === true) {
       hasIncompleteData ||= selectedTransit1Berangkat.length !== passengerCount;
     }
-  
     if (seatTransit2Berangkat.length > 0) {
-      hasIncompleteData ||= selectedTransit2Berangkat !== passengerCount;
+      hasIncompleteData ||= selectedTransit2Berangkat.length !== passengerCount;
     }
-  
     if (ticketData2) {
-      hasIncompleteData ||= selectedPulang !== passengerCount;
+      hasIncompleteData ||= selectedPulang.length !== passengerCount;
     }
-  
     if (ticketData2?.isTransits === true) {
-      hasIncompleteData ||= selectedTransit1Pulang !== passengerCount;
+      hasIncompleteData ||= selectedTransit1Pulang.length !== passengerCount;
     }
-  
     if (seatTransit2Pulang.length > 0) {
-      hasIncompleteData ||= selectedTransit2Pulang !== passengerCount;
+      hasIncompleteData ||= selectedTransit2Pulang.length !== passengerCount;
     }
     if (hasIncompleteData) {
       setErrorMessage('Data Belum Lengkap, Harap Lengkapi Data Anda !!');
