@@ -77,7 +77,9 @@ function CheckoutCompleted() {
     },
     enabled: !!orderId,
   });
-
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   useEffect(() => {
     if (!token && !user) {
       setOverlayVisible(true)
@@ -334,11 +336,11 @@ function CheckoutCompleted() {
           borderBottom="2px solid"
           borderColor="gray.100"
         >
-          <Flex w="75%" direction="column" marginBottom={5}>
+          <Flex w={{ base: "95%", md: "75%" }} direction="column" marginBottom={5}>
             <Stack
               color="black"
               marginTop={10}
-              marginLeft={30}
+              marginLeft={{base: 0, md: 30 }}
               marginBottom={5}
             >
               <BreadcrumbRoot size="lg">

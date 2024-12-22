@@ -520,8 +520,8 @@ function CheckoutIndex() {
               color="white"
               p={3}
               borderRadius="lg"
-              w="92%"
-              marginLeft={10}
+              w={{ base: '100%', md: '92%' }}
+              marginLeft={{ base: 0, md: 10 }}
             >
               <Text fontFamily="Inter, sans-serif">Selesaikan dalam </Text>
               <Text marginLeft={2}>{formattedTime}</Text>
@@ -541,7 +541,7 @@ function CheckoutIndex() {
                   bg="white"
                   color="black"
                   w="100%"
-                  minWidth="33vw"
+                  minWidth={{ base: '100%', md: '33vw' }}
                   marginBottom={10}
                 >
                   <Card.Header>
@@ -617,7 +617,7 @@ function CheckoutIndex() {
                               {passengerData[index].type}
                             </Text>
                           </Box>
-                          <Stack gap="4" px={4}>
+                          <Stack gap="4" px={4} spacing={{ base: 2, md: 4 }}>
                             <SelectRoot
                               collection={listTitle}
                               value={passengerData[index].title}
@@ -658,7 +658,7 @@ function CheckoutIndex() {
                             <Stack
                               align="center"
                               justifyContent="space-between"
-                              direction="row"
+                              direction={{ base: 'column', sm: 'row' }} 
                             >
                               <Text>Punya Nama Keluarga?</Text>
                               <Switch
