@@ -463,59 +463,52 @@ function CheckoutIndex() {
   const [errorMessage, setErrorMessage] = useState('')
   const [isSaveDisabled, setIsSaveDisabled] = useState(true)
   const checkDataCompleteness = () => {
-    let hasIncompleteData = passengerData.some(
-      (data) =>
-        !data.title ||
-        !data.namaLengkap ||
-        !data.tanggalLahir ||
-        !data.kewarganegaraan ||
-        !data.ktpPas ||
-        !data.negaraPenerbit ||
-        !data.berlakuSampai ||
-        (data.selectedBerangkat != passengerCount)
-    )
+    let hasIncompleteData = passengerData.some((data) =>
+      !data.title ||
+      !data.namaLengkap ||
+      !data.tanggalLahir ||
+      !data.kewarganegaraan ||
+      !data.ktpPas ||
+      !/^\d{16}$/.test(data.ktpPas) ||
+      !data.negaraPenerbit ||
+      !data.berlakuSampai
+    );
+    if (ticketData) {
+      hasIncompleteData ||= selectedBerangkat.length !== passengerCount;
+    }
+  
     if (ticketData?.isTransits === true) {
-      hasIncompleteData = passengerData.some((data) =>
-        hasIncompleteData ||
-        data.selectedTransit1Berangkat != passengerCount
-      );
+      hasIncompleteData ||= selectedTransit1Berangkat.length !== passengerCount;
     }
+  
     if (seatTransit2Berangkat.length > 0) {
-        hasIncompleteData = passengerData.some((data) =>
-          hasIncompleteData ||
-          data.selectedTransit2Berangkat != passengerCount
-        );
+      hasIncompleteData ||= selectedTransit2Berangkat !== passengerCount;
     }
+  
     if (ticketData2) {
-      hasIncompleteData = passengerData.some((data) =>
-        hasIncompleteData ||
-        data.selectedPulang != passengerCount
-      );
+      hasIncompleteData ||= selectedPulang !== passengerCount;
     }
+  
     if (ticketData2?.isTransits === true) {
-      hasIncompleteData = passengerData.some((data) =>
-        hasIncompleteData ||
-        data.selectedTransit1Pulang != passengerCount
-      );
+      hasIncompleteData ||= selectedTransit1Pulang !== passengerCount;
     }
+  
     if (seatTransit2Pulang.length > 0) {
-      hasIncompleteData = passengerData.some((data) =>
-        hasIncompleteData ||
-        data.selectedTransit2Pulang != passengerCount
-      );
+      hasIncompleteData ||= selectedTransit2Pulang !== passengerCount;
     }
     if (hasIncompleteData) {
-      setErrorMessage('Data Belum Lengkap, Harap Lengkapi Data Anda !!')
-      setIsSaveDisabled(true)
+      setErrorMessage('Data Belum Lengkap, Harap Lengkapi Data Anda !!');
+      setIsSaveDisabled(true);
     } else {
-      setErrorMessage('')
-      setIsSaveDisabled(false)
+      setErrorMessage('');
+      setIsSaveDisabled(false);
     }
-  }
-
+  };
+  
   useEffect(() => {
-    checkDataCompleteness()
-  }, [passengerData])
+    checkDataCompleteness();
+  }, [passengerData, selectedBerangkat, selectedTransit1Berangkat, selectedTransit2Berangkat, selectedPulang, selectedTransit1Pulang, selectedTransit2Pulang]);
+  
   return (
     <>
       <Loading isVisible={isLoading} message={messageLoading} />
