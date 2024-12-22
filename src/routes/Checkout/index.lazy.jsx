@@ -47,7 +47,7 @@ import Overlay from '../../components/Overlay/index.jsx'
 import { createOrder } from '../../services/order/index.js'
 import Loading from '../../components/Overlay/loading.jsx'
 
-export const Route = createLazyFileRoute('/Checkout/')({
+export const Route = createLazyFileRoute('/checkout/')({
   component: CheckoutIndex,
 })
 

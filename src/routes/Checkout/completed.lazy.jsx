@@ -35,7 +35,7 @@ import { useSelector } from 'react-redux'
 import Overlay from '../../components/Overlay/index.jsx'
 import Loading from '../../components/Overlay/loading.jsx'
 
-export const Route = createLazyFileRoute('/Checkout/completed')({
+export const Route = createLazyFileRoute('/checkout/completed')({
   component: CheckoutCompleted,
 })
 
