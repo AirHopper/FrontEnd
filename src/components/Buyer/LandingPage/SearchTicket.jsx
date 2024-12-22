@@ -168,8 +168,9 @@ const SearchTicket = ({
   };
 
   const handleFormatDate = (date) => {
-    // Format date to "YYYY-MM-DD"
-    return format(date, "yyyy-MM-dd");
+    const dateTest = new Date(date);
+    dateTest.setHours(dateTest.getHours() - 7);
+    return format(dateTest, "yyyy-MM-dd");
   };
 
   const handleSwitchChange = () => {
