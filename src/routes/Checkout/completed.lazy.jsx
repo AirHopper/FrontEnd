@@ -30,10 +30,10 @@ import SeatPickerPremiumEkonomi from '../../components/Buyer/Seat/seatPremiumEko
 import SeatPickerBisnis from '../../components/Buyer/Seat/seatBisnis.lazy.jsx'
 import SeatPickerEksekutif from '../../components/Buyer/Seat/seatEksekutif.lazy.jsx'
 import { getDetailOrder } from '../../services/order/index.js'
-import { useQuery } from "@tanstack/react-query";
-import { useSelector } from "react-redux";
-import Overlay from '../../components/Overlay/index.jsx';
-import Loading from "../../components/Overlay/loading.jsx";
+import { useQuery } from '@tanstack/react-query'
+import { useSelector } from 'react-redux'
+import Overlay from '../../components/Overlay/index.jsx'
+import Loading from '../../components/Overlay/loading.jsx'
 
 export const Route = createLazyFileRoute('/checkout/completed')({
   component: CheckoutCompleted,
@@ -41,45 +41,45 @@ export const Route = createLazyFileRoute('/checkout/completed')({
 
 function CheckoutCompleted() {
   const navigate = useNavigate()
-  const { state } = useLocation();
-  const orderId = state.orderId;
-  const { user, token } = useSelector((state) => state.auth);
+  const { state } = useLocation()
+  const orderId = state.orderId
+  const { user, token } = useSelector((state) => state.auth)
   const [isOverlayVisible, setOverlayVisible] = useState(false)
   const [message, setMessage] = useState('')
   const [tujuan, setTujuan] = useState('')
-  const [selected, setSelected] = React.useState(null);
-  const [orderData, setOrderData] = useState([]);
-  const [flightDetails, setFlightDetails] = useState([]);
-  const [flightDetails2, setFlightDetails2] = useState([]);
-  const [kelas, setKelas] = useState("");
+  const [selected, setSelected] = React.useState(null)
+  const [orderData, setOrderData] = useState([])
+  const [flightDetails, setFlightDetails] = useState([])
+  const [flightDetails2, setFlightDetails2] = useState([])
+  const [kelas, setKelas] = useState('')
   const [selectedBerangkat, setSelectedBerangkat] = useState([])
   const [selectedTransit1Berangkat, setSelectedTransit1Berangkat] = useState([])
   const [selectedTransit2Berangkat, setSelectedTransit2Berangkat] = useState([])
   const [selectedPulang, setSelectedPulang] = useState([])
   const [selectedTransit1Pulang, setSelectedTransit1Pulang] = useState([])
   const [selectedTransit2Pulang, setSelectedTransit2Pulang] = useState([])
-  const [seatBerangkat, setSeatBerangkat] = useState([]);
-  const [seatTransit1Berangkat, setSeatTransit1Berangkat] = useState([]);
-  const [seatTransit2Berangkat, setSeatTransit2Berangkat] = useState([]);
-  const [seatPulang, setSeatPulang] = useState([]);
-  const [seatTransit1Pulang, setSeatTransit1Pulang] = useState([]);
-  const [seatTransit2Pulang, setSeatTransit2Pulang] = useState([]);
-  const [fullName, setFullName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [email, setEmail] = useState("");
-  const [passengersData, setPassengersData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const { data, isSuccess} = useQuery({
-    queryKey: ["order", orderId],
-    queryFn: async()=>{
+  const [seatBerangkat, setSeatBerangkat] = useState([])
+  const [seatTransit1Berangkat, setSeatTransit1Berangkat] = useState([])
+  const [seatTransit2Berangkat, setSeatTransit2Berangkat] = useState([])
+  const [seatPulang, setSeatPulang] = useState([])
+  const [seatTransit1Pulang, setSeatTransit1Pulang] = useState([])
+  const [seatTransit2Pulang, setSeatTransit2Pulang] = useState([])
+  const [fullName, setFullName] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [email, setEmail] = useState('')
+  const [passengersData, setPassengersData] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const { data, isSuccess } = useQuery({
+    queryKey: ['order', orderId],
+    queryFn: async () => {
       const data = await getDetailOrder(orderId)
       return data
     },
     enabled: !!orderId,
-  });
+  })
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+    window.scrollTo(0, 0)
+  }, [])
   useEffect(() => {
     if (!token && !user) {
       setOverlayVisible(true)
@@ -141,9 +141,9 @@ function CheckoutCompleted() {
   }, [user])
   useEffect(() => {
     if (isSuccess) {
-        const dataBaru = data.data
-        setOrderData(dataBaru);
-        setIsLoading(false);
+      const dataBaru = data.data
+      setOrderData(dataBaru)
+      setIsLoading(false)
     }
   }, [data, isSuccess])
   const passenger = orderData?.passengers
@@ -185,12 +185,12 @@ function CheckoutCompleted() {
   }, [flights2])
   useEffect(() => {
     if (flightDetails2?.length > 0) {
-      setSeatPulang(flightDetails2[0]?.seat);
+      setSeatPulang(flightDetails2[0]?.seat)
       if (flightDetails2.length > 1) {
-        setSeatTransit1Pulang(flightDetails2[1]?.seat);
+        setSeatTransit1Pulang(flightDetails2[1]?.seat)
       }
       if (flightDetails2.length > 2) {
-        setSeatTransit2Pulang(flightDetails2[2]?.seat);
+        setSeatTransit2Pulang(flightDetails2[2]?.seat)
       }
     }
   }, [flightDetails2])
@@ -325,7 +325,7 @@ function CheckoutCompleted() {
 
   return (
     <>
-      <Loading isVisible={isLoading} message="Memuat Data Order..."/>      
+      <Loading isVisible={isLoading} message="Memuat Data Order..." />
       <Overlay isVisible={isOverlayVisible} message={message} />
       <Box bg="white" px={4}>
         <Flex
@@ -336,18 +336,19 @@ function CheckoutCompleted() {
           borderBottom="2px solid"
           borderColor="gray.100"
         >
-          <Flex w={{ base: "95%", md: "75%" }} direction="column" marginBottom={5}>
+          <Flex
+            w={{ base: '95%', md: '75%' }}
+            direction="column"
+            marginBottom={5}
+          >
             <Stack
               color="black"
               marginTop={10}
-              marginLeft={{base: 0, md: 30 }}
+              marginLeft={{ base: 0, md: 30 }}
               marginBottom={5}
             >
               <BreadcrumbRoot size="lg">
-                <BreadcrumbLink
-                  color="black"
-                  fontWeight="bold"
-                >
+                <BreadcrumbLink color="black" fontWeight="bold">
                   Isi Data Diri
                 </BreadcrumbLink>
                 <BreadcrumbCurrentLink color="black" fontWeight="bold">
@@ -460,20 +461,40 @@ function CheckoutCompleted() {
                     </Card.Title>
                   </Card.Header>
                   <Card.Body marginBottom={5}>
-                    {!passengersData &&(
-                      <Flex justifyContent="center" alignItems="center" height="100vh" bg="gray.100">
+                    {!passengersData && (
+                      <Flex
+                        justifyContent="center"
+                        alignItems="center"
+                        height="100vh"
+                        bg="gray.100"
+                      >
                         <Spinner size="xl" color="teal.500" />
-                        <Text ml={4} fontSize="lg" color="gray.700" fontFamily="Inter, sans-serif">
+                        <Text
+                          ml={4}
+                          fontSize="lg"
+                          color="gray.700"
+                          fontFamily="Inter, sans-serif"
+                        >
                           Memuat Data Penumpang...
                         </Text>
                       </Flex>
                     )}
-                    {!!passengersData &&(
+                    {!!passengersData && (
                       <Box>
-                      {[...Array(passengersData.length)].map((_, index) => (
+                        {[...Array(passengersData.length)].map((_, index) => (
                           <Box key={index} mb={6} color="black">
-                            <Flex bg="#3C3C3C" color="white" borderTopRadius="lg" h={10} mb={2} justifyContent="space-between">
-                              <Text ml={4} pt={2}>Data Diri Penumpang {index + 1} - {passengersData[index]?.type}</Text>
+                            <Flex
+                              bg="#3C3C3C"
+                              color="white"
+                              borderTopRadius="lg"
+                              h={10}
+                              mb={2}
+                              justifyContent="space-between"
+                            >
+                              <Text ml={4} pt={2}>
+                                Data Diri Penumpang {index + 1} -{' '}
+                                {passengersData[index]?.type}
+                              </Text>
                               <Box marginTop={2} marginRight={5}>
                                 <FontAwesomeIcon
                                   icon={faCircleCheck}
@@ -526,7 +547,9 @@ function CheckoutCompleted() {
                                 <Input
                                   value={
                                     passengersData[index]?.dateOfBirth
-                                      ? new Date(passengersData[index]?.dateOfBirth).toLocaleDateString('id-ID', {
+                                      ? new Date(
+                                          passengersData[index]?.dateOfBirth,
+                                        ).toLocaleDateString('id-ID', {
                                           day: '2-digit',
                                           month: 'long',
                                           year: 'numeric',
@@ -554,7 +577,9 @@ function CheckoutCompleted() {
                                 labelProps={{ fontWeight: 'bold' }}
                               >
                                 <Input
-                                  value={passengersData[index]?.identifierNumber}
+                                  value={
+                                    passengersData[index]?.identifierNumber
+                                  }
                                   disabled
                                   borderColor="gray.300"
                                 />
@@ -578,7 +603,9 @@ function CheckoutCompleted() {
                                 <Input
                                   value={
                                     passengersData[index]?.idValidUntil
-                                      ? new Date(passengersData[index]?.idValidUntil).toLocaleDateString('id-ID', {
+                                      ? new Date(
+                                          passengersData[index]?.idValidUntil,
+                                        ).toLocaleDateString('id-ID', {
                                           day: '2-digit',
                                           month: 'long',
                                           year: 'numeric',

@@ -9,7 +9,7 @@ import notFoundTicket from '../../assets/img/notfoundflight.png';
 import loadingImage from '../../assets/img/loading.png';
 import pack from '../../assets/img/pack.svg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faCircleInfo, faGreaterThan } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faArrowLeftLong, faArrowRightLong, faCircleInfo, faGreaterThan, faMinus } from '@fortawesome/free-solid-svg-icons';
 import { useBreakpointValue } from '@chakra-ui/react';
 import { HStack, VStack, Image, AccordionItem, AccordionRoot, AccordionItemTrigger, AccordionItemContent, Flex } from '@chakra-ui/react';
 import { faChevronUp } from '@fortawesome/free-solid-svg-icons';
@@ -32,18 +32,16 @@ function RouteComponent() {
 	// state management transit
 	const [isTransitFilter, setIsTransitFilter] = useState(false);
 	const [isDirectFilter, setIsDirectFilter] = useState(false);
-	// state managenent airline
-	const [selectedAirline, setSelectedAirline] = useState(null);
 	// state navigate
 	const [isNavigating, setIsNavigating] = useState(false);
 	const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 	// Ambil parameter URL
 	const urlParams = new URLSearchParams(location.search);
 	const params = {
-		departureCity: urlParams.get('departure'),
-		arrivalCity: urlParams.get('arrival'),
+		departureCity: urlParams.get('departure')?.split('+').join(' ').split('_').join(' '),
+		arrivalCity: urlParams.get('arrival')?.split('+').join(' ').split('_').join(' '),
 		flightDate: urlParams.get('departureDate'),
-		classType: urlParams.get('classType'),
+		classType: urlParams.get('classType')?.split('+').join(' ').split('_').join(' '),
 		adult: urlParams.get('adult'),
 		child: urlParams.get('child'),
 		infant: urlParams.get('infant'),
@@ -51,28 +49,37 @@ function RouteComponent() {
 		isTransit: urlParams.get('isTransit'),
 		orderBy: urlParams.get('orderBy') || 'price_asc',
 		passenger: parseInt(urlParams.get('adult')) + parseInt(urlParams.get('child')) + parseInt(urlParams.get('infant')),
-		airline: urlParams.get('airline'),
+		airline: urlParams.get('airline')?.split('+').join(' ').split('_').join(' '),
+	};
+
+	const formatString = str => {
+		return str?.split('+').join(' ').split('_').join(' ') || '';
+	};
+
+	const hasRequiredParams = () => {
+		return params.departureCity && params.arrivalCity && params.classType && params.flightDate;
 	};
 
 	useEffect(() => {
-		const hasRequiredParams = params.departureCity && params.arrivalCity && params.classType && params.flightDate;
-
-		// Hanya arahkan ke halaman utama jika tidak ada parameter yang diperlukan, dan tidak sedang navigasi
-		if (!hasRequiredParams && !isNavigating) {
-			// Tunggu sampai durasi toast selesai sebelum navigasi
+		// Check for valid parameters on mount and when params change
+		if (!hasRequiredParams() && !isNavigating) {
+			// Show error and navigate to home
 			setTimeout(() => {
 				navigate({ to: '/' });
-			}, 500); // Sesuaikan dengan durasi autoClose
+			}, 500);
 			setIsNavigating(true);
 			toast.error('Pencarian Tidak Valid!', {
 				position: 'top-right',
-				autoClose: 3000, // Durasi toast
+				autoClose: 3000,
 				hideProgressBar: true,
 				closeOnClick: true,
 				pauseOnHover: false,
 				draggable: false,
 				theme: 'colored',
 			});
+		} else if (hasRequiredParams()) {
+			// Reset navigation state if params are valid
+			setIsNavigating(true);
 		}
 	}, [params, navigate, isNavigating]);
 
@@ -119,34 +126,16 @@ function RouteComponent() {
 	};
 
 	const [isTransitAccordionOpen, setIsTransitAccordionOpen] = useState(false);
-	const [isAirlinesAccordionOpen, setIsAirlinesAccordionOpen] = useState(false);
 
 	// Handler untuk Transit Accordion
 	const toggleTransitAccordion = () => {
 		setIsTransitAccordionOpen(prev => !prev);
 	};
 
-	// Handler untuk Airlines Accordion
-	const toggleAirlinesAccordion = () => {
-		setIsAirlinesAccordionOpen(prev => !prev);
-	};
-
 	// handle filter
 	const handleApplyFilter = filteredData => {
 		setTickets(filteredData);
 	};
-
-	// Mengambil Nilai Filter Transit dari URL
-	const getIsTransitFromUrl = () => {
-		const urlParams = new URLSearchParams(window.location.search);
-		const isTransit = urlParams.get('search[isTransit]');
-		return isTransit === '1';
-	};
-
-	useEffect(() => {
-		const initialIsTransit = getIsTransitFromUrl();
-		setIsTransitFilter(initialIsTransit);
-	}, []);
 
 	useEffect(() => {
 		// Update URL params setiap kali filter diubah
@@ -175,42 +164,6 @@ function RouteComponent() {
 
 	const handleTransitFilterChange = e => {
 		setIsTransitFilter(e.target.checked);
-	};
-
-	// Handler untuk perubahan filter maskapai
-	const handleAirlineFilterChange = (airline, isChecked) => {
-		const updatedAirlines = isChecked ? [...(selectedAirline || []), airline] : (selectedAirline || []).filter(item => item !== airline);
-
-		setSelectedAirline(updatedAirlines);
-
-		// Perbarui parameter URL
-		updateUrlParams('search[airline]', updatedAirlines.join(','));
-	};
-
-	useEffect(() => {
-		// Memanggil backend saat filter maskapai diubah
-		const fetchFilteredTickets = async () => {
-			const updatedParams = {
-				...params,
-				airline: selectedAirline ? selectedAirline.join(',') : undefined, // Gabungkan maskapai terpilih
-			};
-
-			const response = await getTicketsListing(updatedParams);
-			setTickets(response);
-		};
-
-		if (selectedAirline) {
-			fetchFilteredTickets();
-		}
-	}, [selectedAirline]); // Bergantung pada perubahan selectedAirline
-
-	const getUniqueAirlines = tickets => {
-		if (!Array.isArray(tickets)) return [];
-
-		// Ekstrak nama maskapai dari flights[0].airline.name
-		const airlines = tickets.flatMap(ticket => ticket.flights?.map(flight => flight.airline.name) || []);
-
-		return [...new Set(airlines)]; // Hilangkan duplikat
 	};
 
 	// Inisialisasi state untuk ticketId1 dan ticketId2
@@ -267,7 +220,6 @@ function RouteComponent() {
 	};
 
 	const handleNavigation = () => {
-		setIsNavigating(true);
 		navigate({ to: '/' });
 	};
 
@@ -295,20 +247,19 @@ function RouteComponent() {
 					_hover={{ bg: '#2078B8', color: '#FDFFFE' }}
 					cursor={'pointer'}
 				>
-					<FontAwesomeIcon icon={faArrowLeft} size="sm" />
-					<Text display="inline" pl={2}>
-						{/* Menghindari teks untuk membungkus */}
-						<span style={{ marginRight: 6 }}>{params.departureCity ? params.departureCity.replace(/\+/g, ' ') : ''}</span>
-						<FontAwesomeIcon icon={faGreaterThan} size="sm" style={{ marginLeft: 6, marginRight: 6 }} />
-						<span style={{ marginLeft: 6, marginRight: 6 }}>{params.arrivalCity ? params.arrivalCity.replace(/\+/g, ' ') : ''}</span>
-						{' - '}
-						<span style={{ marginLeft: 6, marginRight: 6 }}>
+					<Flex gap={4} align={'center'}>
+						<FontAwesomeIcon icon={faArrowLeftLong} size="md" />
+						<span>{params.departureCity}</span>
+						<FontAwesomeIcon icon={faArrowRightLong} size="md" />
+						<span>{params.arrivalCity}</span>
+						<FontAwesomeIcon icon={faMinus} />
+						<span>
 							{params.passenger}
 							<span style={{ marginLeft: 4 }}> Penumpang</span>
 						</span>
-						{' - '}
-						<span style={{ marginLeft: 6, marginRight: 6 }}>{params.classType ? params.classType.replace(/\+/g, ' ') : ''}</span>
-					</Text>
+						<FontAwesomeIcon icon={faMinus} />
+						<span>{params.classType}</span>
+					</Flex>
 				</Stack>
 
 				<Stack
@@ -331,6 +282,7 @@ function RouteComponent() {
 			</Grid>
 
 			{/* Filter Day */}
+			<FilterDay selectedDay={selectedDay} setSelectedDay={setSelectedDay} paramsDate={params.flightDate} onUpdateTickets={updateTickets} flightDate={departureDate} setIsButtonDisabled={setIsButtonDisabled} />
 			<FilterDay selectedDay={selectedDay} setSelectedDay={setSelectedDay} paramsDate={params.flightDate} onUpdateTickets={updateTickets} flightDate={departureDate} setIsButtonDisabled={setIsButtonDisabled} />
 
 			{/* Select Filter */}
@@ -372,65 +324,34 @@ function RouteComponent() {
 										</Flex>
 
 										{/* Accordion Content */}
-										{isTransitAccordionOpen && (
-											<AccordionItemContent>
-												<Box display="flex" flexDirection="column" gap={4} py={4}>
-													{/* Checkbox Langsung */}
-													<Checkbox isChecked={isDirectFilter} onChange={handleDirectFilterChange} colorScheme="blue">
-														Tampilkan Tiket Langsung
-													</Checkbox>
+										<Box
+											overflow="hidden"
+											transition="height 0.3s ease, opacity 0.3s ease"
+											height={isTransitAccordionOpen ? 'auto' : 0} // Tinggi animasi
+											opacity={isTransitAccordionOpen ? 1 : 0} // Mengatur visibilitas
+										>
+											<Box display="flex" flexDirection="column" gap={4} py={4}>
+												{/* Checkbox Langsung */}
+												<Checkbox
+													isChecked={isDirectFilter} // Terhubung ke state
+													onChange={handleDirectFilterChange}
+													colorScheme="blue"
+													cursor="pointer"
+												>
+													Tampilkan Tiket Langsung
+												</Checkbox>
 
-													{/* Checkbox Transit */}
-													<Checkbox isChecked={isTransitFilter} onChange={handleTransitFilterChange} colorScheme="blue">
-														Tampilkan Tiket Transit
-													</Checkbox>
-												</Box>
-											</AccordionItemContent>
-										)}
-									</Box>
-								</AccordionItem>
-							</AccordionRoot>
-						</Box>
-
-						<Box display="flex" width="100%" borderWidth="1px" borderRadius="md" px={6} py={{ base: '4', md: '6' }} shadow="sm" height="auto">
-							<AccordionRoot collapsible>
-								<AccordionItem>
-									<Box display="block" width="100%">
-										{/* Header */}
-										<Flex justify={'space-between'} alignItems="flex-start">
-											<Text fontSize={{ base: 'md', md: 'lg' }} fontWeight={'semibold'}>
-												Filter Maskapai
-											</Text>
-											<AccordionItemTrigger
-												display={'inline-block'}
-												width={'auto'}
-												onClick={toggleAirlinesAccordion} // Menggunakan handler airlines
-											>
-												<Text cursor={'pointer'} display={'flex'} alignItems={'flex-start'}>
-													<FontAwesomeIcon
-														icon={faChevronUp}
-														style={{
-															transition: 'transform 0.3s',
-															transform: isAirlinesAccordionOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-														}}
-													/>
-												</Text>
-											</AccordionItemTrigger>
-										</Flex>
-
-										{/* Accordion Content */}
-										{isAirlinesAccordionOpen && (
-											<AccordionItemContent>
-												<Box display="flex" flexDirection="column" gap={4} py={4}>
-													{/* TODO: mapping airlines dari tickets.flights.airline disetiap checkbox */}
-													{getUniqueAirlines(tickets).map((airline, index) => (
-														<Checkbox key={index} isChecked={selectedAirline?.includes(airline)} onChange={e => handleAirlineFilterChange(airline, e.target.checked)} colorScheme="blue">
-															{airline}
-														</Checkbox>
-													))}
-												</Box>
-											</AccordionItemContent>
-										)}
+												{/* Checkbox Transit */}
+												<Checkbox
+													isChecked={isTransitFilter} // Terhubung ke state
+													onChange={handleTransitFilterChange}
+													cursor="pointer"
+													colorScheme="blue"
+												>
+													Tampilkan Tiket Transit
+												</Checkbox>
+											</Box>
+										</Box>
 									</Box>
 								</AccordionItem>
 							</AccordionRoot>
@@ -466,16 +387,26 @@ function RouteComponent() {
 						<Box>
 							{tickets.map((ticket, index) => (
 								<Flex gap={10} mb={6} key={ticket.id}>
-									<AccordionRoot key={ticket.id} collapsible borderWidth="1px" borderRadius="md" px={6} pt={6} shadow="sm">
+									<AccordionRoot
+										key={ticket.id}
+										collapsible
+										borderWidth="1px"
+										borderRadius="md"
+										px={6}
+										pt={6}
+										shadow={activeAccordion === index ? 'none' : 'sm'} // Shadow saat tidak aktif
+										borderColor={activeAccordion === index ? '#44B3F8' : 'transparent'} // Border biru saat aktif
+										transition="all 0.3s ease"
+									>
 										<AccordionItem value={`ticket-${index}`}>
-											<Box display="block" width="100%" pb={6}>
+											<Box display="block" width="100%" pb={6} gap={{ base: 2, sm: 4, md: 6, lg: 8 }}>
 												{/* Header */}
 												<Flex justify={'space-between'} flexDirection={['column-reverse', 'row']} mb={1}>
 													<HStack justifyContent={'start'}>
 														<Flex align={'center'} gap={6}>
 															<Image src={ticket.flights[0].airline.logo} alt="Airline logo" boxSize="40px" />
 															<Text fontWeight="normal" fontSize={'md'}>
-																{ticket.flights[0].airline.name} - {ticket.class}
+																{formatString(ticket.flights[0].airline.name)} - {formatString(ticket.class)}
 															</Text>
 														</Flex>
 													</HStack>
@@ -494,55 +425,68 @@ function RouteComponent() {
 												</Flex>
 
 												{/* Content */}
-												<Flex justify="space-between" flexDirection={['column', 'row']} px={[0, 0]}>
-													<HStack gap={0}>
+												<Flex justify="space-between" flexDirection={['column', 'row']} px={[0, 0]} gap={{ base: 2, sm: 4 }}>
+													<HStack width="100%" gap={{ base: 2, sm: 4, md: 6, lg: 6 }}>
 														{/* Departure Info */}
 														<VStack gap={0} align={'flex-start'}>
 															<Text fontSize={['sm', 'lg']} fontWeight={'bold'}>
-																{new Date(ticket.departure.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' })}
+																{new Date(ticket.departure.time).toLocaleTimeString([], {
+																	hour: '2-digit',
+																	minute: '2-digit',
+																	hour12: false,
+																	timeZone: 'UTC',
+																})}
 															</Text>
 															<Text fontSize={['sm', 'md']}>{ticket.departure.airport.code}</Text>
 														</VStack>
 
-														{/* Duration Info */}
-														<VStack align="center" mx={[4, 6]} gap={1}>
-															<Text fontWeight="normal" fontSize={'md'} color={'#A8B6B7'}>
-																{ticket.isTransits && ticket.flights.length > 0 ? `${ticket.flights.length - 1} Pemberhentian` : 'Langsung'}
-															</Text>
-															<Box
-																fontWeight="normal"
-																fontSize={'md'}
-																borderBottom="2px solid red"
-																width={{
-																	base: '30vw',
-																	sm: '18vw',
-																	md: '12vw',
-																	lg: '13vw',
-																}}
-															/>
-															<Text color={'#A8B6B7'}>
-																{ticket.isTransits && ticket.flights.length > 0
-																	? `${Math.floor(ticket.flights.reduce((total, flight) => total + flight.duration, 0) / 60)}h ${ticket.flights.reduce((total, flight) => total + flight.duration, 0) % 60}m`
-																	: `${Math.floor(ticket.flights[0].duration / 60)}h ${ticket.flights[0].duration % 60}m`}
-															</Text>
+														{/* Panah dengan Lebar Fleksibel */}
+														<VStack
+															spacing={2}
+															align="center"
+															flex="1"
+															mx={[4, 0]}
+															my={[3, 0]}
+															fontSize={'sm'}
+															flexGrow={1} // Tambahkan ini agar memenuhi sisa ruang
+														>
+															<Text color={'#A8B6B7'}>{`${String(Math.floor(ticket.totalDuration / 60)).padStart(2, '0')}h ${String(ticket.totalDuration % 60).padStart(2, '0')}m`}</Text>
+															<Box position="relative" width="100%" height="2px" backgroundColor="red">
+																<Box
+																	position="absolute"
+																	top="50%"
+																	right="0"
+																	transform="translateY(-50%)"
+																	width="0"
+																	height="0"
+																	borderStyle="solid"
+																	borderWidth="6px 0 6px 10px" // Membentuk segitiga
+																	borderColor="transparent transparent transparent red"
+																/>
+															</Box>
 														</VStack>
 
 														{/* Arrival Info */}
-														<VStack gap={0} align={'flex-start'} mr={4}>
+														<VStack gap={0} align={'flex-start'}>
 															<Text fontSize={['sm', 'md']} fontWeight={'bold'}>
-																{new Date(ticket.arrival.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' })}
+																{new Date(ticket.arrival.time).toLocaleTimeString([], {
+																	hour: '2-digit',
+																	minute: '2-digit',
+																	hour12: false,
+																	timeZone: 'UTC',
+																})}
 															</Text>
 															<Text fontSize={['sm', 'md']}>{ticket.arrival.airport.code}</Text>
 														</VStack>
+
 														<img src={pack} alt="pack" />
 													</HStack>
 
 													{/* Price and Button */}
-													<Grid gap={2} justifyItems="flex-end" mt={[4, 6]}>
+													<Grid gap={2} justifyItems="flex-end" mt={[4, 6]} minWidth="150px">
 														<Text fontSize={['md', 'lg']} fontWeight="bold" color={ticket.discount ? 'red' : '#2078B8'} textAlign="end">
 															IDR. {new Intl.NumberFormat('id-ID').format(ticket.totalPrice)}
 														</Text>
-
 														<Button
 															onClick={() => handleSendSearch(ticket.id, ticket.departure.time)}
 															bg={isButtonDisabled ? '#D3D3D3' : '#44B3F8'}
@@ -601,7 +545,7 @@ function RouteComponent() {
 																<Image src={flight.airline.logo} alt="Airline logo" boxSize="40px" />
 																<VStack align="start" gap={1} spacing={0}>
 																	<Text fontSize="md" fontWeight="semibold">
-																		{ticket.flights[0].airline.name} - {ticket.class}
+																		{formatString(ticket.flights[0].airline.name)} - {formatString(ticket.class)}
 																	</Text>
 																	<Text fontSize="md" fontWeight="bold">
 																		{flight.airplane}
@@ -649,7 +593,7 @@ function RouteComponent() {
 															<HStack fontSize="sm" fontWeight="semibold" mt={10} textAlign="start" gap={2} p={3} pl={5} border="1px solid #A8B6B7" borderRadius="md">
 																<FontAwesomeIcon icon={faCircleInfo} color="#A8B6B7" />
 																<Text color="#A8B6B7">
-																	Berhenti untuk Ganti Pesawat di {flight.arrival.city.name}
+																	Transit di {flight.arrival.city.name}
 																	{(() => {
 																		const transitTime = new Date(ticket.flights[index + 1].departure.time) - new Date(flight.arrival.time);
 																		const hours = Math.floor(transitTime / 3600000);

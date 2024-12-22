@@ -45,7 +45,7 @@ import SeatPickerEksekutif from '../../components/Buyer/Seat/seatEksekutif.lazy.
 import { getDetailTickets } from '../../services/tickets/index.js'
 import Overlay from '../../components/Overlay/index.jsx'
 import { createOrder } from '../../services/order/index.js'
-import Loading from "../../components/Overlay/loading.jsx";
+import Loading from '../../components/Overlay/loading.jsx'
 
 export const Route = createLazyFileRoute('/checkout/')({
   component: CheckoutIndex,
@@ -78,8 +78,8 @@ function CheckoutIndex() {
   const [isOverlayVisible, setOverlayVisible] = useState(false)
   const [fullName, setFullName] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
-  const [isLoading, setIsLoading] = useState(true);
-  const [messageLoading, setMessageLoading]  = useState("Memuat Data Ticket...")
+  const [isLoading, setIsLoading] = useState(true)
+  const [messageLoading, setMessageLoading] = useState('Memuat Data Ticket...')
   const [email, setEmail] = useState('')
   const dewasa = parseInt(params.get('adult'), 10) || 0
   const anak = parseInt(params.get('child'), 10) || 0
@@ -89,10 +89,13 @@ function CheckoutIndex() {
   const ticketId2 = parseInt(params.get('ticketId2'), 10) || 0
   const passengerCount = dewasa + anak
   const totalTicketDewasaPergi = parseInt(ticketData?.totalPrice || 0) * dewasa
-  const totalTicketDewasaPulang = parseInt(ticketData2?.totalPrice || 0) * dewasa
+  const totalTicketDewasaPulang =
+    parseInt(ticketData2?.totalPrice || 0) * dewasa
   const totalTicketDewasa = totalTicketDewasaPergi + totalTicketDewasaPulang
-  const totalTicketAnakPergi = (Math.ceil(((parseInt(ticketData?.totalPrice || 0) * 80) / 100)))*anak
-  const totalTicketAnakPulang = (Math.ceil(((parseInt(ticketData2?.totalPrice || 0) * 80) / 100)))*anak
+  const totalTicketAnakPergi =
+    Math.ceil((parseInt(ticketData?.totalPrice || 0) * 80) / 100) * anak
+  const totalTicketAnakPulang =
+    Math.ceil((parseInt(ticketData2?.totalPrice || 0) * 80) / 100) * anak
   const totalTicketAnak = totalTicketAnakPergi + totalTicketAnakPulang
   const bookedSeatBerangkat = []
   seatBerangkat.forEach((seat) => {
@@ -159,7 +162,7 @@ function CheckoutIndex() {
   useEffect(() => {
     if (isOverlayVisible) {
       const timer = setTimeout(() => {
-      navigate({ to: tujuan })
+        navigate({ to: tujuan })
       }, 4000)
 
       return () => clearTimeout(timer)
@@ -178,8 +181,8 @@ function CheckoutIndex() {
   useEffect(() => {
     if (isSuccess) {
       const dataBaru = data.data
-      setTicketData(dataBaru);
-      setIsLoading(false);
+      setTicketData(dataBaru)
+      setIsLoading(false)
     }
   }, [data, isSuccess])
 
@@ -311,8 +314,8 @@ function CheckoutIndex() {
     },
   })
   const handleClick = () => {
-    setMessageLoading("Menyimpan Data Order....")
-    setIsLoading(true);
+    setMessageLoading('Menyimpan Data Order....')
+    setIsLoading(true)
     const updatedOrder = order?.map((item, index) => ({
       ...item,
       type: passengerData[index]?.type,
@@ -413,7 +416,7 @@ function CheckoutIndex() {
       { label: 'Greece', value: 'Greece' },
       { label: 'Portugal', value: 'Portugal' },
     ],
-  });  
+  })
 
   useEffect(() => {
     if (timeLeft <= 0) {
@@ -457,8 +460,8 @@ function CheckoutIndex() {
   const minutes = Math.floor((timeLeft % 3600) / 60)
   const seconds = timeLeft % 60
   const formattedTime = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
-  const [errorMessage, setErrorMessage] = useState("");
-  const [isSaveDisabled, setIsSaveDisabled] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('')
+  const [isSaveDisabled, setIsSaveDisabled] = useState(true)
   const checkDataCompleteness = () => {
     const hasIncompleteData = passengerData.some(
       (data) =>
@@ -467,24 +470,24 @@ function CheckoutIndex() {
         !data.tanggalLahir ||
         !data.kewarganegaraan ||
         !data.negaraPenerbit ||
-        !data.berlakuSampai
-    );
-  
+        !data.berlakuSampai,
+    )
+
     if (hasIncompleteData) {
-      setErrorMessage("Data Belum Lengkap, Harap Lengkapi Data Anda !!");
-      setIsSaveDisabled(true);
+      setErrorMessage('Data Belum Lengkap, Harap Lengkapi Data Anda !!')
+      setIsSaveDisabled(true)
     } else {
-      setErrorMessage("");
-      setIsSaveDisabled(false);
+      setErrorMessage('')
+      setIsSaveDisabled(false)
     }
-  };
-  
+  }
+
   useEffect(() => {
-    checkDataCompleteness();
-  }, [passengerData]);
+    checkDataCompleteness()
+  }, [passengerData])
   return (
     <>
-      <Loading isVisible={isLoading} message={messageLoading}/>  
+      <Loading isVisible={isLoading} message={messageLoading} />
       <Overlay isVisible={isOverlayVisible} message={message} />
       <Box bg="white" px={4}>
         <Flex
@@ -658,7 +661,7 @@ function CheckoutIndex() {
                             <Stack
                               align="center"
                               justifyContent="space-between"
-                              direction={{ base: 'column', sm: 'row' }} 
+                              direction={{ base: 'column', sm: 'row' }}
                             >
                               <Text>Punya Nama Keluarga?</Text>
                               <Switch
@@ -751,12 +754,15 @@ function CheckoutIndex() {
                                 borderColor="gray.300"
                                 isInvalid={
                                   passengerData[index].ktpPas &&
-                                  (!/^\d{16}$/.test(passengerData[index].ktpPas))
+                                  !/^\d{16}$/.test(passengerData[index].ktpPas)
                                 }
                               />
-                              {!/^\d{16}$/.test(passengerData[index].ktpPas || '') && (
+                              {!/^\d{16}$/.test(
+                                passengerData[index].ktpPas || '',
+                              ) && (
                                 <Text color="red.500" fontSize="sm" mt={1}>
-                                  Nomor KTP/Paspor harus berupa angka dan terdiri dari 16 digit.
+                                  Nomor KTP/Paspor harus berupa angka dan
+                                  terdiri dari 16 digit.
                                 </Text>
                               )}
                             </Field>
@@ -833,7 +839,7 @@ function CheckoutIndex() {
                       data={someData}
                       seat={seatBerangkat}
                       bookedSeats={bookedSeatBerangkat}
-                      selectedSeats = {[]}
+                      selectedSeats={[]}
                     />
                   )}
                   {kelas === 'Premium+Economy' && (
@@ -842,7 +848,7 @@ function CheckoutIndex() {
                       data={someData}
                       seat={seatBerangkat}
                       bookedSeats={bookedSeatBerangkat}
-                      selectedSeats = {[]}
+                      selectedSeats={[]}
                     />
                   )}
                   {kelas === 'Business' && (
@@ -851,7 +857,7 @@ function CheckoutIndex() {
                       data={someData}
                       seat={seatBerangkat}
                       bookedSeats={bookedSeatBerangkat}
-                      selectedSeats = {[]}
+                      selectedSeats={[]}
                     />
                   )}
                   {kelas == 'First+Class' && (
@@ -860,7 +866,7 @@ function CheckoutIndex() {
                       data={someData}
                       seat={seatBerangkat}
                       bookedSeats={bookedSeatBerangkat}
-                      selectedSeats = {[]}
+                      selectedSeats={[]}
                     />
                   )}
                   {ticketData?.isTransits === true && (
@@ -880,7 +886,7 @@ function CheckoutIndex() {
                           data={someData}
                           seat={seatTransit1Berangkat}
                           bookedSeats={bookedSeatTransit1Berangkat}
-                          selectedSeats = {[]}
+                          selectedSeats={[]}
                         />
                       )}
                       {kelas === 'Premium+Economy' && (
@@ -889,7 +895,7 @@ function CheckoutIndex() {
                           data={someData}
                           seat={seatTransit1Berangkat}
                           bookedSeats={bookedSeatTransit1Berangkat}
-                          selectedSeats = {[]}
+                          selectedSeats={[]}
                         />
                       )}
                       {kelas === 'Business' && (
@@ -898,7 +904,7 @@ function CheckoutIndex() {
                           data={someData}
                           seat={seatTransit1Berangkat}
                           bookedSeats={bookedSeatTransit1Berangkat}
-                          selectedSeats = {[]}
+                          selectedSeats={[]}
                         />
                       )}
                       {kelas == 'First+Class' && (
@@ -907,7 +913,7 @@ function CheckoutIndex() {
                           data={someData}
                           seat={seatTransit1Berangkat}
                           bookedSeats={bookedSeatTransit1Berangkat}
-                          selectedSeats = {[]}
+                          selectedSeats={[]}
                         />
                       )}
                     </>
@@ -929,7 +935,7 @@ function CheckoutIndex() {
                           data={someData}
                           seat={seatTransit2Berangkat}
                           bookedSeats={bookedSeatTransit2Berangkat}
-                          selectedSeats = {[]}
+                          selectedSeats={[]}
                         />
                       )}
                       {kelas === 'Premium+Economy' && (
@@ -938,7 +944,7 @@ function CheckoutIndex() {
                           data={someData}
                           seat={seatTransit2Berangkat}
                           bookedSeats={bookedSeatTransit2Berangkat}
-                          selectedSeats = {[]}
+                          selectedSeats={[]}
                         />
                       )}
                       {kelas === 'Business' && (
@@ -947,7 +953,7 @@ function CheckoutIndex() {
                           data={someData}
                           seat={seatTransit2Berangkat}
                           bookedSeats={bookedSeatTransit2Berangkat}
-                          selectedSeats = {[]}
+                          selectedSeats={[]}
                         />
                       )}
                       {kelas == 'First+Class' && (
@@ -956,7 +962,7 @@ function CheckoutIndex() {
                           data={someData}
                           seat={seatTransit2Berangkat}
                           bookedSeats={bookedSeatTransit2Berangkat}
-                          selectedSeats = {[]}
+                          selectedSeats={[]}
                         />
                       )}
                     </>
@@ -978,7 +984,7 @@ function CheckoutIndex() {
                           data={someData}
                           seat={seatPulang}
                           bookedSeats={bookedSeatPulang}
-                          selectedSeats = {[]}
+                          selectedSeats={[]}
                         />
                       )}
                       {kelas === 'Premium+Economy' && (
@@ -987,7 +993,7 @@ function CheckoutIndex() {
                           data={someData}
                           seat={seatPulang}
                           bookedSeats={bookedSeatPulang}
-                          selectedSeats = {[]}
+                          selectedSeats={[]}
                         />
                       )}
                       {kelas === 'Business' && (
@@ -996,7 +1002,7 @@ function CheckoutIndex() {
                           data={someData}
                           seat={seatPulang}
                           bookedSeats={bookedSeatPulang}
-                          selectedSeats = {[]}
+                          selectedSeats={[]}
                         />
                       )}
                       {kelas == 'First+Class' && (
@@ -1005,7 +1011,7 @@ function CheckoutIndex() {
                           data={someData}
                           seat={seatPulang}
                           bookedSeats={bookedSeatPulang}
-                          selectedSeats = {[]}
+                          selectedSeats={[]}
                         />
                       )}
                     </>
@@ -1027,7 +1033,7 @@ function CheckoutIndex() {
                           data={someData}
                           seat={seatTransit1Pulang}
                           bookedSeats={bookedSeatTransit1Pulang}
-                          selectedSeats = {[]}
+                          selectedSeats={[]}
                         />
                       )}
                       {kelas === 'Premium+Economy' && (
@@ -1036,7 +1042,7 @@ function CheckoutIndex() {
                           data={someData}
                           seat={seatTransit1Pulang}
                           bookedSeats={bookedSeatTransit1Pulang}
-                          selectedSeats = {[]}
+                          selectedSeats={[]}
                         />
                       )}
                       {kelas === 'Business' && (
@@ -1045,7 +1051,7 @@ function CheckoutIndex() {
                           data={someData}
                           seat={seatTransit1Pulang}
                           bookedSeats={bookedSeatTransit1Pulang}
-                          selectedSeats = {[]}
+                          selectedSeats={[]}
                         />
                       )}
                       {kelas == 'First+Class' && (
@@ -1054,7 +1060,7 @@ function CheckoutIndex() {
                           data={someData}
                           seat={seatTransit1Pulang}
                           bookedSeats={bookedSeatTransit1Pulang}
-                          selectedSeats = {[]}
+                          selectedSeats={[]}
                         />
                       )}
                     </>
@@ -1076,7 +1082,7 @@ function CheckoutIndex() {
                           data={someData}
                           seat={seatTransit2Pulang}
                           bookedSeats={bookedSeatTransit2Pulang}
-                          selectedSeats = {[]}
+                          selectedSeats={[]}
                         />
                       )}
                       {kelas === 'Premium+Economy' && (
@@ -1085,7 +1091,7 @@ function CheckoutIndex() {
                           data={someData}
                           seat={seatTransit2Pulang}
                           bookedSeats={bookedSeatTransit2Pulang}
-                          selectedSeats = {[]}
+                          selectedSeats={[]}
                         />
                       )}
                       {kelas === 'Business' && (
@@ -1094,7 +1100,7 @@ function CheckoutIndex() {
                           data={someData}
                           seat={seatTransit2Pulang}
                           bookedSeats={bookedSeatTransit2Pulang}
-                          selectedSeats = {[]}
+                          selectedSeats={[]}
                         />
                       )}
                       {kelas == 'First+Class' && (
@@ -1103,7 +1109,7 @@ function CheckoutIndex() {
                           data={someData}
                           seat={seatTransit2Pulang}
                           bookedSeats={bookedSeatTransit2Pulang}
-                          selectedSeats = {[]}
+                          selectedSeats={[]}
                         />
                       )}
                     </>
@@ -1120,7 +1126,7 @@ function CheckoutIndex() {
                 >
                   Simpan
                 </Button>
-                {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+                {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
               </Box>
               <Box>
                 <Card.Root
@@ -1138,10 +1144,20 @@ function CheckoutIndex() {
                     </Card.Title>
                   </Card.Header>
                   <Card.Body>
-                    {!flightDetails &&(
-                      <Flex justifyContent="center" alignItems="center" height="100vh" bg="gray.100">
+                    {!flightDetails && (
+                      <Flex
+                        justifyContent="center"
+                        alignItems="center"
+                        height="100vh"
+                        bg="gray.100"
+                      >
                         <Spinner size="xl" color="teal.500" />
-                        <Text ml={4} fontSize="lg" color="gray.700" fontFamily="Inter, sans-serif">
+                        <Text
+                          ml={4}
+                          fontSize="lg"
+                          color="gray.700"
+                          fontFamily="Inter, sans-serif"
+                        >
                           Memuat Data Penerbangan...
                         </Text>
                       </Flex>
@@ -1149,697 +1165,740 @@ function CheckoutIndex() {
                     {!!flightDetails && (
                       <>
                         <Flex justifyContent="space-between">
-                        <Text fontWeight="bold">
-                          {new Date(
-                            firstFlight?.departure.time,
-                          ).toLocaleTimeString('id-ID', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            timeZone: 'UTC',
-                          })}
-                        </Text>
-                        <Text color="blue.400" fontWeight="bold">
-                          Keberangkatan
-                        </Text>
-                      </Flex>
-                      <Text>
-                        {new Date(firstFlight?.departure.time).toLocaleDateString(
-                          'id-ID',
-                          { day: 'numeric', month: 'long', year: 'numeric' },
-                        )}
-                      </Text>
-                      <Text fontWeight="bolder">
-                        {firstFlight?.departure.airport.name} -{' '}
-                        {firstFlight?.departure.terminal.name}{' '}
-                        {firstFlight?.departure.terminal.type}
-                      </Text>
-                      <Box
-                        borderBottom="2px solid"
-                        borderColor="gray.200"
-                        marginTop={3}
-                      />
-                      <Flex direction="column" marginLeft={7} marginTop={3}>
-                        <Text fontWeight="bold">
-                          {firstFlight?.airplane} - {ticketData?.class}
-                        </Text>
-                      </Flex>
-                      <Flex align="center" marginTop={3}>
-                        <FontAwesomeIcon
-                          icon={faSun}
-                          color="orange"
-                          marginLeft={1}
-                        />
-                        <Text fontWeight="bold" marginLeft={3}>
-                          Informasi :
-                        </Text>
-                      </Flex>
-                      <Flex marginLeft={7} direction="column">
-                        <Text>Baggage {firstFlight?.baggage} Kg</Text>
-                        <Text>Cabin baggage {firstFlight?.cabinBaggage} Kg</Text>
-                        {firstFlight?.entertainment === true && (
-                          <Text>In Flight Entertainment</Text>
-                        )}
-                      </Flex>
-                      <Box
-                        borderBottom="2px solid"
-                        borderColor="gray.200"
-                        marginTop={3}
-                        marginBottom={3}
-                      />
-                      <Flex justifyContent="space-between">
-                        <Text fontWeight="bold">
-                          {new Date(firstFlight?.arrival.time).toLocaleTimeString(
-                            'id-ID',
-                            {
+                          <Text fontWeight="bold">
+                            {new Date(
+                              firstFlight?.departure.time,
+                            ).toLocaleTimeString('id-ID', {
                               hour: '2-digit',
                               minute: '2-digit',
                               timeZone: 'UTC',
-                            },
-                          )}
-                        </Text>
-                        <Text color="blue.400" fontWeight="bold">
-                          Kedatangan
-                        </Text>
-                      </Flex>
-                      <Text>
-                        {new Date(firstFlight?.arrival.time).toLocaleDateString(
-                          'id-ID',
-                          { day: 'numeric', month: 'long', year: 'numeric' },
-                        )}
-                      </Text>
-                      <Text fontWeight="bolder">
-                        {firstFlight?.arrival.airport.name} -{' '}
-                        {firstFlight?.arrival.terminal.name}{' '}
-                        {firstFlight?.arrival.terminal.type}
-                      </Text>
-                      {!!secondFlight && (
-                        <>
-                          <Box
-                            borderBottom="2px solid"
-                            borderColor="gray.200"
-                            marginTop={3}
-                            marginBottom={5}
-                          />
-                          <Text
-                            fontWeight="bold"
-                            marginBottom={5}
-                            color="blue"
-                            fontSize="lg"
-                          >
-                            Detail Penerbangan Berangkat (Transit Pertama)
+                            })}
                           </Text>
-                          <Flex justifyContent="space-between">
-                            <Text fontWeight="bold">
+                          <Text color="blue.400" fontWeight="bold">
+                            Keberangkatan
+                          </Text>
+                        </Flex>
+                        <Text>
+                          {new Date(
+                            firstFlight?.departure.time,
+                          ).toLocaleDateString('id-ID', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
+                          })}
+                        </Text>
+                        <Text fontWeight="bolder">
+                          {firstFlight?.departure.airport.name} -{' '}
+                          {firstFlight?.departure.terminal.name}{' '}
+                          {firstFlight?.departure.terminal.type}
+                        </Text>
+                        <Box
+                          borderBottom="2px solid"
+                          borderColor="gray.200"
+                          marginTop={3}
+                        />
+                        <Flex direction="column" marginLeft={7} marginTop={3}>
+                          <Text fontWeight="bold">
+                            {firstFlight?.airplane} - {ticketData?.class}
+                          </Text>
+                        </Flex>
+                        <Flex align="center" marginTop={3}>
+                          <FontAwesomeIcon
+                            icon={faSun}
+                            color="orange"
+                            marginLeft={1}
+                          />
+                          <Text fontWeight="bold" marginLeft={3}>
+                            Informasi :
+                          </Text>
+                        </Flex>
+                        <Flex marginLeft={7} direction="column">
+                          <Text>Baggage {firstFlight?.baggage} Kg</Text>
+                          <Text>
+                            Cabin baggage {firstFlight?.cabinBaggage} Kg
+                          </Text>
+                          {firstFlight?.entertainment === true && (
+                            <Text>In Flight Entertainment</Text>
+                          )}
+                        </Flex>
+                        <Box
+                          borderBottom="2px solid"
+                          borderColor="gray.200"
+                          marginTop={3}
+                          marginBottom={3}
+                        />
+                        <Flex justifyContent="space-between">
+                          <Text fontWeight="bold">
+                            {new Date(
+                              firstFlight?.arrival.time,
+                            ).toLocaleTimeString('id-ID', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              timeZone: 'UTC',
+                            })}
+                          </Text>
+                          <Text color="blue.400" fontWeight="bold">
+                            Kedatangan
+                          </Text>
+                        </Flex>
+                        <Text>
+                          {new Date(
+                            firstFlight?.arrival.time,
+                          ).toLocaleDateString('id-ID', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
+                          })}
+                        </Text>
+                        <Text fontWeight="bolder">
+                          {firstFlight?.arrival.airport.name} -{' '}
+                          {firstFlight?.arrival.terminal.name}{' '}
+                          {firstFlight?.arrival.terminal.type}
+                        </Text>
+                        {!!secondFlight && (
+                          <>
+                            <Box
+                              borderBottom="2px solid"
+                              borderColor="gray.200"
+                              marginTop={3}
+                              marginBottom={5}
+                            />
+                            <Text
+                              fontWeight="bold"
+                              marginBottom={5}
+                              color="blue"
+                              fontSize="lg"
+                            >
+                              Detail Penerbangan Berangkat (Transit Pertama)
+                            </Text>
+                            <Flex justifyContent="space-between">
+                              <Text fontWeight="bold">
+                                {new Date(
+                                  secondFlight?.departure.time,
+                                ).toLocaleTimeString('id-ID', {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                  timeZone: 'UTC',
+                                })}
+                              </Text>
+                              <Text color="blue.400" fontWeight="bold">
+                                Keberangkatan
+                              </Text>
+                            </Flex>
+                            <Text>
                               {new Date(
                                 secondFlight?.departure.time,
-                              ).toLocaleTimeString('id-ID', {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                timeZone: 'UTC',
+                              ).toLocaleDateString('id-ID', {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric',
                               })}
                             </Text>
-                            <Text color="blue.400" fontWeight="bold">
-                              Keberangkatan
+                            <Text fontWeight="bolder">
+                              {secondFlight?.departure.airport.name} -{' '}
+                              {secondFlight?.departure.terminal.name}{' '}
+                              {secondFlight?.departure.terminal.type}
                             </Text>
-                          </Flex>
-                          <Text>
-                            {new Date(
-                              secondFlight?.departure.time,
-                            ).toLocaleDateString('id-ID', {
-                              day: 'numeric',
-                              month: 'long',
-                              year: 'numeric',
-                            })}
-                          </Text>
-                          <Text fontWeight="bolder">
-                            {secondFlight?.departure.airport.name} -{' '}
-                            {secondFlight?.departure.terminal.name}{' '}
-                            {secondFlight?.departure.terminal.type}
-                          </Text>
-                          <Box
-                            borderBottom="2px solid"
-                            borderColor="gray.200"
-                            marginTop={3}
-                          />
-                          <Flex direction="column" marginLeft={7} marginTop={3}>
-                            <Text fontWeight="bold">
-                              {secondFlight?.airplane} - {ticketData?.class}
-                            </Text>
-                          </Flex>
-                          <Flex align="center" marginTop={3}>
-                            <FontAwesomeIcon
-                              icon={faSun}
-                              color="orange"
-                              marginLeft={1}
+                            <Box
+                              borderBottom="2px solid"
+                              borderColor="gray.200"
+                              marginTop={3}
                             />
-                            <Text fontWeight="bold" marginLeft={3}>
-                              Informasi :
-                            </Text>
-                          </Flex>
-                          <Flex marginLeft={7} direction="column">
-                            <Text>Baggage {secondFlight?.baggage} Kg</Text>
+                            <Flex
+                              direction="column"
+                              marginLeft={7}
+                              marginTop={3}
+                            >
+                              <Text fontWeight="bold">
+                                {secondFlight?.airplane} - {ticketData?.class}
+                              </Text>
+                            </Flex>
+                            <Flex align="center" marginTop={3}>
+                              <FontAwesomeIcon
+                                icon={faSun}
+                                color="orange"
+                                marginLeft={1}
+                              />
+                              <Text fontWeight="bold" marginLeft={3}>
+                                Informasi :
+                              </Text>
+                            </Flex>
+                            <Flex marginLeft={7} direction="column">
+                              <Text>Baggage {secondFlight?.baggage} Kg</Text>
+                              <Text>
+                                Cabin baggage {secondFlight?.cabinBaggage} Kg
+                              </Text>
+                              {secondFlight?.entertainment === true && (
+                                <Text>In Flight Entertainment</Text>
+                              )}
+                            </Flex>
+                            <Box
+                              borderBottom="2px solid"
+                              borderColor="gray.200"
+                              marginTop={3}
+                              marginBottom={3}
+                            />
+                            <Flex justifyContent="space-between">
+                              <Text fontWeight="bold">
+                                {new Date(
+                                  secondFlight?.arrival.time,
+                                ).toLocaleTimeString('id-ID', {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                  timeZone: 'UTC',
+                                })}
+                              </Text>
+                              <Text color="blue.400" fontWeight="bold">
+                                Kedatangan
+                              </Text>
+                            </Flex>
                             <Text>
-                              Cabin baggage {secondFlight?.cabinBaggage} Kg
-                            </Text>
-                            {secondFlight?.entertainment === true && (
-                              <Text>In Flight Entertainment</Text>
-                            )}
-                          </Flex>
-                          <Box
-                            borderBottom="2px solid"
-                            borderColor="gray.200"
-                            marginTop={3}
-                            marginBottom={3}
-                          />
-                          <Flex justifyContent="space-between">
-                            <Text fontWeight="bold">
                               {new Date(
                                 secondFlight?.arrival.time,
-                              ).toLocaleTimeString('id-ID', {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                timeZone: 'UTC',
+                              ).toLocaleDateString('id-ID', {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric',
                               })}
                             </Text>
-                            <Text color="blue.400" fontWeight="bold">
-                              Kedatangan
+                            <Text fontWeight="bolder">
+                              {secondFlight?.arrival.airport.name} -{' '}
+                              {secondFlight?.arrival.terminal.name}{' '}
+                              {secondFlight?.arrival.terminal.type}
                             </Text>
-                          </Flex>
-                          <Text>
-                            {new Date(
-                              secondFlight?.arrival.time,
-                            ).toLocaleDateString('id-ID', {
-                              day: 'numeric',
-                              month: 'long',
-                              year: 'numeric',
-                            })}
-                          </Text>
-                          <Text fontWeight="bolder">
-                            {secondFlight?.arrival.airport.name} -{' '}
-                            {secondFlight?.arrival.terminal.name}{' '}
-                            {secondFlight?.arrival.terminal.type}
-                          </Text>
-                        </>
-                      )}
-                      {!!thirdFlight && (
-                        <>
-                          <Box
-                            borderBottom="2px solid"
-                            borderColor="gray.200"
-                            marginTop={3}
-                            marginBottom={5}
-                          />
-                          <Text
-                            fontWeight="bold"
-                            marginBottom={5}
-                            color="blue"
-                            fontSize="lg"
-                          >
-                            Detail Penerbangan Berangkat (Transit Kedua)
-                          </Text>
-                          <Flex justifyContent="space-between">
-                            <Text fontWeight="bold">
+                          </>
+                        )}
+                        {!!thirdFlight && (
+                          <>
+                            <Box
+                              borderBottom="2px solid"
+                              borderColor="gray.200"
+                              marginTop={3}
+                              marginBottom={5}
+                            />
+                            <Text
+                              fontWeight="bold"
+                              marginBottom={5}
+                              color="blue"
+                              fontSize="lg"
+                            >
+                              Detail Penerbangan Berangkat (Transit Kedua)
+                            </Text>
+                            <Flex justifyContent="space-between">
+                              <Text fontWeight="bold">
+                                {new Date(
+                                  thirdFlight?.departure.time,
+                                ).toLocaleTimeString('id-ID', {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                  timeZone: 'UTC',
+                                })}
+                              </Text>
+                              <Text color="blue.400" fontWeight="bold">
+                                Keberangkatan
+                              </Text>
+                            </Flex>
+                            <Text>
                               {new Date(
                                 thirdFlight?.departure.time,
-                              ).toLocaleTimeString('id-ID', {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                timeZone: 'UTC',
+                              ).toLocaleDateString('id-ID', {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric',
                               })}
                             </Text>
-                            <Text color="blue.400" fontWeight="bold">
-                              Keberangkatan
+                            <Text fontWeight="bolder">
+                              {thirdFlight?.departure.airport.name} -{' '}
+                              {thirdFlight?.departure.terminal.name}{' '}
+                              {thirdFlight?.departure.terminal.type}
                             </Text>
-                          </Flex>
-                          <Text>
-                            {new Date(
-                              thirdFlight?.departure.time,
-                            ).toLocaleDateString('id-ID', {
-                              day: 'numeric',
-                              month: 'long',
-                              year: 'numeric',
-                            })}
-                          </Text>
-                          <Text fontWeight="bolder">
-                            {thirdFlight?.departure.airport.name} -{' '}
-                            {thirdFlight?.departure.terminal.name}{' '}
-                            {thirdFlight?.departure.terminal.type}
-                          </Text>
-                          <Box
-                            borderBottom="2px solid"
-                            borderColor="gray.200"
-                            marginTop={3}
-                          />
-                          <Flex direction="column" marginLeft={7} marginTop={3}>
-                            <Text fontWeight="bold">
-                              {thirdFlight?.airplane} - {ticketData?.class}
-                            </Text>
-                          </Flex>
-                          <Flex align="center" marginTop={3}>
-                            <FontAwesomeIcon
-                              icon={faSun}
-                              color="orange"
-                              marginLeft={1}
+                            <Box
+                              borderBottom="2px solid"
+                              borderColor="gray.200"
+                              marginTop={3}
                             />
-                            <Text fontWeight="bold" marginLeft={3}>
-                              Informasi :
-                            </Text>
-                          </Flex>
-                          <Flex marginLeft={7} direction="column">
-                            <Text>Baggage {thirdFlight?.baggage} Kg</Text>
+                            <Flex
+                              direction="column"
+                              marginLeft={7}
+                              marginTop={3}
+                            >
+                              <Text fontWeight="bold">
+                                {thirdFlight?.airplane} - {ticketData?.class}
+                              </Text>
+                            </Flex>
+                            <Flex align="center" marginTop={3}>
+                              <FontAwesomeIcon
+                                icon={faSun}
+                                color="orange"
+                                marginLeft={1}
+                              />
+                              <Text fontWeight="bold" marginLeft={3}>
+                                Informasi :
+                              </Text>
+                            </Flex>
+                            <Flex marginLeft={7} direction="column">
+                              <Text>Baggage {thirdFlight?.baggage} Kg</Text>
+                              <Text>
+                                Cabin baggage {thirdFlight?.cabinBaggage} Kg
+                              </Text>
+                              {thirdFlight?.entertainment === true && (
+                                <Text>In Flight Entertainment</Text>
+                              )}
+                            </Flex>
+                            <Box
+                              borderBottom="2px solid"
+                              borderColor="gray.200"
+                              marginTop={3}
+                              marginBottom={3}
+                            />
+                            <Flex justifyContent="space-between">
+                              <Text fontWeight="bold">
+                                {new Date(
+                                  thirdFlight?.arrival.time,
+                                ).toLocaleTimeString('id-ID', {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                  timeZone: 'UTC',
+                                })}
+                              </Text>
+                              <Text color="blue.400" fontWeight="bold">
+                                Kedatangan
+                              </Text>
+                            </Flex>
                             <Text>
-                              Cabin baggage {thirdFlight?.cabinBaggage} Kg
-                            </Text>
-                            {thirdFlight?.entertainment === true && (
-                              <Text>In Flight Entertainment</Text>
-                            )}
-                          </Flex>
-                          <Box
-                            borderBottom="2px solid"
-                            borderColor="gray.200"
-                            marginTop={3}
-                            marginBottom={3}
-                          />
-                          <Flex justifyContent="space-between">
-                            <Text fontWeight="bold">
                               {new Date(
                                 thirdFlight?.arrival.time,
-                              ).toLocaleTimeString('id-ID', {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                timeZone: 'UTC',
+                              ).toLocaleDateString('id-ID', {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric',
                               })}
                             </Text>
-                            <Text color="blue.400" fontWeight="bold">
-                              Kedatangan
+                            <Text fontWeight="bolder">
+                              {thirdFlight?.arrival.airport.name} -{' '}
+                              {thirdFlight?.arrival.terminal.name}{' '}
+                              {thirdFlight?.arrival.terminal.type}
                             </Text>
-                          </Flex>
-                          <Text>
-                            {new Date(
-                              thirdFlight?.arrival.time,
-                            ).toLocaleDateString('id-ID', {
-                              day: 'numeric',
-                              month: 'long',
-                              year: 'numeric',
-                            })}
-                          </Text>
-                          <Text fontWeight="bolder">
-                            {thirdFlight?.arrival.airport.name} -{' '}
-                            {thirdFlight?.arrival.terminal.name}{' '}
-                            {thirdFlight?.arrival.terminal.type}
-                          </Text>
-                        </>
-                      )}
-                      {ticketData2 && (
-                        <>
-                          <Box
-                            borderBottom="2px solid"
-                            borderColor="gray.200"
-                            marginTop={3}
-                            marginBottom={5}
-                          />
-                          <Text
-                            fontWeight="bold"
-                            marginBottom={5}
-                            color="blue"
-                            fontSize="lg"
-                          >
-                            Detail Penerbangan Pulang
-                          </Text>
-                          <Flex justifyContent="space-between">
-                            <Text fontWeight="bold">
+                          </>
+                        )}
+                        {ticketData2 && (
+                          <>
+                            <Box
+                              borderBottom="2px solid"
+                              borderColor="gray.200"
+                              marginTop={3}
+                              marginBottom={5}
+                            />
+                            <Text
+                              fontWeight="bold"
+                              marginBottom={5}
+                              color="blue"
+                              fontSize="lg"
+                            >
+                              Detail Penerbangan Pulang
+                            </Text>
+                            <Flex justifyContent="space-between">
+                              <Text fontWeight="bold">
+                                {new Date(
+                                  firtsReturnFlight?.departure.time,
+                                ).toLocaleTimeString('id-ID', {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                  timeZone: 'UTC',
+                                })}
+                              </Text>
+                              <Text color="blue.400" fontWeight="bold">
+                                Keberangkatan
+                              </Text>
+                            </Flex>
+                            <Text>
                               {new Date(
                                 firtsReturnFlight?.departure.time,
-                              ).toLocaleTimeString('id-ID', {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                timeZone: 'UTC',
+                              ).toLocaleDateString('id-ID', {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric',
                               })}
                             </Text>
-                            <Text color="blue.400" fontWeight="bold">
-                              Keberangkatan
+                            <Text fontWeight="bolder">
+                              {firtsReturnFlight?.departure.airport.name} -{' '}
+                              {firtsReturnFlight?.departure.terminal.name}{' '}
+                              {firtsReturnFlight?.departure.terminal.type}
                             </Text>
-                          </Flex>
-                          <Text>
-                            {new Date(
-                              firtsReturnFlight?.departure.time,
-                            ).toLocaleDateString('id-ID', {
-                              day: 'numeric',
-                              month: 'long',
-                              year: 'numeric',
-                            })}
-                          </Text>
-                          <Text fontWeight="bolder">
-                            {firtsReturnFlight?.departure.airport.name} -{' '}
-                            {firtsReturnFlight?.departure.terminal.name}{' '}
-                            {firtsReturnFlight?.departure.terminal.type}
-                          </Text>
-                          <Box
-                            borderBottom="2px solid"
-                            borderColor="gray.200"
-                            marginTop={3}
-                          />
-                          <Flex direction="column" marginLeft={7} marginTop={3}>
-                            <Text fontWeight="bold">
-                              {firtsReturnFlight?.airplane} - {ticketData?.class}
-                            </Text>
-                          </Flex>
-                          <Flex align="center" marginTop={3}>
-                            <FontAwesomeIcon
-                              icon={faSun}
-                              color="orange"
-                              marginLeft={1}
+                            <Box
+                              borderBottom="2px solid"
+                              borderColor="gray.200"
+                              marginTop={3}
                             />
-                            <Text fontWeight="bold" marginLeft={3}>
-                              Informasi :
-                            </Text>
-                          </Flex>
-                          <Flex marginLeft={7} direction="column">
-                            <Text>Baggage {firtsReturnFlight?.baggage} Kg</Text>
+                            <Flex
+                              direction="column"
+                              marginLeft={7}
+                              marginTop={3}
+                            >
+                              <Text fontWeight="bold">
+                                {firtsReturnFlight?.airplane} -{' '}
+                                {ticketData?.class}
+                              </Text>
+                            </Flex>
+                            <Flex align="center" marginTop={3}>
+                              <FontAwesomeIcon
+                                icon={faSun}
+                                color="orange"
+                                marginLeft={1}
+                              />
+                              <Text fontWeight="bold" marginLeft={3}>
+                                Informasi :
+                              </Text>
+                            </Flex>
+                            <Flex marginLeft={7} direction="column">
+                              <Text>
+                                Baggage {firtsReturnFlight?.baggage} Kg
+                              </Text>
+                              <Text>
+                                Cabin baggage {firtsReturnFlight?.cabinBaggage}{' '}
+                                Kg
+                              </Text>
+                              {firtsReturnFlight?.entertainment === true && (
+                                <Text>In Flight Entertainment</Text>
+                              )}
+                            </Flex>
+                            <Box
+                              borderBottom="2px solid"
+                              borderColor="gray.200"
+                              marginTop={3}
+                              marginBottom={3}
+                            />
+                            <Flex justifyContent="space-between">
+                              <Text fontWeight="bold">
+                                {new Date(
+                                  firtsReturnFlight?.arrival.time,
+                                ).toLocaleTimeString('id-ID', {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                  timeZone: 'UTC',
+                                })}
+                              </Text>
+                              <Text color="blue.400" fontWeight="bold">
+                                Kedatangan
+                              </Text>
+                            </Flex>
                             <Text>
-                              Cabin baggage {firtsReturnFlight?.cabinBaggage} Kg
-                            </Text>
-                            {firtsReturnFlight?.entertainment === true && (
-                              <Text>In Flight Entertainment</Text>
-                            )}
-                          </Flex>
-                          <Box
-                            borderBottom="2px solid"
-                            borderColor="gray.200"
-                            marginTop={3}
-                            marginBottom={3}
-                          />
-                          <Flex justifyContent="space-between">
-                            <Text fontWeight="bold">
                               {new Date(
                                 firtsReturnFlight?.arrival.time,
-                              ).toLocaleTimeString('id-ID', {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                timeZone: 'UTC',
+                              ).toLocaleDateString('id-ID', {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric',
                               })}
                             </Text>
-                            <Text color="blue.400" fontWeight="bold">
-                              Kedatangan
+                            <Text fontWeight="bolder">
+                              {firtsReturnFlight?.arrival.airport.name} -{' '}
+                              {firtsReturnFlight?.arrival.terminal.name}{' '}
+                              {firtsReturnFlight?.arrival.terminal.type}
                             </Text>
-                          </Flex>
-                          <Text>
-                            {new Date(
-                              firtsReturnFlight?.arrival.time,
-                            ).toLocaleDateString('id-ID', {
-                              day: 'numeric',
-                              month: 'long',
-                              year: 'numeric',
-                            })}
-                          </Text>
-                          <Text fontWeight="bolder">
-                            {firtsReturnFlight?.arrival.airport.name} -{' '}
-                            {firtsReturnFlight?.arrival.terminal.name}{' '}
-                            {firtsReturnFlight?.arrival.terminal.type}
-                          </Text>
-                        </>
-                      )}
-                      {!!secondReturnFlight && (
-                        <>
-                          <Box
-                            borderBottom="2px solid"
-                            borderColor="gray.200"
-                            marginTop={3}
-                            marginBottom={5}
-                          />
-                          <Text
-                            fontWeight="bold"
-                            marginBottom={5}
-                            color="blue"
-                            fontSize="lg"
-                          >
-                            Detail Penerbangan Pulang (Transit Pertama)
-                          </Text>
-                          <Flex justifyContent="space-between">
-                            <Text fontWeight="bold">
+                          </>
+                        )}
+                        {!!secondReturnFlight && (
+                          <>
+                            <Box
+                              borderBottom="2px solid"
+                              borderColor="gray.200"
+                              marginTop={3}
+                              marginBottom={5}
+                            />
+                            <Text
+                              fontWeight="bold"
+                              marginBottom={5}
+                              color="blue"
+                              fontSize="lg"
+                            >
+                              Detail Penerbangan Pulang (Transit Pertama)
+                            </Text>
+                            <Flex justifyContent="space-between">
+                              <Text fontWeight="bold">
+                                {new Date(
+                                  secondReturnFlight?.departure.time,
+                                ).toLocaleTimeString('id-ID', {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                  timeZone: 'UTC',
+                                })}
+                              </Text>
+                              <Text color="blue.400" fontWeight="bold">
+                                Keberangkatan
+                              </Text>
+                            </Flex>
+                            <Text>
                               {new Date(
                                 secondReturnFlight?.departure.time,
-                              ).toLocaleTimeString('id-ID', {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                timeZone: 'UTC',
+                              ).toLocaleDateString('id-ID', {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric',
                               })}
                             </Text>
-                            <Text color="blue.400" fontWeight="bold">
-                              Keberangkatan
+                            <Text fontWeight="bolder">
+                              {secondReturnFlight?.departure.airport.name} -{' '}
+                              {secondReturnFlight?.departure.terminal.name}{' '}
+                              {secondReturnFlight?.departure.terminal.type}
                             </Text>
-                          </Flex>
-                          <Text>
-                            {new Date(
-                              secondReturnFlight?.departure.time,
-                            ).toLocaleDateString('id-ID', {
-                              day: 'numeric',
-                              month: 'long',
-                              year: 'numeric',
-                            })}
-                          </Text>
-                          <Text fontWeight="bolder">
-                            {secondReturnFlight?.departure.airport.name} -{' '}
-                            {secondReturnFlight?.departure.terminal.name}{' '}
-                            {secondReturnFlight?.departure.terminal.type}
-                          </Text>
-                          <Box
-                            borderBottom="2px solid"
-                            borderColor="gray.200"
-                            marginTop={3}
-                          />
-                          <Flex direction="column" marginLeft={7} marginTop={3}>
-                            <Text fontWeight="bold">
-                              {secondReturnFlight?.airplane} - {ticketData?.class}
-                            </Text>
-                          </Flex>
-                          <Flex align="center" marginTop={3}>
-                            <FontAwesomeIcon
-                              icon={faSun}
-                              color="orange"
-                              marginLeft={1}
+                            <Box
+                              borderBottom="2px solid"
+                              borderColor="gray.200"
+                              marginTop={3}
                             />
-                            <Text fontWeight="bold" marginLeft={3}>
-                              Informasi :
-                            </Text>
-                          </Flex>
-                          <Flex marginLeft={7} direction="column">
-                            <Text>Baggage {secondReturnFlight?.baggage} Kg</Text>
+                            <Flex
+                              direction="column"
+                              marginLeft={7}
+                              marginTop={3}
+                            >
+                              <Text fontWeight="bold">
+                                {secondReturnFlight?.airplane} -{' '}
+                                {ticketData?.class}
+                              </Text>
+                            </Flex>
+                            <Flex align="center" marginTop={3}>
+                              <FontAwesomeIcon
+                                icon={faSun}
+                                color="orange"
+                                marginLeft={1}
+                              />
+                              <Text fontWeight="bold" marginLeft={3}>
+                                Informasi :
+                              </Text>
+                            </Flex>
+                            <Flex marginLeft={7} direction="column">
+                              <Text>
+                                Baggage {secondReturnFlight?.baggage} Kg
+                              </Text>
+                              <Text>
+                                Cabin baggage {secondReturnFlight?.cabinBaggage}{' '}
+                                Kg
+                              </Text>
+                              {secondReturnFlight?.entertainment === true && (
+                                <Text>In Flight Entertainment</Text>
+                              )}
+                            </Flex>
+                            <Box
+                              borderBottom="2px solid"
+                              borderColor="gray.200"
+                              marginTop={3}
+                              marginBottom={3}
+                            />
+                            <Flex justifyContent="space-between">
+                              <Text fontWeight="bold">
+                                {new Date(
+                                  secondReturnFlight?.arrival.time,
+                                ).toLocaleTimeString('id-ID', {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                  timeZone: 'UTC',
+                                })}
+                              </Text>
+                              <Text color="blue.400" fontWeight="bold">
+                                Kedatangan
+                              </Text>
+                            </Flex>
                             <Text>
-                              Cabin baggage {secondReturnFlight?.cabinBaggage} Kg
-                            </Text>
-                            {secondReturnFlight?.entertainment === true && (
-                              <Text>In Flight Entertainment</Text>
-                            )}
-                          </Flex>
-                          <Box
-                            borderBottom="2px solid"
-                            borderColor="gray.200"
-                            marginTop={3}
-                            marginBottom={3}
-                          />
-                          <Flex justifyContent="space-between">
-                            <Text fontWeight="bold">
                               {new Date(
                                 secondReturnFlight?.arrival.time,
-                              ).toLocaleTimeString('id-ID', {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                timeZone: 'UTC',
+                              ).toLocaleDateString('id-ID', {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric',
                               })}
                             </Text>
-                            <Text color="blue.400" fontWeight="bold">
-                              Kedatangan
+                            <Text fontWeight="bolder">
+                              {secondReturnFlight?.arrival.airport.name} -{' '}
+                              {secondReturnFlight?.arrival.terminal.name}{' '}
+                              {secondReturnFlight?.arrival.terminal.type}
                             </Text>
-                          </Flex>
-                          <Text>
-                            {new Date(
-                              secondReturnFlight?.arrival.time,
-                            ).toLocaleDateString('id-ID', {
-                              day: 'numeric',
-                              month: 'long',
-                              year: 'numeric',
-                            })}
-                          </Text>
-                          <Text fontWeight="bolder">
-                            {secondReturnFlight?.arrival.airport.name} -{' '}
-                            {secondReturnFlight?.arrival.terminal.name}{' '}
-                            {secondReturnFlight?.arrival.terminal.type}
-                          </Text>
-                        </>
-                      )}
-                      {!!thirdReturnFlight && (
-                        <>
-                          <Box
-                            borderBottom="2px solid"
-                            borderColor="gray.200"
-                            marginTop={3}
-                            marginBottom={5}
-                          />
-                          <Text
-                            fontWeight="bold"
-                            marginBottom={5}
-                            color="blue"
-                            fontSize="lg"
-                          >
-                            Detail Penerbangan Pulang (Transit Kedua)
-                          </Text>
-                          <Flex justifyContent="space-between">
-                            <Text fontWeight="bold">
+                          </>
+                        )}
+                        {!!thirdReturnFlight && (
+                          <>
+                            <Box
+                              borderBottom="2px solid"
+                              borderColor="gray.200"
+                              marginTop={3}
+                              marginBottom={5}
+                            />
+                            <Text
+                              fontWeight="bold"
+                              marginBottom={5}
+                              color="blue"
+                              fontSize="lg"
+                            >
+                              Detail Penerbangan Pulang (Transit Kedua)
+                            </Text>
+                            <Flex justifyContent="space-between">
+                              <Text fontWeight="bold">
+                                {new Date(
+                                  thirdReturnFlight?.departure.time,
+                                ).toLocaleTimeString('id-ID', {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                  timeZone: 'UTC',
+                                })}
+                              </Text>
+                              <Text color="blue.400" fontWeight="bold">
+                                Keberangkatan
+                              </Text>
+                            </Flex>
+                            <Text>
                               {new Date(
                                 thirdReturnFlight?.departure.time,
-                              ).toLocaleTimeString('id-ID', {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                timeZone: 'UTC',
+                              ).toLocaleDateString('id-ID', {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric',
                               })}
                             </Text>
-                            <Text color="blue.400" fontWeight="bold">
-                              Keberangkatan
+                            <Text fontWeight="bolder">
+                              {thirdReturnFlight?.departure.airport.name} -{' '}
+                              {thirdReturnFlight?.departure.terminal.name}{' '}
+                              {thirdReturnFlight?.departure.terminal.type}
                             </Text>
-                          </Flex>
-                          <Text>
-                            {new Date(
-                              thirdReturnFlight?.departure.time,
-                            ).toLocaleDateString('id-ID', {
-                              day: 'numeric',
-                              month: 'long',
-                              year: 'numeric',
-                            })}
-                          </Text>
-                          <Text fontWeight="bolder">
-                            {thirdReturnFlight?.departure.airport.name} -{' '}
-                            {thirdReturnFlight?.departure.terminal.name}{' '}
-                            {thirdReturnFlight?.departure.terminal.type}
-                          </Text>
-                          <Box
-                            borderBottom="2px solid"
-                            borderColor="gray.200"
-                            marginTop={3}
-                          />
-                          <Flex direction="column" marginLeft={7} marginTop={3}>
-                            <Text fontWeight="bold">
-                              {thirdReturnFlight?.airplane} - {ticketData?.class}
-                            </Text>
-                          </Flex>
-                          <Flex align="center" marginTop={3}>
-                            <FontAwesomeIcon
-                              icon={faSun}
-                              color="orange"
-                              marginLeft={1}
+                            <Box
+                              borderBottom="2px solid"
+                              borderColor="gray.200"
+                              marginTop={3}
                             />
-                            <Text fontWeight="bold" marginLeft={3}>
-                              Informasi :
-                            </Text>
-                          </Flex>
-                          <Flex marginLeft={7} direction="column">
-                            <Text>Baggage {thirdReturnFlight?.baggage} Kg</Text>
+                            <Flex
+                              direction="column"
+                              marginLeft={7}
+                              marginTop={3}
+                            >
+                              <Text fontWeight="bold">
+                                {thirdReturnFlight?.airplane} -{' '}
+                                {ticketData?.class}
+                              </Text>
+                            </Flex>
+                            <Flex align="center" marginTop={3}>
+                              <FontAwesomeIcon
+                                icon={faSun}
+                                color="orange"
+                                marginLeft={1}
+                              />
+                              <Text fontWeight="bold" marginLeft={3}>
+                                Informasi :
+                              </Text>
+                            </Flex>
+                            <Flex marginLeft={7} direction="column">
+                              <Text>
+                                Baggage {thirdReturnFlight?.baggage} Kg
+                              </Text>
+                              <Text>
+                                Cabin baggage {thirdReturnFlight?.cabinBaggage}{' '}
+                                Kg
+                              </Text>
+                              {thirdReturnFlight?.entertainment === true && (
+                                <Text>In Flight Entertainment</Text>
+                              )}
+                            </Flex>
+                            <Box
+                              borderBottom="2px solid"
+                              borderColor="gray.200"
+                              marginTop={3}
+                              marginBottom={3}
+                            />
+                            <Flex justifyContent="space-between">
+                              <Text fontWeight="bold">
+                                {new Date(
+                                  thirdReturnFlight?.arrival.time,
+                                ).toLocaleTimeString('id-ID', {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                  timeZone: 'UTC',
+                                })}
+                              </Text>
+                              <Text color="blue.400" fontWeight="bold">
+                                Kedatangan
+                              </Text>
+                            </Flex>
                             <Text>
-                              Cabin baggage {thirdReturnFlight?.cabinBaggage} Kg
-                            </Text>
-                            {thirdReturnFlight?.entertainment === true && (
-                              <Text>In Flight Entertainment</Text>
-                            )}
-                          </Flex>
-                          <Box
-                            borderBottom="2px solid"
-                            borderColor="gray.200"
-                            marginTop={3}
-                            marginBottom={3}
-                          />
-                          <Flex justifyContent="space-between">
-                            <Text fontWeight="bold">
                               {new Date(
                                 thirdReturnFlight?.arrival.time,
-                              ).toLocaleTimeString('id-ID', {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                timeZone: 'UTC',
+                              ).toLocaleDateString('id-ID', {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric',
                               })}
                             </Text>
-                            <Text color="blue.400" fontWeight="bold">
-                              Kedatangan
+                            <Text fontWeight="bolder">
+                              {thirdReturnFlight?.arrival.airport.name} -{' '}
+                              {thirdReturnFlight?.arrival.terminal.name}{' '}
+                              {thirdReturnFlight?.arrival.terminal.type}
                             </Text>
-                          </Flex>
+                          </>
+                        )}
+                        <Box
+                          borderBottom="2px solid"
+                          borderColor="gray.200"
+                          marginTop={3}
+                          marginBottom={3}
+                        />
+                        <Text fontWeight="bold">Rincian Harga</Text>
+                        <Flex justifyContent="space-between" marginTop={1}>
+                          <Text>{dewasa} Dewasa</Text>
                           <Text>
-                            {new Date(
-                              thirdReturnFlight?.arrival.time,
-                            ).toLocaleDateString('id-ID', {
-                              day: 'numeric',
-                              month: 'long',
-                              year: 'numeric',
-                            })}
+                            {new Intl.NumberFormat('id-ID', {
+                              style: 'currency',
+                              currency: 'IDR',
+                              minimumFractionDigits: 0,
+                              maximumFractionDigits: 0,
+                            })
+                              .format(totalTicketDewasa)
+                              .replace('Rp', 'IDR')}
                           </Text>
-                          <Text fontWeight="bolder">
-                            {thirdReturnFlight?.arrival.airport.name} -{' '}
-                            {thirdReturnFlight?.arrival.terminal.name}{' '}
-                            {thirdReturnFlight?.arrival.terminal.type}
+                        </Flex>
+                        <Flex justifyContent="space-between" marginTop={1}>
+                          <Text>{anak} Anak</Text>
+                          <Text>
+                            {new Intl.NumberFormat('id-ID', {
+                              style: 'currency',
+                              currency: 'IDR',
+                              minimumFractionDigits: 0,
+                              maximumFractionDigits: 0,
+                            })
+                              .format(totalTicketAnak)
+                              .replace('Rp', 'IDR')}
                           </Text>
-                        </>
-                      )}
-                      <Box
-                        borderBottom="2px solid"
-                        borderColor="gray.200"
-                        marginTop={3}
-                        marginBottom={3}
-                      />
-                      <Text fontWeight="bold">Rincian Harga</Text>
-                      <Flex justifyContent="space-between" marginTop={1}>
-                        <Text>{dewasa} Dewasa</Text>
-                        <Text>
-                          {new Intl.NumberFormat('id-ID', {
-                            style: 'currency',
-                            currency: 'IDR',
-                            minimumFractionDigits: 0,
-                            maximumFractionDigits: 0,
-                          })
-                            .format(totalTicketDewasa)
-                            .replace('Rp', 'IDR')}
-                        </Text>
-                      </Flex>
-                      <Flex justifyContent="space-between" marginTop={1}>
-                        <Text>{anak} Anak</Text>
-                        <Text>
-                          {new Intl.NumberFormat('id-ID', {
-                            style: 'currency',
-                            currency: 'IDR',
-                            minimumFractionDigits: 0,
-                            maximumFractionDigits: 0,
-                          })
-                            .format(totalTicketAnak)
-                            .replace('Rp', 'IDR')}
-                        </Text>
-                      </Flex>
-                      <Flex justifyContent="space-between" marginTop={1}>
-                        <Text>{bayi} Bayi</Text>
-                        <Text>IDR 0</Text>
-                      </Flex>
-                      <Flex justifyContent="space-between" marginTop={1}>
-                        <Text>Tax</Text>
-                        <Text>IDR 0</Text>
-                      </Flex>
-                      <Box
-                        borderBottom="2px solid"
-                        borderColor="gray.200"
-                        marginTop={2}
-                        marginBottom={3}
-                      />
-                      <Flex justifyContent="space-between" marginTop={1}>
-                        <Text fontWeight="bold" fontSize="larger">
-                          Total
-                        </Text>
-                        <Text fontWeight="bold" fontSize="larger" color="blue">
-                          {new Intl.NumberFormat('id-ID', {
-                            style: 'currency',
-                            currency: 'IDR',
-                            minimumFractionDigits: 0,
-                            maximumFractionDigits: 0,
-                          })
-                            .format(totalTicketDewasa + totalTicketAnak)
-                            .replace('Rp', 'IDR')}
-                        </Text>
-                      </Flex>
-                    </>
+                        </Flex>
+                        <Flex justifyContent="space-between" marginTop={1}>
+                          <Text>{bayi} Bayi</Text>
+                          <Text>IDR 0</Text>
+                        </Flex>
+                        <Flex justifyContent="space-between" marginTop={1}>
+                          <Text>Tax</Text>
+                          <Text>IDR 0</Text>
+                        </Flex>
+                        <Box
+                          borderBottom="2px solid"
+                          borderColor="gray.200"
+                          marginTop={2}
+                          marginBottom={3}
+                        />
+                        <Flex justifyContent="space-between" marginTop={1}>
+                          <Text fontWeight="bold" fontSize="larger">
+                            Total
+                          </Text>
+                          <Text
+                            fontWeight="bold"
+                            fontSize="larger"
+                            color="blue"
+                          >
+                            {new Intl.NumberFormat('id-ID', {
+                              style: 'currency',
+                              currency: 'IDR',
+                              minimumFractionDigits: 0,
+                              maximumFractionDigits: 0,
+                            })
+                              .format(totalTicketDewasa + totalTicketAnak)
+                              .replace('Rp', 'IDR')}
+                          </Text>
+                        </Flex>
+                      </>
                     )}
                   </Card.Body>
                 </Card.Root>
