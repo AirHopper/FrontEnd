@@ -33,6 +33,9 @@ const FilterDay = ({ selectedDay, setSelectedDay, paramsDate, onUpdateTickets, f
 		}
 	}, [reqDate, dates, setSelectedDay]);
 
+	const todayMinusOne = new Date();
+	todayMinusOne.setUTCDate(todayMinusOne.getUTCDate() - 1);
+
 	const handleDayClick = index => {
 		const selectedDate = new Date(dates[index]).toISOString().split('T')[0];
 

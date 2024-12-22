@@ -208,7 +208,9 @@ function HistoryCard({ orders, onSelectOrder, selectedOrderId }) {
 								<Text textAlign="left" fontSize={'sm'} fontWeight="bold">
 									Class:
 								</Text>
-								<Text fontSize={'sm'}>{order.outboundTicket.class}</Text>
+								<Text textAlign="center" fontSize="sm" style={{ whiteSpace: 'nowrap' }}>
+									{order?.outboundTicket?.class?.replace(/_/g, ' ')}
+								</Text>
 							</VStack>
 
 							<Text fontSize={'md'} fontWeight="bold" color="#2078B8" textAlign="right">
