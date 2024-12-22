@@ -8,20 +8,23 @@ export const getHistory = async params => {
 	const token = localStorage.getItem('token');
 	const url = `${import.meta.env.VITE_API_URL}${import.meta.env.VITE_API_VERSION}/orders?${queryParams.toString()}`;
 
-	const response = await fetch(url, {
-		headers: {
-			authorization: `Bearer ${token}`,
-		},
-		method: 'GET',
-	});
+	try {
+		const response = await fetch(url, {
+			headers: {
+				authorization: `Bearer ${token}`,
+			},
+			method: 'GET',
+		});
+		const result = await response.json();
 
-	// get the data if fetching succeed!
-	const result = await response.json();
-	if (!result?.success) {
-		throw new Error(result?.message);
+		if (!result?.success) {
+			throw new Error(result?.message);
+		}
+
+		return result?.data;
+	} catch (error) {
+		throw error;
 	}
-
-	return result?.data;
 };
 
 // service.js

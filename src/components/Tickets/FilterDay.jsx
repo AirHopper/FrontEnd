@@ -33,20 +33,6 @@ const FilterDay = ({ selectedDay, setSelectedDay, paramsDate, onUpdateTickets, f
 		}
 	}, [reqDate, dates, setSelectedDay]);
 
-	useEffect(() => {
-		if (formattedParamsDate && formattedParamsDate < formattedFlightDate) {
-			toast.warn('Tanggal pulang harus setelah tanggal pergi!');
-			setIsButtonDisabled(true);
-		} else {
-			setIsButtonDisabled(false);
-		}
-	}, [formattedParamsDate, formattedFlightDate, setIsButtonDisabled]);
-
-	// Get today - 1 in UTC
-	const todayMinusOne = new Date();
-	todayMinusOne.setUTCDate(todayMinusOne.getUTCDate() - 1);
-
-	// Handle day click
 	const handleDayClick = index => {
 		const selectedDate = new Date(dates[index]).toISOString().split('T')[0];
 
@@ -60,11 +46,6 @@ const FilterDay = ({ selectedDay, setSelectedDay, paramsDate, onUpdateTickets, f
 			toast.error('Tanggal pulang minimal 1 hari setelah tanggal pergi!');
 			return;
 		}
-
-		// Log tanggal yang dipilih dan perbandingannya dengan paramsDate dan flightDate
-		console.log(`Selected Day: ${days[(dates[index].getUTCDay() + 6) % 7]}, Date: ${selectedDate}`);
-		console.log(`Params Date: ${formattedParamsDate}`);
-		console.log(`Flight Date: ${formattedFlightDate}`);
 
 		// Update URL
 		const newUrl = new URL(window.location);

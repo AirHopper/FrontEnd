@@ -3,7 +3,7 @@ import { createLazyFileRoute, useLocation, useNavigate } from '@tanstack/react-r
 import { Box, Container, Grid, Heading, Text, Button, Stack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { getTicketsListing } from '../../services/ticketsListing';
-import FilterDay from '../../components/tickets/FilterDay';
+import FilterDay from '../../components/Tickets/FilterDay';
 import { useState, useEffect } from 'react';
 import notFoundTicket from '../../assets/img/notfoundflight.png';
 import loadingImage from '../../assets/img/loading.png';
@@ -13,8 +13,9 @@ import { faArrowLeft, faArrowLeftLong, faArrowRightLong, faCircleInfo, faGreater
 import { useBreakpointValue } from '@chakra-ui/react';
 import { HStack, VStack, Image, AccordionItem, AccordionRoot, AccordionItemTrigger, AccordionItemContent, Flex } from '@chakra-ui/react';
 import { faChevronUp } from '@fortawesome/free-solid-svg-icons';
-import SelectFilter from '../../components/tickets/SelectFilter';
+import SelectFilter from '../../components/Tickets/SelectFilter';
 import { Checkbox } from '@/components/ui/checkbox';
+import { toast } from 'react-toastify';
 import { toast } from 'react-toastify';
 
 export const Route = createLazyFileRoute('/tickets/')({
@@ -218,10 +219,6 @@ function RouteComponent() {
 			}
 		}
 	};
-	useEffect(() => {
-		console.log('isDirectFilter:', isDirectFilter);
-		console.log('isTransitFilter:', isTransitFilter);
-	}, [isDirectFilter, isTransitFilter]);
 
 	const handleNavigation = () => {
 		navigate({ to: '/' });
@@ -286,6 +283,7 @@ function RouteComponent() {
 			</Grid>
 
 			{/* Filter Day */}
+			<FilterDay selectedDay={selectedDay} setSelectedDay={setSelectedDay} paramsDate={params.flightDate} onUpdateTickets={updateTickets} flightDate={departureDate} setIsButtonDisabled={setIsButtonDisabled} />
 			<FilterDay selectedDay={selectedDay} setSelectedDay={setSelectedDay} paramsDate={params.flightDate} onUpdateTickets={updateTickets} flightDate={departureDate} setIsButtonDisabled={setIsButtonDisabled} />
 
 			{/* Select Filter */}

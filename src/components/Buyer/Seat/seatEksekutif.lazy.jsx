@@ -43,15 +43,6 @@ export default class App extends Component {
         { id: seat[4].id, number: 5, isReserved: false, isSelected : false },
         { id: seat[5].id, number: 6, isReserved: false, isSelected : false },
       ],
-      [
-        { id: seat[6].id, number: 7, isReserved: false, isSelected : false },
-        { id: seat[7].id, number: 8, isReserved: false, isSelected : false },
-        { id: seat[8].id, number: 9, isReserved: false, isSelected : false },
-        null,
-        { id: seat[9].id, number: 10, isReserved: false, isSelected : false },
-        { id: seat[10].id, number: 11, isReserved: false, isSelected : false },
-        { id: seat[11].id, number: 12, isReserved: false, isSelected : false },
-      ],
     ];
     row.forEach((rowData) => {
       rowData.forEach((seat) => {

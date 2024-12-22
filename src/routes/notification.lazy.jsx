@@ -25,15 +25,19 @@ import { notifications } from "../services/notification";
 import { useSelector } from "react-redux";
 import { clearNotifications } from "../services/notification";
 import Swal from "sweetalert2";
+import { profile } from "../services/user";
+import Protected from "../components/Auth/Protected";
 
 export const Route = createLazyFileRoute("/notification")({
-  component: NotificationPage,
+  component: () => (
+    <Protected >
+        <NotificationPage />
+    </Protected>
+),
 });
 
 function NotificationPage() {
 
-  const { token, user } = useSelector((state) => state.auth);
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const [notification, setNotification] = useState([]);
@@ -41,11 +45,13 @@ function NotificationPage() {
   const [searchQuery, setSearchQuery] = useState(""); 
   const [debouncedQuery, setDebouncedQuery] = useState("");
 
-  useEffect(() => {
-    if (!token && !user) {
-      navigate({ to: "/" });
-    }
-  }, [navigate, token, user]);
+  const { token } = useSelector((state) => state.auth);
+    // React Query untuk mendapatkan profil user jika token ada
+    const { data: profileData, isSuccessProfile, isErrorProfile } = useQuery({
+      queryKey: ["profile"],
+      queryFn: profile,
+      enabled: !!token,
+    });
 
   // Debounce search input
   useEffect(() => {

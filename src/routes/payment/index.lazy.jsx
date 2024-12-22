@@ -22,6 +22,7 @@ import { getDetailOrder } from '../../services/order'
 import { useQuery } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import Overlay from '../../components/Overlay/index.jsx';
+import Loading from "../../components/Overlay/loading.jsx";
 
 export const Route = createLazyFileRoute('/payment/')({
   component: PaymentIndex,
@@ -40,6 +41,7 @@ function PaymentIndex() {
     const [flightDetails, setFlightDetails] = useState([]);
     const [flightDetails2, setFlightDetails2] = useState([]);
     const [snapLoaded, setSnapLoaded] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const { data, isSuccess} = useQuery({
         queryKey: ["order", orderId],
         queryFn: async()=>{
@@ -76,12 +78,14 @@ function PaymentIndex() {
         if (isSuccess) {
             const dataBaru = data.data
             setOrderData(dataBaru);
+            setIsLoading(false);
         }   
     }, [data, isSuccess]);
     useEffect(() => {
         const query = new URLSearchParams(location.search);
         const transactionStatus = query.get("transaction_status");
         const statusCode = query.get("status_code");
+        const order_Id = query.get("order_id");
        
         if (transactionStatus) {
             if (transactionStatus === "pending" && statusCode === "201") {
@@ -95,7 +99,10 @@ function PaymentIndex() {
                 toast.success("Pembayaran berhasil!", {
                     autoClose: 3000,
                 });
-                navigate({to:"/payment/success"});
+                navigate({
+                    to:"/payment/success",
+                    state : {orderId : order_Id}
+                });
             } else {
                 toast.error("Terjadi kesalahan saat pembayaran.", {
                     autoClose: 3000,
@@ -108,44 +115,12 @@ function PaymentIndex() {
     const load_payment = () => {
         window.snap.embed(tokenPayment, {
             embedId: "snap-container",
-            onSuccess: function (result) {
-                toast.success("Pembayaran berhasil!", {
-                    autoClose: 3000,
-                });
-                navigate({
-                    to: "/payment/success",
-                });
-            },
-            onPending: function (result) {
-                toast.info("Pembayaran sedang menunggu.", {
-                    autoClose: 3000,
-                });
-                navigate({
-                    to: "/",
-                });
-            },
-            onError: function (result) {
-                toast.error("Terjadi kesalahan saat pembayaran.", {
-                    autoClose: 3000,
-                });
-                navigate({
-                    to: "/",
-                });
-            },
-            onClose: function () {
-                toast.warning("Anda menutup embed pembayaran.", {
-                    autoClose: 3000,
-                });
-                navigate({
-                    to: "/",
-                });
-            },
         });
     };
     useEffect(() => {
         const script = document.createElement("script");
         script.src = "https://app.sandbox.midtrans.com/snap/snap.js";	
-        script.setAttribute("data-client-key", "SB-Mid-client-6xTm8UKill9p5ONm");
+        script.setAttribute("data-client-key", import.meta.env.MIDTRANS_CLIENT_KEY);
         script.async = true;
         script.onload = () => {
             setSnapLoaded(true);
@@ -216,6 +191,7 @@ function PaymentIndex() {
     }
     return (
         <>
+        <Loading isVisible={isLoading} message="Memuat Data Pembayaran...."/>  
         <Overlay isVisible={isOverlayVisible} message={message} />
         <Box bg="white" px={4}>
             <Flex
@@ -227,7 +203,7 @@ function PaymentIndex() {
             borderColor="gray.100"
             >
             <Flex w="75%" direction="column" marginBottom={5}>
-                <Stack color="black" marginTop={10} marginLeft={30} marginBottom={5}>
+                <Stack color="black" marginTop={10} marginLeft={{ base: 4, md: 30 }} marginBottom={5}>
                 <BreadcrumbRoot size="lg">
                     <BreadcrumbLink
                     color="black"
@@ -246,7 +222,7 @@ function PaymentIndex() {
             </Flex>
             </Flex>
             <Flex w="100%" alignItems="center" justifyContent="center">
-            <Flex w="70%">
+            <Flex w="70%" maxW="1200px">
                 <Grid
                 templateColumns={{ base: "1fr", md: "1fr 1fr" }}
                 gap={6}

@@ -23,12 +23,11 @@ import { setToken, setUser } from "../../../redux/slices/auth";
 import { profile } from "../../../services/user";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify"; 
-import { enableNotification } from "../../../script";
+import { enableNotification } from "../../../registerSW";
 
 const Navbar = () => {
   const dispatch = useDispatch();
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
-  const [errorToastShown, setErrorToastShown] = useState(false);
 
   const { user, token } = useSelector((state) => state.auth);
 
@@ -45,13 +44,10 @@ const Navbar = () => {
       dispatch(setUser(data));
       const unreadExists = data.Notification.some((notif) => !notif.isRead);
       setHasUnreadNotifications(unreadExists);
-      setErrorToastShown(false); // Reset ketika sukses
-    } else if (isError && !errorToastShown) {
-      toast.error("Ada yang salah, silahkan login kembali");
-      setErrorToastShown(true); // Tandai bahwa error toast sudah muncul
+    } else if (isError) {
       dispatch(setToken(null));
     }
-  }, [isSuccess, isError, data, dispatch, token, errorToastShown]);
+  }, [isSuccess, isError, data, dispatch, token]);
 
   return (
     <Box

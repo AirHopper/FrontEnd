@@ -28,9 +28,13 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from 'react-toastify'; 
 import { profile } from "../services/user";
 import Swal from "sweetalert2";
-
+import Protected from "../components/Auth/Protected";
 export const Route = createLazyFileRoute("/profile")({
-  component: ProfilePage,
+  component: () => (
+    <Protected >
+        <ProfilePage />
+    </Protected>
+),
 });
 
 function ProfilePage() {
@@ -56,11 +60,11 @@ function ProfilePage() {
     navigate({ to: "/" });
   }, [dispatch, navigate]);
 
-  useEffect(() => {
-    if (!token && !user) {
-      navigate({ to: "/" });
-    }
-  }, [navigate, token, user]);
+  // useEffect(() => {
+  //   if (!token && !user) {
+  //     navigate({ to: "/" });
+  //   }
+  // }, [navigate, token, user]);
 
   useEffect(() => {
     if(user){

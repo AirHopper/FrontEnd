@@ -140,8 +140,6 @@ function RouteComponent() {
 		setSelectedOrder(order);
 		setSelectedOrderId(order.id);
 
-		console.log('Selected Order ID:', order.id); // Pastikan ID pesanan ada
-
 		if (detailRef.current) {
 			detailRef.current.scrollIntoView({ behavior: 'smooth' });
 		}
@@ -187,8 +185,6 @@ function RouteComponent() {
 		}
 	};
 
-	console.log('Selected Order:', selectedOrder);
-
 	useEffect(() => {
 		// Menyinkronkan selectedOrder dengan order yang diperbarui
 		if (orders && selectedOrder) {
@@ -215,7 +211,6 @@ function RouteComponent() {
 			confirmButtonText: 'Ya, hapus!',
 			cancelButtonText: 'Batal',
 		}).then(result => {
-			console.log('SweetAlert result:', result); // Cek apakah konfirmasi terjadi
 			if (result.isConfirmed) {
 				executeCancelBooking(order.id); // Pastikan ID pesanan dikirimkan dengan benar
 			}
