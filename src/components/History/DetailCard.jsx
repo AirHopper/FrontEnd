@@ -8,6 +8,11 @@ const DetailCard = ({ order, onCancelBooking, onPayment }) => {
 		return <Text>No order selected.</Text>;
 	}
 
+	const handlePrintPDF = pdfUrl => {
+		// Open the PDF in a new tab for printing
+		window.open(pdfUrl, '_blank');
+	};
+
 	return (
 		<Box p={{ base: 2, sm: 4 }} my={6}>
 			{/* Header */}
