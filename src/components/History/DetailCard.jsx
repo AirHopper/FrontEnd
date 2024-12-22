@@ -87,6 +87,17 @@ const DetailCard = ({ order, onCancelBooking, onPayment }) => {
 									{flight.airline.name}
 								</Text>
 								<Text fontSize={['sm', 'md']}>Pesawat: {flight.airplane}</Text>
+								<Text fontWeight={'bold'}>Informasi :</Text>
+
+								{/* Render Informasi Penumpang Secara Dinamis */}
+								{order.passengers.map((passenger, index) => (
+									<Box key={index} mt={0}>
+										<Text>
+											Penumpang {index + 1} : {passenger.title} {passenger.name}
+										</Text>
+										<Text>ID : {passenger.seat[0]?.id}</Text>
+									</Box>
+								))}
 							</VStack>
 						</HStack>
 

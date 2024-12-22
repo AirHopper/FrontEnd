@@ -1,61 +1,70 @@
 import React, { useEffect } from 'react';
 import { Button, Flex, Grid, Text, Box } from '@chakra-ui/react';
-import { toast } from 'react-toastify'; // Make sure to install react-toastify
+import { toast } from 'react-toastify';
 
 const FilterDay = ({ selectedDay, setSelectedDay, paramsDate, onUpdateTickets, flightDate, setIsButtonDisabled }) => {
 	const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
 
-	// Format paramsDate to 'YYYY-MM-DD'
+	// Format paramsDate to 'YYYY-MM-DD' in UTC
 	const formattedParamsDate = paramsDate ? new Date(paramsDate).toISOString().split('T')[0] : null;
 	const formattedFlightDate = flightDate ? new Date(flightDate).toISOString().split('T')[0] : null;
 
-	// Pastikan reqDate adalah tanggal hari ini
+	// Ensure reqDate is today in UTC
 	const reqDate = formattedParamsDate && !isNaN(new Date(formattedParamsDate)) ? new Date(formattedParamsDate) : new Date();
 
-	// Generate dates dimulai dari hari ini
+	// Generate dates starting from today in UTC
 	const generateDates = (startDate, count = 7, offset = 1, referenceDate = null) => {
-		const start = referenceDate ? new Date(referenceDate) : new Date(startDate); // Mulai dari referenceDate jika tersedia
-		start.setDate(start.getDate() - offset); // Adjust starting day by offset
+		const start = referenceDate ? new Date(referenceDate) : new Date(startDate);
+		start.setUTCDate(start.getUTCDate() - offset); // Adjust starting day by offset
 
 		return Array.from({ length: count + offset }, (_, i) => {
 			const date = new Date(start);
-			date.setDate(start.getDate() + i);
+			date.setUTCDate(start.getUTCDate() + i);
 			return date;
 		});
 	};
 
-	const dates = generateDates(reqDate, 7, 1, formattedFlightDate && formattedParamsDate < formattedFlightDate ? formattedFlightDate : null);
+	const dates = generateDates(reqDate, 7, 1, formattedParamsDate < formattedFlightDate ? formattedFlightDate : null);
 
 	useEffect(() => {
-		const initialSelectedDay = dates.findIndex(date => date.toDateString() === reqDate.toDateString());
+		const initialSelectedDay = dates.findIndex(date => date.toUTCString() === reqDate.toUTCString());
 		if (initialSelectedDay !== -1) {
 			setSelectedDay(initialSelectedDay);
 		}
 	}, [reqDate, dates, setSelectedDay]);
 
 	useEffect(() => {
-		if (formattedParamsDate && formattedFlightDate && formattedParamsDate < formattedFlightDate) {
+		if (formattedParamsDate && formattedParamsDate < formattedFlightDate) {
 			toast.warn('Tanggal pulang harus setelah tanggal pergi!');
-			setIsButtonDisabled(true); // Mengubah isButtonDisabled menjadi true
+			setIsButtonDisabled(true);
 		} else {
-			setIsButtonDisabled(false); // Mengubah isButtonDisabled menjadi false
+			setIsButtonDisabled(false);
 		}
 	}, [formattedParamsDate, formattedFlightDate, setIsButtonDisabled]);
 
-	// Mendapatkan tanggal hari ini - 1
+	// Get today - 1 in UTC
 	const todayMinusOne = new Date();
-	todayMinusOne.setDate(todayMinusOne.getDate() - 1);
+	todayMinusOne.setUTCDate(todayMinusOne.getUTCDate() - 1);
 
-	// Function for handling day click
+	// Handle day click
 	const handleDayClick = index => {
 		const selectedDate = new Date(dates[index]).toISOString().split('T')[0];
 
-		// Cek jika tombol dinonaktifkan
+		// Cek apakah tombol dinonaktifkan
 		const isDisabled = dates[index] < todayMinusOne;
 		if (isDisabled) {
 			toast.error('Tanggal yang dipilih sudah lewat!');
 			return;
+		} else if (selectedDate < formattedFlightDate + 1) {
+			// Perubahan disini
+			toast.error('Tanggal pulang minimal 1 hari setelah tanggal pergi!');
+			return;
 		}
+
+		// Log tanggal yang dipilih dan perbandingannya dengan paramsDate dan flightDate
+		console.log(`Selected Day: ${days[(dates[index].getUTCDay() + 6) % 7]}, Date: ${selectedDate}`);
+		console.log(`Params Date: ${formattedParamsDate}`);
+		console.log(`Flight Date: ${formattedFlightDate}`);
 
 		// Update URL
 		const newUrl = new URL(window.location);
@@ -83,16 +92,16 @@ const FilterDay = ({ selectedDay, setSelectedDay, paramsDate, onUpdateTickets, f
 							textAlign="center"
 							border="1px solid #A8B6B7"
 							_hover={{ bg: '#2078B8', color: '#FDFFFE' }}
-							onClick={() => handleDayClick(index + offsetIndex)} // Call handleDayClick on button click
+							onClick={() => handleDayClick(index + offsetIndex)}
 							py={5}
 							fontSize="md"
 							flexShrink={0}
 							width={['100px', '120px', 'auto']}
-							isDisabled={isDisabled} // Disable the button if the date is before today - 1
+							isDisabled={isDisabled}
 						>
 							<Flex direction="column" align="center" justify="center" width="100%" px={2} gap={0}>
 								<Text fontSize="md" fontWeight="semibold">
-									{days[(date.getDay() + 6) % 7]}
+									{days[(date.getUTCDay() + 6) % 7]}
 								</Text>
 								<Text fontSize="sm" fontWeight="normal">
 									{date.toLocaleDateString('id-ID', {

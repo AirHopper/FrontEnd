@@ -274,16 +274,56 @@ function RouteComponent() {
 			{/* Filter Order by Status */}
 			<Box overflowX="auto" my={4}>
 				<HStack gap={4} justifyContent="start" minWidth="max-content">
-					<Button bg={'#44B3F8'} _hover={{ bg: '#2078BB' }} borderRadius="full" onClick={() => setSelectedStatus('All')}>
+					<Button
+						bg={selectedStatus === 'All' ? '#44B3F8' : 'transparent'}
+						border={selectedStatus === 'All' ? 'none' : '2px solid #44B3F8'}
+						color={selectedStatus === 'All' ? 'white' : '#44B3F8'}
+						_hover={{
+							bg: selectedStatus === 'All' ? '#2078BB' : 'transparent',
+							color: selectedStatus === 'All' ? 'white' : '#2078BB',
+						}}
+						borderRadius="full"
+						onClick={() => setSelectedStatus('All')}
+					>
 						ALL
 					</Button>
-					<Button bg={'red.500'} _hover={{ bg: 'red.700' }} borderRadius="full" onClick={() => setSelectedStatus('Unpaid')}>
+					<Button
+						bg={selectedStatus === 'Unpaid' ? 'red.500' : 'transparent'}
+						border={selectedStatus === 'Unpaid' ? 'none' : '2px solid #E53E3E'}
+						color={selectedStatus === 'Unpaid' ? 'white' : '#E53E3E'}
+						_hover={{
+							bg: selectedStatus === 'Unpaid' ? 'red.700' : 'transparent',
+							color: selectedStatus === 'Unpaid' ? 'white' : '#C53030',
+						}}
+						borderRadius="full"
+						onClick={() => setSelectedStatus('Unpaid')}
+					>
 						Unpaid
 					</Button>
-					<Button bg={'green.500'} _hover={{ bg: 'green.700' }} borderRadius="full" onClick={() => setSelectedStatus('Issued')}>
+					<Button
+						bg={selectedStatus === 'Issued' ? 'green.500' : 'transparent'}
+						border={selectedStatus === 'Issued' ? 'none' : '2px solid #38A169'}
+						color={selectedStatus === 'Issued' ? 'white' : '#38A169'}
+						_hover={{
+							bg: selectedStatus === 'Issued' ? 'green.700' : 'transparent',
+							color: selectedStatus === 'Issued' ? 'white' : '#2F855A',
+						}}
+						borderRadius="full"
+						onClick={() => setSelectedStatus('Issued')}
+					>
 						Issued
 					</Button>
-					<Button bg={'gray.500'} _hover={{ bg: 'gray.700' }} borderRadius="full" onClick={() => setSelectedStatus('Cancelled')}>
+					<Button
+						bg={selectedStatus === 'Cancelled' ? 'gray.500' : 'transparent'}
+						border={selectedStatus === 'Cancelled' ? 'none' : '2px solid #A0AEC0'}
+						color={selectedStatus === 'Cancelled' ? 'white' : '#A0AEC0'}
+						_hover={{
+							bg: selectedStatus === 'Cancelled' ? 'gray.700' : 'transparent',
+							color: selectedStatus === 'Cancelled' ? 'white' : '#718096',
+						}}
+						borderRadius="full"
+						onClick={() => setSelectedStatus('Cancelled')}
+					>
 						Cancelled
 					</Button>
 				</HStack>
