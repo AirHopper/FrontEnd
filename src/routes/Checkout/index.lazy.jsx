@@ -340,10 +340,10 @@ function CheckoutIndex() {
               ...(selectedPulang?.[index]?.id
                 ? [selectedPulang[index]?.id]
                 : []),
-              ...(selectedTransit1Pulang?.[index?.id]
+              ...(selectedTransit1Pulang?.[index]?.id
                 ? [selectedTransit1Pulang[index]?.id]
                 : []),
-              ...(selectedTransit2Pulang?.[index?.id]
+              ...(selectedTransit2Pulang?.[index]?.id
                 ? [selectedTransit2Pulang[index]?.id]
                 : []),
             ],
