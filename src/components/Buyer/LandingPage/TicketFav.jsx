@@ -148,7 +148,7 @@ const TicketFav = ({ handleSelectCard }) => {
             bgColor="#a5d8ff"
             _hover={{ bgColor: "#70caff" }}
             color="gray.700"
-            onClick={() => setContinentFilter("Eropa")}
+            onClick={() => setContinentFilter("Europa")}
           >
             <FontAwesomeIcon icon={faMagnifyingGlass} />
             Eropa
