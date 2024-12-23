@@ -50,7 +50,6 @@ self.addEventListener('activate', async () => {
 
   // Save subscription to backend
   const response = await saveSubscription(subscription);
-  console.log(response);
 });
 
 // Handle push notifications

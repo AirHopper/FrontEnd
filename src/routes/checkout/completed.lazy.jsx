@@ -958,7 +958,7 @@ function CheckoutCompleted() {
                     <Flex direction="column" marginLeft={7} marginTop={3}>
                       <Text fontWeight="bold">
                         {firstFlight?.airplane} -{' '}
-                        {orderData?.outboundTicket?.class}
+                        {orderData?.outboundTicket?.class?.replace(/_/g, ' ')}
                       </Text>
                     </Flex>
                     <Flex align="center" marginTop={3}>
@@ -1062,7 +1062,7 @@ function CheckoutCompleted() {
                         <Flex direction="column" marginLeft={7} marginTop={3}>
                           <Text fontWeight="bold">
                             {secondFlight?.airplane} -{' '}
-                            {orderData?.outboundTicket?.class}
+                            {orderData?.outboundTicket?.class?.replace(/_/g, ' ')}
                           </Text>
                         </Flex>
                         <Flex align="center" marginTop={3}>
@@ -1172,7 +1172,7 @@ function CheckoutCompleted() {
                         <Flex direction="column" marginLeft={7} marginTop={3}>
                           <Text fontWeight="bold">
                             {thirdFlight?.airplane} -{' '}
-                            {orderData?.outboundTicket?.class}
+                            {orderData?.outboundTicket?.class?.replace(/_/g, ' ')}
                           </Text>
                         </Flex>
                         <Flex align="center" marginTop={3}>
@@ -1282,7 +1282,7 @@ function CheckoutCompleted() {
                         <Flex direction="column" marginLeft={7} marginTop={3}>
                           <Text fontWeight="bold">
                             {firtsReturnFlight?.airplane} -{' '}
-                            {orderData?.returnTicket?.class}
+                            {orderData?.returnTicket?.class?.replace(/_/g, ' ')}
                           </Text>
                         </Flex>
                         <Flex align="center" marginTop={3}>
@@ -1392,7 +1392,7 @@ function CheckoutCompleted() {
                         <Flex direction="column" marginLeft={7} marginTop={3}>
                           <Text fontWeight="bold">
                             {secondReturnFlight?.airplane} -{' '}
-                            {orderData?.returnTicket?.class}
+                            {orderData?.returnTicket?.class?.replace(/_/g, ' ')}
                           </Text>
                         </Flex>
                         <Flex align="center" marginTop={3}>
@@ -1502,7 +1502,7 @@ function CheckoutCompleted() {
                         <Flex direction="column" marginLeft={7} marginTop={3}>
                           <Text fontWeight="bold">
                             {thirdReturnFlight?.airplane} -{' '}
-                            {orderData?.returnTicket?.class}
+                            {orderData?.returnTicket?.class?.replace(/_/g, ' ')}
                           </Text>
                         </Flex>
                         <Flex align="center" marginTop={3}>

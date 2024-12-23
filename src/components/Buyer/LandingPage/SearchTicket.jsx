@@ -63,13 +63,13 @@ const SearchTicket = ({
   const [hoverTimeout, setHoverTimeout] = useState(null); // state untuk timeout popover
 
   // Passenger and Class Input
-  const [adultCount, setAdultCount] = useState(0);
+  const [adultCount, setAdultCount] = useState(1);
   const [childCount, setChildCount] = useState(0);
   const [infantCount, setInfantCount] = useState(0);
 
   // location input type and total passengers
   const [locationType, setLocationType] = useState("");
-  const [totalPassengers, setTotalPassengers] = useState(0);
+  const [totalPassengers, setTotalPassengers] = useState(1);
 
   const handleMouseEnter = () => {
     // Set delay untuk membuka popover
