@@ -1226,7 +1226,8 @@ function CheckoutIndex() {
                         />
                         <Flex direction="column" marginLeft={7} marginTop={3}>
                           <Text fontWeight="bold">
-                            {firstFlight?.airplane} - {ticketData?.class?.replace(/_/g, ' ')}
+                            {firstFlight?.airplane} -{' '}
+                            {ticketData?.class?.replace(/_/g, ' ')}
                           </Text>
                         </Flex>
                         <Flex align="center" marginTop={3}>
@@ -1337,7 +1338,8 @@ function CheckoutIndex() {
                               marginTop={3}
                             >
                               <Text fontWeight="bold">
-                                {secondFlight?.airplane} - {ticketData?.class?.replace(/_/g, ' ')}
+                                {secondFlight?.airplane} -{' '}
+                                {ticketData?.class?.replace(/_/g, ' ')}
                               </Text>
                             </Flex>
                             <Flex align="center" marginTop={3}>
@@ -1450,7 +1452,8 @@ function CheckoutIndex() {
                               marginTop={3}
                             >
                               <Text fontWeight="bold">
-                                {thirdFlight?.airplane} - {ticketData?.class?.replace(/_/g, ' ')}
+                                {thirdFlight?.airplane} -{' '}
+                                {ticketData?.class?.replace(/_/g, ' ')}
                               </Text>
                             </Flex>
                             <Flex align="center" marginTop={3}>
