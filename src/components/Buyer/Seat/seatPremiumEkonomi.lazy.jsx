@@ -106,7 +106,7 @@ export default class App extends Component {
         {!!data &&(
           <>
             <Flex justifyContent="center" bg="#73CA5C" color="white" p={2} borderRadius="md" w="92%" marginLeft={5}>
-              <Text fontFamily="Inter, sans-serif">Premium Ekonomi - {availableSeats} Kursi Tersedia</Text>
+              <Text fontFamily="Inter, sans-serif">Premium Economy - {availableSeats} Kursi Tersedia</Text>
             </Flex>
             <div className="seat-picker-container">
             <SeatPicker
@@ -134,7 +134,7 @@ export default class App extends Component {
                 width="90%"
               >
                 <Text marginLeft={4} marginTop={2}>
-                  Premium Ekonomi - {selectedSeats.length} Kursi Dipilih
+                  Premium Economy - {selectedSeats.length} Kursi Dipilih
                 </Text>
                 <Box marginTop={2} marginRight={5}>
                   <FontAwesomeIcon
