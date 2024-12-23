@@ -1226,7 +1226,7 @@ function CheckoutIndex() {
                         />
                         <Flex direction="column" marginLeft={7} marginTop={3}>
                           <Text fontWeight="bold">
-                            {firstFlight?.airplane} - {ticketData?.class}
+                            {firstFlight?.airplane} - {ticketData?.class?.replace(/_/g, ' ')}
                           </Text>
                         </Flex>
                         <Flex align="center" marginTop={3}>
@@ -1337,7 +1337,7 @@ function CheckoutIndex() {
                               marginTop={3}
                             >
                               <Text fontWeight="bold">
-                                {secondFlight?.airplane} - {ticketData?.class}
+                                {secondFlight?.airplane} - {ticketData?.class?.replace(/_/g, ' ')}
                               </Text>
                             </Flex>
                             <Flex align="center" marginTop={3}>
@@ -1450,7 +1450,7 @@ function CheckoutIndex() {
                               marginTop={3}
                             >
                               <Text fontWeight="bold">
-                                {thirdFlight?.airplane} - {ticketData?.class}
+                                {thirdFlight?.airplane} - {ticketData?.class?.replace(/_/g, ' ')}
                               </Text>
                             </Flex>
                             <Flex align="center" marginTop={3}>
@@ -1564,7 +1564,7 @@ function CheckoutIndex() {
                             >
                               <Text fontWeight="bold">
                                 {firtsReturnFlight?.airplane} -{' '}
-                                {ticketData?.class}
+                                {ticketData?.class?.replace(/_/g, ' ')}
                               </Text>
                             </Flex>
                             <Flex align="center" marginTop={3}>
@@ -1681,7 +1681,7 @@ function CheckoutIndex() {
                             >
                               <Text fontWeight="bold">
                                 {secondReturnFlight?.airplane} -{' '}
-                                {ticketData?.class}
+                                {ticketData?.class?.replace(/_/g, ' ')}
                               </Text>
                             </Flex>
                             <Flex align="center" marginTop={3}>
@@ -1798,7 +1798,7 @@ function CheckoutIndex() {
                             >
                               <Text fontWeight="bold">
                                 {thirdReturnFlight?.airplane} -{' '}
-                                {ticketData?.class}
+                                {ticketData?.class?.replace(/_/g, ' ')}
                               </Text>
                             </Flex>
                             <Flex align="center" marginTop={3}>
