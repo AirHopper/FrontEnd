@@ -129,7 +129,7 @@ const TicketFav = ({ handleSelectCard }) => {
               <SelectItem
                 item={continent}
                 key={continent.value}
-                onClick={() => setContinentFilter(continent.value)}
+                onClick={() => handleFilterChange(continent.value)}
               >
                 {continent.label}
               </SelectItem>
