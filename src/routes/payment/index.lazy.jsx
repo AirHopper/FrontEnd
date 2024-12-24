@@ -202,7 +202,7 @@ function PaymentIndex() {
             borderColor="gray.100"
             >
             <Flex w="75%" direction="column" marginBottom={5}>
-                <Stack color="black" marginTop={10} marginLeft={{ base: 4, md: 30 }} marginBottom={5}>
+                <Stack color="black" marginTop={10} ml={{ base: 0, md: 30 }} mb={5}>
                 <BreadcrumbRoot size="lg">
                     <BreadcrumbLink
                     color="black"
@@ -225,7 +225,7 @@ function PaymentIndex() {
                 <Grid
                 templateColumns={{ base: "1fr", md: "1fr 1fr" }}
                 gap={6}
-                p={5}
+                
                 >
                 <Box>
                     <Card.Root
