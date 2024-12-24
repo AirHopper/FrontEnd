@@ -1,7 +1,7 @@
 input.inputBox {
     background: white;
-    height: 2vw;
-    width: 28vw;
+    height: clamp(40px, 2vw, 60px); /* Tinggi minimum 40px, proporsional dengan 2vw, maksimum 60px */
+    width: clamp(90%, 28vw, 500px);
     border-radius: 3px;
     border: 1px solid gray;
 }

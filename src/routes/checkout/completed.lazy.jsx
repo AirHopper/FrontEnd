@@ -491,7 +491,7 @@ function CheckoutCompleted() {
                               mb={2}
                               justifyContent="space-between"
                             >
-                              <Text ml={4} pt={2}>
+                              <Text ml={[2, 4]} pt={2} fontSize={["xs", "md"]} lineHeight="short" whiteSpace="nowrap">
                                 Data Diri Penumpang {index + 1} -{' '}
                                 {passengersData[index]?.type}
                               </Text>

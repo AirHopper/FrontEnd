@@ -221,7 +221,7 @@ function PaymentIndex() {
             </Flex>
             </Flex>
             <Flex w="100%" alignItems="center" justifyContent="center">
-            <Flex w="70%" maxW="1200px">
+            <Flex w={["100%", "70%"]} maxW="1200px">
                 <Grid
                 templateColumns={{ base: "1fr", md: "1fr 1fr" }}
                 gap={6}
