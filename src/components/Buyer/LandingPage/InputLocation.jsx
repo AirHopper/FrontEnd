@@ -26,7 +26,7 @@ const InputLocation = ({ isFocused, onCloseClick, onCitySelect }) => {
   const [cities, setCities] = useState([]);
   const { data, isSuccess, isError } = useQuery({
     queryKey: ["cities", { query }],
-    queryFn: () => getCities({ departureCity: query }),
+    queryFn: () => getCities(query),
     enabled: query.length > 0,
   });
 
@@ -72,10 +72,7 @@ const InputLocation = ({ isFocused, onCloseClick, onCitySelect }) => {
 
   // Filter cities based on search query
   const filteredCityNames = cities
-    .flatMap((item) => [
-      { name: item.departure.city.name, code: item.departure.city.code },
-      { name: item.arrival.city.name, code: item.arrival.city.code },
-    ]) // Combine departure and arrival cities
+    .flatMap((item) => [{ name: item.name, code: item.code }]) // Combine departure and arrival cities
     .filter(
       (city, index, self) =>
         self.findIndex((c) => c.name === city.name) === index // Remove duplicates
@@ -152,7 +149,16 @@ const InputLocation = ({ isFocused, onCloseClick, onCitySelect }) => {
         <CloseButton onClick={onCloseClick} />
       </HStack>
 
-      <List.Root as={Stack} listStyle="none">
+      <List.Root
+        as={Stack}
+        listStyle="none"
+        overflowY={
+          query.length > 0 && filteredCityNames.length > 4 ? "auto" : "hidden"
+        }
+        height={
+          query.length > 0 && filteredCityNames.length > 4 ? "40vh" : "auto"
+        }
+      >
         {isError ? (
           <Stack alignItems="center" mt={5}>
             <Image

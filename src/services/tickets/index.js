@@ -26,19 +26,9 @@ export const getTickets = async (page, limit, continent) => {
   return result;
 };
 
-export const getCities = async (query) => {
-  let params = {};
-
-  if (query.departureCity) {
-    params["search[departureCity]"] = query.departureCity;
-  }
-  if (query.arrivalCity) {
-    params["search[arrivalCity]"] = query.arrivalCity;
-  }
-
-  let url =
-    `${import.meta.env.VITE_API_URL}${import.meta.env.VITE_API_VERSION}/tickets?` +
-    new URLSearchParams(params);
+// get cities
+export const getCities = async () => {
+  let url = `${import.meta.env.VITE_API_URL}${import.meta.env.VITE_API_VERSION}/cities`;
 
   const response = await fetch(url, {
     method: "GET",
@@ -52,7 +42,7 @@ export const getCities = async (query) => {
   return result?.data;
 };
 
-// get data
+// get detail tickets data
 export const getDetailTickets = async (id) => {
   let url = `${import.meta.env.VITE_API_URL}${import.meta.env.VITE_API_VERSION}/tickets/${id}`;
   const response = await fetch(url, {

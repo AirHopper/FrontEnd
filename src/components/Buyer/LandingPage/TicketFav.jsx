@@ -49,10 +49,6 @@ const TicketFav = ({ handleSelectCard }) => {
     ],
   });
 
-  const handleChange = (value) => {
-    setContinentFilter(value);
-  };
-
   // getData
   const [tickets, setTickets] = useState([]);
   const { data, isSuccess, isPending, isError } = useQuery({
@@ -75,12 +71,8 @@ const TicketFav = ({ handleSelectCard }) => {
       setTickets(filteredTickets);
 
       // Update page, limit, and total items
-      setCurrentPage(currentPage);
       setPageLimit(pageLimit);
       setTotalItems(data?.pagination?.totalItems);
-
-      // Update filter state
-      setContinentFilter(continentFilter);
     }
   }, [data, isSuccess]);
 
@@ -99,60 +91,22 @@ const TicketFav = ({ handleSelectCard }) => {
 
         {/* Continent Filters */}
         <HStack display={{ base: "none", md: "flex" }}>
-          <Button
-            size="md"
-            borderRadius="xl"
-            bgColor="#44b3f8"
-            _hover={{ bgColor: "#2078b8" }}
-            onClick={() => setContinentFilter("")}
-          >
-            <FontAwesomeIcon icon={faMagnifyingGlass} />
-            Semua
-          </Button>
-          <Button
-            size="md"
-            borderRadius="xl"
-            bgColor="#a5d8ff"
-            _hover={{ bgColor: "#70caff" }}
-            color="gray.700"
-            onClick={() => setContinentFilter("Asia")}
-          >
-            <FontAwesomeIcon icon={faMagnifyingGlass} />
-            Asia
-          </Button>
-          <Button
-            size="md"
-            borderRadius="xl"
-            bgColor="#a5d8ff"
-            _hover={{ bgColor: "#70caff" }}
-            color="gray.700"
-            onClick={() => setContinentFilter("Amerika")}
-          >
-            <FontAwesomeIcon icon={faMagnifyingGlass} />
-            Amerika
-          </Button>
-          <Button
-            size="md"
-            borderRadius="xl"
-            bgColor="#a5d8ff"
-            _hover={{ bgColor: "#70caff" }}
-            color="gray.700"
-            onClick={() => setContinentFilter("Australia")}
-          >
-            <FontAwesomeIcon icon={faMagnifyingGlass} />
-            Australia
-          </Button>
-          <Button
-            size="md"
-            borderRadius="xl"
-            bgColor="#a5d8ff"
-            _hover={{ bgColor: "#70caff" }}
-            color="gray.700"
-            onClick={() => setContinentFilter("Europa")}
-          >
-            <FontAwesomeIcon icon={faMagnifyingGlass} />
-            Eropa
-          </Button>
+          {continents.items.map((continent) => (
+            <Button
+              key={continent.value}
+              size="md"
+              borderRadius="xl"
+              bgColor={
+                continentFilter === continent.value ? "#44b3f8" : "#a5d8ff"
+              }
+              _hover={{ bgColor: "#70caff" }}
+              color={continentFilter === continent.value ? "white" : "gray.700"}
+              onClick={() => setContinentFilter(continent.value)}
+            >
+              <FontAwesomeIcon icon={faMagnifyingGlass} />
+              {continent.label}
+            </Button>
+          ))}
         </HStack>
 
         {/* Continent Filter Select (Responsive) */}
@@ -171,7 +125,7 @@ const TicketFav = ({ handleSelectCard }) => {
               <SelectItem
                 item={continent}
                 key={continent.value}
-                onClick={() => handleChange(continent.value)}
+                onClick={() => setContinentFilter(continent.value)}
               >
                 {continent.label}
               </SelectItem>
