@@ -5,12 +5,14 @@ import {
   HStack,
   Image,
   createListCollection,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import {
   PaginationItems,
   PaginationNextTrigger,
   PaginationPrevTrigger,
   PaginationRoot,
+  PaginationPageText,
 } from "@/components/ui/pagination";
 import { Button } from "@/components/ui/button";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
@@ -30,6 +32,8 @@ import {
 } from "@/components/ui/select";
 
 const TicketFav = ({ handleSelectCard }) => {
+  const isBase = useBreakpointValue({ base: true, sm: false });
+
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(10);
@@ -62,6 +66,7 @@ const TicketFav = ({ handleSelectCard }) => {
     setContinentFilter(continent);
     setCurrentPage(1); // Reset pagination ke halaman pertama
   };
+
   useEffect(() => {
     if (isSuccess) {
       const today = new Date().toISOString().split("T")[0]; // Format tanggal sekarang (YYYY-MM-DD)
@@ -171,18 +176,33 @@ const TicketFav = ({ handleSelectCard }) => {
       {/* Pagination */}
       {tickets.length > 0 && (
         <HStack justifyContent="center" mt={6}>
-          <PaginationRoot
-            count={totalItems}
-            pageSize={pageLimit}
-            currentPage={currentPage}
-            onPageChange={(event) => setCurrentPage(event.page)}
-          >
-            <HStack>
-              <PaginationPrevTrigger />
-              <PaginationItems />
-              <PaginationNextTrigger />
-            </HStack>
-          </PaginationRoot>
+          {isBase ? (
+            <PaginationRoot
+              count={totalItems}
+              pageSize={pageLimit}
+              currentPage={currentPage}
+              onPageChange={(event) => setCurrentPage(event.page)}
+            >
+              <HStack gap="4">
+                <PaginationPrevTrigger />
+                <PaginationPageText />
+                <PaginationNextTrigger />
+              </HStack>
+            </PaginationRoot>
+          ) : (
+            <PaginationRoot
+              count={totalItems}
+              pageSize={pageLimit}
+              currentPage={currentPage}
+              onPageChange={(event) => setCurrentPage(event.page)}
+            >
+              <HStack>
+                <PaginationPrevTrigger />
+                <PaginationItems />
+                <PaginationNextTrigger />
+              </HStack>
+            </PaginationRoot>
+          )}
         </HStack>
       )}
     </Stack>
