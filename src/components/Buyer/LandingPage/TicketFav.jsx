@@ -58,6 +58,10 @@ const TicketFav = ({ handleSelectCard }) => {
     retry: 1,
   });
 
+  const handleFilterChange = (continent) => {
+    setContinentFilter(continent);
+    setCurrentPage(1); // Reset pagination ke halaman pertama
+  };
   useEffect(() => {
     if (isSuccess) {
       const today = new Date().toISOString().split("T")[0]; // Format tanggal sekarang (YYYY-MM-DD)
@@ -101,7 +105,7 @@ const TicketFav = ({ handleSelectCard }) => {
               }
               _hover={{ bgColor: "#70caff" }}
               color={continentFilter === continent.value ? "white" : "gray.700"}
-              onClick={() => setContinentFilter(continent.value)}
+              onClick={() => handleFilterChange(continent.value)}
             >
               <FontAwesomeIcon icon={faMagnifyingGlass} />
               {continent.label}
