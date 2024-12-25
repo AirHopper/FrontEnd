@@ -247,25 +247,35 @@ function RouteComponent() {
 					_hover={{ bg: '#2078B8', color: '#FDFFFE' }}
 					cursor={'pointer'}
 				>
-					<Flex gap={4} align={'center'}>
-						<FontAwesomeIcon icon={faArrowLeftLong} size="md" />
-						<span>{params.departureCity}</span>
-						<FontAwesomeIcon icon={faArrowRightLong} size="md" />
-						<span>{params.arrivalCity}</span>
-						<FontAwesomeIcon icon={faMinus} />
-						<span>
-							{params.passenger}
-							<span style={{ marginLeft: 4 }}> Penumpang</span>
-						</span>
-						<FontAwesomeIcon icon={faMinus} />
-						<span>{params.classType}</span>
+					<Flex align="flex-start" direction={{ base: 'row' }} wrap="wrap" textAlign={{ base: 'start', sm: 'start' }}>
+						<FontAwesomeIcon icon={faArrowLeftLong} size="sm" />
+					</Flex>
+					<Flex gap={{ base: 1, sm: 2, md: 4 }} align="start" direction={{ base: 'row' }} wrap="wrap" textAlign={{ base: 'start', sm: 'start' }}>
+						<Box align="start">
+							<Text as="span">{params.departureCity}</Text>
+
+							<Text as="span" mx={2}>
+								<FontAwesomeIcon icon={faArrowRightLong} size="sm" />
+							</Text>
+							<Text as="span">{params.arrivalCity}</Text>
+							<Text as="span" mx={2}>
+								<FontAwesomeIcon icon={faMinus} />
+							</Text>
+							<Text as="span" style={{ whiteSpace: 'nowrap' }}>
+								{params.passenger} Penumpang
+							</Text>
+							<Text as="span" mx={2}>
+								<FontAwesomeIcon icon={faMinus} />
+							</Text>
+							<Text as="span">{params.classType}</Text>
+						</Box>
 					</Flex>
 				</Stack>
 
 				<Stack
 					onClick={handleNavigation}
 					py={3}
-					px={8}
+					px={9}
 					bg="#F8D24D"
 					_hover={{ bg: '#D4B340', color: '#FDFFFE' }}
 					borderRadius="md"
